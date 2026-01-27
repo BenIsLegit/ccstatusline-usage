@@ -243,7 +243,7 @@ export const App: React.FC = () => {
             <Box marginBottom={1}>
                 <Text bold>
                     <Gradient name='retro'>
-                        CCStatusline Configuration
+                        CCStatusline Usage
                     </Gradient>
                 </Text>
                 <Text bold>

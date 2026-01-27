@@ -14,18 +14,35 @@
 **🎨 A highly customizable status line formatter for Claude Code CLI**
 *Display model info, git branch, token usage, and other metrics in your terminal*
 
-[![npm version](https://img.shields.io/npm/v/ccstatusline.svg)](https://www.npmjs.com/package/ccstatusline)
-[![npm downloads](https://img.shields.io/npm/dm/ccstatusline.svg)](https://www.npmjs.com/package/ccstatusline)
+[![npm version](https://img.shields.io/npm/v/ccstatusline-usage.svg)](https://www.npmjs.com/package/ccstatusline-usage)
+[![npm downloads](https://img.shields.io/npm/dm/ccstatusline-usage.svg)](https://www.npmjs.com/package/ccstatusline-usage)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/sirmalloc/ccstatusline/blob/main/LICENSE)
-[![Node.js Version](https://img.shields.io/node/v/ccstatusline.svg)](https://nodejs.org)
-[![install size](https://packagephobia.com/badge?p=ccstatusline)](https://packagephobia.com/result?p=ccstatusline)
+[![Node.js Version](https://img.shields.io/node/v/ccstatusline-usage.svg)](https://nodejs.org)
+[![install size](https://packagephobia.com/badge?p=ccstatusline-usage)](https://packagephobia.com/result?p=ccstatusline-usage)
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/sirmalloc/ccstatusline/graphs/commit-activity)
 
 [![Mentioned in Awesome Claude Code](https://awesome.re/mentioned-badge.svg)](https://github.com/hesreallyhim/awesome-claude-code)
 [![ClaudeLog - A comprehensive knowledge base for Claude](https://claudelog.com/img/claude_log_badge.svg)](https://claudelog.com/)
 
+## Fork Enhancements
 
-![Demo](https://raw.githubusercontent.com/sirmalloc/ccstatusline/main/screenshots/demo.gif)
+This fork adds API-based usage widgets beyond the upstream:
+
+- **Session/Weekly Usage** - Real utilization from Anthropic API with progress bars
+- **Reset Timer** - Time until 5-hour session window resets
+- **Context Window Display** - Visual bar showing context usage
+- **Two-line Layout** - Session info on line 1, context on line 2
+
+### Enhanced Status Line Preview
+
+```
+Session: [████░░░░░░░░░░░] 27.0% | Weekly: [████████████░░░] 86.0% | 1:56 hr | Model: Opus 4.5 | Session ID: 714aa815-8a...
+  Context: [███████░░░░░░░░] 103k/200k (51%)
+```
+
+These widgets are enabled by default. Just install and run!
+
+![Status Bar Demo](screenshots/status-bar-demo.png)
 
 </div>
 
@@ -39,6 +56,7 @@
 - [API Documentation](#-api-documentation)
 - [Development](#️-development)
 - [Contributing](#-contributing)
+- [Uninstall](#️-uninstall)
 - [License](#-license)
 - [Related Projects](#-related-projects)
 
@@ -60,7 +78,7 @@
 
 - **👾 Emoji Support** - You can now paste emoji into the custom text widget. You can also turn on the merge option to get emoji labels for your widgets like this:
   
-![Emoji Support](https://raw.githubusercontent.com/sirmalloc/ccstatusline/main/screenshots/emojiSupport.png)
+![Emoji Support](screenshots/emojiSupport.png)
 
 ### v2.0.11 - Unlimited Status Lines
 
@@ -73,13 +91,13 @@
 
 ### v2.0.8 - Powerline Auto-Alignment
 
-![Powerline Auto-Alignment](https://raw.githubusercontent.com/sirmalloc/ccstatusline/main/screenshots/autoAlign.png)
+![Powerline Auto-Alignment](screenshots/autoAlign.png)
 
 - **🎯 Widget Alignment** - Auto-align widgets across multiple status lines in Powerline mode for a clean, columnar layout (toggle with 'a' in Powerline Setup)
 
 ### v2.0.7 - Current Working Directory & Session Cost
 
-![Current Working Directory and Session Cost](https://raw.githubusercontent.com/sirmalloc/ccstatusline/main/screenshots/cwdAndSessionCost.png)
+![Current Working Directory and Session Cost](screenshots/cwdAndSessionCost.png)
 
 - **📁 Current Working Directory** - Display the current working directory with configurable segment display
   - Set the number of path segments to show (e.g., show only last 2 segments: `.../Personal/ccstatusline`)
@@ -97,7 +115,7 @@
 
 ### v2.0.2 - Block Timer Widget
 
-![Block Timer](https://raw.githubusercontent.com/sirmalloc/ccstatusline/main/screenshots/blockTimerSmall.png)
+![Block Timer](screenshots/blockTimerSmall.png)
 
 - **⏱️ Block Timer** - Track your progress through 5-hour Claude Code blocks
   - Displays time elapsed in current block as hours/minutes (e.g., "3hr 45m")
@@ -119,6 +137,8 @@
 ## ✨ Features
 
 - **📊 Real-time Metrics** - Display model name, git branch, token usage, session duration, block timer, and more
+- **📈 API Usage Tracking** - Real-time 5-hour session and weekly utilization from Anthropic API with progress bars
+- **⏱️ Reset Timer** - Countdown to when your 5-hour session window resets
 - **🎨 Fully Customizable** - Choose what to display and customize colors for each element
 - **⚡ Powerline Support** - Beautiful Powerline-style rendering with arrow separators, caps, and custom fonts
 - **📐 Multi-line Support** - Configure multiple independent status lines
@@ -137,10 +157,10 @@
 
 ```bash
 # Run the configuration TUI with npm
-npx ccstatusline@latest
+npx ccstatusline-usage@latest
 
 # Or with Bun (faster)
-bunx ccstatusline@latest
+bunx ccstatusline-usage@latest
 ```
 
 ### Configure ccstatusline
@@ -179,19 +199,19 @@ ccstatusline works seamlessly on Windows with full feature compatibility across 
 irm bun.sh/install.ps1 | iex
 
 # Run ccstatusline
-bunx ccstatusline@latest
+bunx ccstatusline-usage@latest
 ```
 
 #### Option 2: Using Node.js
 ```powershell
 # Using npm
-npx ccstatusline@latest
+npx ccstatusline-usage@latest
 
 # Or with Yarn
-yarn dlx ccstatusline@latest
+yarn dlx ccstatusline-usage@latest
 
 # Or with pnpm
-pnpm dlx ccstatusline@latest
+pnpm dlx ccstatusline-usage@latest
 ```
 
 ### Windows-Specific Features
@@ -246,7 +266,7 @@ winget install Git.Git
 **Issue**: Permission errors during installation
 ```powershell
 # Use non-global installation (recommended)
-npx ccstatusline@latest
+npx ccstatusline-usage@latest
 
 # Or run PowerShell as Administrator for global install
 ```
@@ -274,7 +294,7 @@ ccstatusline works perfectly in WSL environments:
 # Install in WSL Ubuntu/Debian
 curl -fsSL https://bun.sh/install | bash
 source ~/.bashrc
-bunx ccstatusline@latest
+bunx ccstatusline-usage@latest
 ```
 
 **WSL Benefits**:
@@ -311,14 +331,14 @@ Configure ccstatusline in your Claude Code settings:
 **For Bun users**:
 ```json
 {
-  "statusLine": "bunx ccstatusline@latest"
+  "statusLine": "bunx ccstatusline-usage@latest"
 }
 ```
 
 **For npm users**:
 ```json
 {
-  "statusLine": "npx ccstatusline@latest"
+  "statusLine": "npx ccstatusline-usage@latest"
 }
 ```
 
@@ -349,7 +369,15 @@ Once configured, ccstatusline automatically formats your Claude Code status line
 
 ### 📊 Available Widgets
 
+#### API Usage Widgets (Fork Enhancement)
+- **Session Usage** - 5-hour session utilization with progress bar (e.g., "Session: [████░░░░░░░░░░░] 29.0%")
+- **Weekly Usage** - 7-day utilization with progress bar (e.g., "Weekly: [█░░░░░░░░░░░░░░] 7.0%")
+- **Reset Timer** - Time until 5-hour session window resets (e.g., "2:59 hr")
+- **Context Bar** - Visual context window usage with bar (e.g., "Context: [███████░░░░░░░░] 103k/200k (51%)")
+
+#### Standard Widgets
 - **Model Name** - Shows the current Claude model (e.g., "Claude 3.5 Sonnet")
+- **Claude Session ID** - Shows the current session UUID
 - **Git Branch** - Displays current git branch name
 - **Git Changes** - Shows uncommitted insertions/deletions (e.g., "+42,-10")
 - **Git Worktree** - Shows the name of the current git worktree
@@ -386,7 +414,7 @@ These settings affect where long lines are truncated, and where right-alignment 
 
 Configure global formatting preferences that apply to all widgets:
 
-![Global Options](https://raw.githubusercontent.com/sirmalloc/ccstatusline/main/screenshots/global.png)
+![Global Options](screenshots/global.png)
 
 #### Default Padding & Separators
 - **Default Padding** - Add consistent padding to the left and right of each widget
@@ -418,7 +446,7 @@ Configure global formatting preferences that apply to all widgets:
 
 The Block Timer widget helps you track your progress through Claude Code's 5-hour conversation blocks:
 
-![Block Timer](https://raw.githubusercontent.com/sirmalloc/ccstatusline/main/screenshots/blockTimer.png)
+![Block Timer](screenshots/blockTimer.png)
 
 **Display Modes:**
 - **Time Display** - Shows elapsed time as "3hr 45m" (default)
@@ -479,7 +507,7 @@ Execute shell commands and display their output dynamically:
 3. Set timeout: `5000` (5 seconds for initial download)
 4. Enable "preserve colors" to keep ccusage's color formatting
 
-![ccusage integration](https://raw.githubusercontent.com/sirmalloc/ccstatusline/main/screenshots/ccusage.png)
+![ccusage integration](screenshots/ccusage.png)
 
 > 📄 **How it works:** The command receives Claude Code's JSON data via stdin, allowing ccusage to access session information, model details, and transcript data for accurate usage tracking.
 
@@ -600,6 +628,16 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ---
 
+## 🗑️ Uninstall
+
+```bash
+npm uninstall -g ccstatusline-usage
+rm -rf ~/.npm/_npx ~/.config/ccstatusline ~/.cache/ccstatusline*
+jq 'del(.statusLine)' ~/.claude/settings.json > /tmp/cs.json && cat /tmp/cs.json > ~/.claude/settings.json
+```
+
+---
+
 ## 📄 License
 
 [MIT](LICENSE) © Matthew Breedlove
@@ -649,8 +687,8 @@ Give a ⭐ if this project helped you!
 [![GitHub forks](https://img.shields.io/github/forks/sirmalloc/ccstatusline?style=social)](https://github.com/sirmalloc/ccstatusline/network/members)
 [![GitHub watchers](https://img.shields.io/github/watchers/sirmalloc/ccstatusline?style=social)](https://github.com/sirmalloc/ccstatusline/watchers)
 
-[![npm version](https://img.shields.io/npm/v/ccstatusline.svg)](https://www.npmjs.com/package/ccstatusline)
-[![npm downloads](https://img.shields.io/npm/dm/ccstatusline.svg)](https://www.npmjs.com/package/ccstatusline)
+[![npm version](https://img.shields.io/npm/v/ccstatusline-usage.svg)](https://www.npmjs.com/package/ccstatusline-usage)
+[![npm downloads](https://img.shields.io/npm/dm/ccstatusline-usage.svg)](https://www.npmjs.com/package/ccstatusline-usage)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/sirmalloc/ccstatusline/blob/main/LICENSE)
 [![Made with Bun](https://img.shields.io/badge/Made%20with-Bun-000000.svg?logo=bun)](https://bun.sh)
 

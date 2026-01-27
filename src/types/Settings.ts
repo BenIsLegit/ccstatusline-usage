@@ -29,17 +29,21 @@ export const SettingsSchema = z.object({
         .min(1)
         .default([
             [
-                { id: '1', type: 'model', color: 'cyan' },
-                { id: '2', type: 'separator' },
-                { id: '3', type: 'context-length', color: 'brightBlack' },
-                { id: '4', type: 'separator' },
-                { id: '5', type: 'git-branch', color: 'magenta' },
-                { id: '6', type: 'separator' },
-                { id: '7', type: 'git-changes', color: 'yellow' }
+                { id: 'session-usage', type: 'session-usage', color: 'brightBlue' },
+                { id: 'sep1', type: 'separator' },
+                { id: 'weekly-usage', type: 'weekly-usage', color: 'brightBlue' },
+                { id: 'sep2', type: 'separator' },
+                { id: 'reset-timer', type: 'reset-timer', color: 'brightBlue' },
+                { id: 'sep3', type: 'separator' },
+                { id: 'model', type: 'model', color: 'magenta' },
+                { id: 'sep4', type: 'separator' },
+                { id: 'session-id', type: 'claude-session-id', color: 'cyan' }
             ],
-            [],
+            [
+                { id: 'context-bar', type: 'context-bar', color: 'blue' }
+            ],
             []
-        ]), // Ensure max 3 lines
+        ]),
     flexMode: FlexModeSchema.default('full-minus-40'),
     compactThreshold: z.number().min(1).max(99).default(60),
     colorLevel: ColorLevelSchema.default(2),
