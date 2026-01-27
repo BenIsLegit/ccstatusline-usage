@@ -4,7 +4,8 @@ import {
     describe,
     expect,
     it,
-    vi
+    vi,
+    type Mock
 } from 'vitest';
 
 import type {
@@ -14,6 +15,8 @@ import type {
 import { GitWorktreeWidget } from '../GitWorktree';
 
 vi.mock('child_process', () => ({ execSync: vi.fn() }));
+
+const mockedExecSync = execSync as Mock;
 
 function render(rawValue = false, isPreview = false) {
     const widget = new GitWorktreeWidget();
@@ -47,31 +50,31 @@ describe('GitWorktreeWidget', () => {
     });
 
     it('should render with worktree', () => {
-        vi.mocked(execSync).mockReturnValue('/some/path/.git/worktrees/some-worktree');
+        mockedExecSync.mockReturnValue('/some/path/.git/worktrees/some-worktree');
 
         expect(render()).toBe('𖠰 some-worktree');
     });
 
     it('should render with nested worktree', () => {
-        vi.mocked(execSync).mockReturnValue('/some/path/.git/worktrees/some-dir/some-worktree');
+        mockedExecSync.mockReturnValue('/some/path/.git/worktrees/some-dir/some-worktree');
 
         expect(render()).toBe('𖠰 some-dir/some-worktree');
     });
 
     it('should render with no worktree', () => {
-        vi.mocked(execSync).mockReturnValue('.git');
+        mockedExecSync.mockReturnValue('.git');
 
         expect(render()).toBe('𖠰 main');
     });
 
     it('should render with no git', () => {
-        vi.mocked(execSync).mockRejectedValue(new Error('No git'));
+        mockedExecSync.mockImplementation(() => { throw new Error('No git'); });
 
         expect(render()).toBe('𖠰 no git');
     });
 
     it('should render with invalid git dir', () => {
-        vi.mocked(execSync).mockReturnValue('');
+        mockedExecSync.mockReturnValue('');
 
         expect(render()).toBe('𖠰 no git');
     });
