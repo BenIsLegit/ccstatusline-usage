@@ -200,7 +200,7 @@ function fetchApiData(): ApiData {
         const apiData: ApiData = {};
         if (data.five_hour) {
             apiData.sessionUsage = data.five_hour.utilization;
-            apiData.sessionResetAt = data.five_hour.reset_at;
+            apiData.sessionResetAt = data.five_hour.resets_at;
         }
         if (data.seven_day) {
             apiData.weeklyUsage = data.seven_day.utilization;
