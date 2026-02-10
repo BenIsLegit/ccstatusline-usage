@@ -29,6 +29,7 @@
 This fork adds API-based usage widgets beyond the upstream:
 
 - **Session/Weekly Usage** - Real utilization from Anthropic API with progress bars
+- **Extra Usage** - When weekly limit is reached, shows extra usage spending (e.g. `Extra: €41.24/€47.00`)
 - **Reset Timer** - Time until 5-hour session window resets
 - **Context Window Display** - Visual bar showing context usage
 - **Two-line Layout** - Session info on line 1, context on line 2
@@ -36,7 +37,7 @@ This fork adds API-based usage widgets beyond the upstream:
 ### Enhanced Status Line Preview
 
 ```
-Session: [████░░░░░░░░░░░] 27.0% | Weekly: [████████████░░░] 86.0% | 1:56 hr | Model: Opus 4.5 | Session ID: 714aa815-8a...
+Session: [████░░░░░░░░░░░] 27.0% | Weekly: [████████████░░░] 86.0% | 1:56 hr | Extra: $41.24/$47.00 | Model: Opus 4.6 | Session ID: 714aa815-8a...
   Context: [███████░░░░░░░░] 103k/200k (51%)
 ```
 
@@ -63,6 +64,23 @@ These widgets are enabled by default. Just install and run!
 ---
 
 ## 🆕 Recent Updates
+
+### [v2.0.44](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.0.44) - Upstream sync + extra usage
+
+- Merged 101 upstream commits (line reorder, CLAUDE_CONFIG_DIR support, Windows fixes, and more)
+- Extra usage spending display in Reset Timer widget (e.g. `Extra: €41.24/€47.00`)
+- Auto-detect currency from timezone (Europe/* = €, else $)
+
+### [v2.0.43](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.0.43) - Extra usage spending display
+
+- Show extra usage spending in Reset Timer widget when weekly limit is reached (e.g. `Extra: €41.24/€47.00`)
+- Auto-detect currency from timezone (Europe/* = €, else $)
+- Updated README release notes
+
+### [v2.0.42](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.0.42) - Fix reset timer API field
+
+- Fixed API field name from `reset_at` to `resets_at` — reset timer now displays correctly
+- Merged latest changes from upstream ccstatusline
 
 ### v2.0.16 - Add fish style path abbreviation toggle to Current Working Directory widget
 
@@ -369,10 +387,10 @@ Once configured, ccstatusline automatically formats your Claude Code status line
 
 ### 📊 Available Widgets
 
-#### API Usage Widgets (Fork Enhancement)
+#### API Usage Widgets ([pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage))
 - **Session Usage** - 5-hour session utilization with progress bar (e.g., "Session: [████░░░░░░░░░░░] 29.0%")
 - **Weekly Usage** - 7-day utilization with progress bar (e.g., "Weekly: [█░░░░░░░░░░░░░░] 7.0%")
-- **Reset Timer** - Time until 5-hour session window resets (e.g., "2:59 hr")
+- **Reset Timer / Extra Usage** - Time until 5-hour session window resets (e.g., "2:59 hr"), or extra usage spending when weekly limit is reached (e.g., "Extra: €41.24/€47.00")
 - **Context Bar** - Visual context window usage with bar (e.g., "Context: [███████░░░░░░░░] 103k/200k (51%)")
 
 #### Standard Widgets
@@ -414,7 +432,7 @@ These settings affect where long lines are truncated, and where right-alignment 
 
 Configure global formatting preferences that apply to all widgets:
 
-![Global Options](screenshots/global.png)
+![Global Options](https://raw.githubusercontent.com/sirmalloc/ccstatusline/main/screenshots/global.png)
 
 #### Default Padding & Separators
 - **Default Padding** - Add consistent padding to the left and right of each widget
@@ -446,7 +464,7 @@ Configure global formatting preferences that apply to all widgets:
 
 The Block Timer widget helps you track your progress through Claude Code's 5-hour conversation blocks:
 
-![Block Timer](screenshots/blockTimer.png)
+![Block Timer](https://raw.githubusercontent.com/sirmalloc/ccstatusline/main/screenshots/blockTimer.png)
 
 **Display Modes:**
 - **Time Display** - Shows elapsed time as "3hr 45m" (default)
@@ -649,6 +667,10 @@ jq 'del(.statusLine)' ~/.claude/settings.json > /tmp/cs.json && cat /tmp/cs.json
 **Matthew Breedlove**
 
 - GitHub: [@sirmalloc](https://github.com/sirmalloc)
+
+**PC van Velzen** ([pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage) fork)
+
+- GitHub: [@pcvelz](https://github.com/pcvelz)
 
 ---
 
