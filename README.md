@@ -65,17 +65,14 @@ These widgets are enabled by default. Just install and run!
 
 ## 🆕 Recent Updates
 
-### [v2.0.44](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.0.44) - Upstream sync + extra usage
+### [v2.0.46](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.0.46) - Upstream sync
 
-- Merged 101 upstream commits (line reorder, CLAUDE_CONFIG_DIR support, Windows fixes, and more)
+- Merged 101 upstream commits: line reorder move mode, Claude Session ID widget, `CLAUDE_CONFIG_DIR` support, Windows fixes, Block Timer fixes, model string/object handling fix, and more
+
+### [v2.0.45](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.0.45) - Extra usage spending display
+
 - Extra usage spending display in Reset Timer widget (e.g. `Extra: €41.24/€47.00`)
 - Auto-detect currency from timezone (Europe/* = €, else $)
-
-### [v2.0.43](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.0.43) - Extra usage spending display
-
-- Show extra usage spending in Reset Timer widget when weekly limit is reached (e.g. `Extra: €41.24/€47.00`)
-- Auto-detect currency from timezone (Europe/* = €, else $)
-- Updated README release notes
 
 ### [v2.0.42](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.0.42) - Fix reset timer API field
 
@@ -151,6 +148,8 @@ These widgets are enabled by default. Just install and run!
 - **🚀 Auto Font Install** - Automatic Powerline font installation with user consent
 
 ---
+
+</div>
 
 ## ✨ Features
 
@@ -656,6 +655,7 @@ jq 'del(.statusLine)' ~/.claude/settings.json > /tmp/cs.json && cat /tmp/cs.json
 
 ---
 
+
 ## 📄 License
 
 [MIT](LICENSE) © Matthew Breedlove
@@ -671,6 +671,7 @@ jq 'del(.statusLine)' ~/.claude/settings.json > /tmp/cs.json && cat /tmp/cs.json
 **PC van Velzen** ([pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage) fork)
 
 - GitHub: [@pcvelz](https://github.com/pcvelz)
+
 
 ---
 
