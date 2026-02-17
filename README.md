@@ -14,44 +14,18 @@
 **🎨 A highly customizable status line formatter for Claude Code CLI**
 *Display model info, git branch, token usage, and other metrics in your terminal*
 
-[![npm version](https://img.shields.io/npm/v/ccstatusline-usage.svg)](https://www.npmjs.com/package/ccstatusline-usage)
-[![npm downloads](https://img.shields.io/npm/dm/ccstatusline-usage.svg)](https://www.npmjs.com/package/ccstatusline-usage)
+[![npm version](https://img.shields.io/npm/v/ccstatusline.svg)](https://www.npmjs.com/package/ccstatusline)
+[![npm downloads](https://img.shields.io/npm/dm/ccstatusline.svg)](https://www.npmjs.com/package/ccstatusline)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/sirmalloc/ccstatusline/blob/main/LICENSE)
-[![Node.js Version](https://img.shields.io/node/v/ccstatusline-usage.svg)](https://nodejs.org)
-[![install size](https://packagephobia.com/badge?p=ccstatusline-usage)](https://packagephobia.com/result?p=ccstatusline-usage)
+[![Node.js Version](https://img.shields.io/node/v/ccstatusline.svg)](https://nodejs.org)
+[![install size](https://packagephobia.com/badge?p=ccstatusline)](https://packagephobia.com/result?p=ccstatusline)
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/sirmalloc/ccstatusline/graphs/commit-activity)
 
 [![Mentioned in Awesome Claude Code](https://awesome.re/mentioned-badge.svg)](https://github.com/hesreallyhim/awesome-claude-code)
 [![ClaudeLog - A comprehensive knowledge base for Claude](https://claudelog.com/img/claude_log_badge.svg)](https://claudelog.com/)
 
-## Fork Enhancements
 
-This fork adds API-based usage widgets beyond the upstream:
-
-- **Session/Weekly Usage** - Real utilization from Anthropic API with progress bars
-- **Extra Usage** - When weekly limit is reached, shows extra usage spending (e.g. `Extra: €41.24/€47.00`)
-- **Reset Timer** - Time until 5-hour session window resets
-- **Context Window Display** - Visual bar showing context usage
-- **Two-line Layout** - Session info on line 1, context on line 2
-- **Narrow Terminal Detection** - Auto-compact rendering on terminals < 80 cols via tmux pane width detection
-
-### Enhanced Status Line Preview
-
-**Desktop (full width):**
-```
-Session: [████░░░░░░░░░░░] 27.0% | Weekly: [████████████░░░] 86.0% | 1:56 hr | Extra: $41.24/$47.00 | Model: Opus 4.6 | Session ID: 714aa815-8a...
-Context: [███████░░░░░░░░] 103k/200k (51%)
-```
-
-**Narrow terminal (< 80 cols, e.g. mobile SSH via tmux):**
-```
-S: [██░░] 51.0% | W: [████] 92.0% | 0:00 hr
-C: [██░░] 100k/200k
-```
-
-These widgets are enabled by default. Just install and run!
-
-![Status Bar Demo](screenshots/status-bar-demo.png)
+![Demo](https://raw.githubusercontent.com/sirmalloc/ccstatusline/main/screenshots/demo.gif)
 
 </div>
 
@@ -65,40 +39,12 @@ These widgets are enabled by default. Just install and run!
 - [API Documentation](#-api-documentation)
 - [Development](#️-development)
 - [Contributing](#-contributing)
-- [Uninstall](#️-uninstall)
 - [License](#-license)
 - [Related Projects](#-related-projects)
 
 ---
 
 ## 🆕 Recent Updates
-
-### [v2.1.1](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.1.1) - Automatic mobile/narrow terminal detection
-
-- **Automatic compact rendering** on terminals < 80 columns via tmux pane width detection:
-  ```
-  S: [██░░] 51.0% | W: [████] 92.0% | 0:00 hr
-  C: [██░░] 100k/200k
-  ```
-- Widgets hidden on narrow terminals: Model, Session Clock, Session ID
-- Progress bars shrink from 15 to 4 characters, labels abbreviated (Session → S, Weekly → W, Context → C)
-- Orphaned separators automatically removed when adjacent widgets are hidden
-- FlexMode `-40` override on narrow terminals (no auto-compact sidebar)
-- Works with any tmux-based remote access setup (SSH clients, mobile terminals, etc.)
-
-### [v2.0.46](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.0.46) - Upstream sync
-
-- Merged 101 upstream commits: line reorder move mode, Claude Session ID widget, `CLAUDE_CONFIG_DIR` support, Windows fixes, Block Timer fixes, model string/object handling fix, and more
-
-### [v2.0.45](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.0.45) - Extra usage spending display
-
-- Extra usage spending display in Reset Timer widget (e.g. `Extra: €41.24/€47.00`)
-- Auto-detect currency from timezone (Europe/* = €, else $)
-
-### [v2.0.42](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.0.42) - Fix reset timer API field
-
-- Fixed API field name from `reset_at` to `resets_at` — reset timer now displays correctly
-- Merged latest changes from upstream ccstatusline
 
 ### v2.0.16 - Add fish style path abbreviation toggle to Current Working Directory widget
 
@@ -114,7 +60,7 @@ These widgets are enabled by default. Just install and run!
 
 - **👾 Emoji Support** - You can now paste emoji into the custom text widget. You can also turn on the merge option to get emoji labels for your widgets like this:
   
-![Emoji Support](screenshots/emojiSupport.png)
+![Emoji Support](https://raw.githubusercontent.com/sirmalloc/ccstatusline/main/screenshots/emojiSupport.png)
 
 ### v2.0.11 - Unlimited Status Lines
 
@@ -127,13 +73,13 @@ These widgets are enabled by default. Just install and run!
 
 ### v2.0.8 - Powerline Auto-Alignment
 
-![Powerline Auto-Alignment](screenshots/autoAlign.png)
+![Powerline Auto-Alignment](https://raw.githubusercontent.com/sirmalloc/ccstatusline/main/screenshots/autoAlign.png)
 
 - **🎯 Widget Alignment** - Auto-align widgets across multiple status lines in Powerline mode for a clean, columnar layout (toggle with 'a' in Powerline Setup)
 
 ### v2.0.7 - Current Working Directory & Session Cost
 
-![Current Working Directory and Session Cost](screenshots/cwdAndSessionCost.png)
+![Current Working Directory and Session Cost](https://raw.githubusercontent.com/sirmalloc/ccstatusline/main/screenshots/cwdAndSessionCost.png)
 
 - **📁 Current Working Directory** - Display the current working directory with configurable segment display
   - Set the number of path segments to show (e.g., show only last 2 segments: `.../Personal/ccstatusline`)
@@ -151,7 +97,7 @@ These widgets are enabled by default. Just install and run!
 
 ### v2.0.2 - Block Timer Widget
 
-![Block Timer](screenshots/blockTimerSmall.png)
+![Block Timer](https://raw.githubusercontent.com/sirmalloc/ccstatusline/main/screenshots/blockTimerSmall.png)
 
 - **⏱️ Block Timer** - Track your progress through 5-hour Claude Code blocks
   - Displays time elapsed in current block as hours/minutes (e.g., "3hr 45m")
@@ -170,13 +116,9 @@ These widgets are enabled by default. Just install and run!
 
 ---
 
-</div>
-
 ## ✨ Features
 
 - **📊 Real-time Metrics** - Display model name, git branch, token usage, session duration, block timer, and more
-- **📈 API Usage Tracking** - Real-time 5-hour session and weekly utilization from Anthropic API with progress bars
-- **⏱️ Reset Timer** - Countdown to when your 5-hour session window resets
 - **🎨 Fully Customizable** - Choose what to display and customize colors for each element
 - **⚡ Powerline Support** - Beautiful Powerline-style rendering with arrow separators, caps, and custom fonts
 - **📐 Multi-line Support** - Configure multiple independent status lines
@@ -184,7 +126,6 @@ These widgets are enabled by default. Just install and run!
 - **⚙️ Global Options** - Apply consistent formatting across all widgets (padding, separators, bold, background)
 - **🚀 Cross-platform** - Works seamlessly with both Bun and Node.js
 - **🔧 Flexible Configuration** - Supports custom Claude Code config directory via `CLAUDE_CONFIG_DIR` environment variable
-- **📱 Narrow Terminal Detection** - Auto-compact rendering on terminals < 80 columns via tmux pane width detection
 - **📏 Smart Width Detection** - Automatically adapts to terminal width with flex separators
 - **⚡ Zero Config** - Sensible defaults that work out of the box
 
@@ -196,10 +137,10 @@ These widgets are enabled by default. Just install and run!
 
 ```bash
 # Run the configuration TUI with npm
-npx ccstatusline-usage@latest
+npx ccstatusline@latest
 
 # Or with Bun (faster)
-bunx ccstatusline-usage@latest
+bunx ccstatusline@latest
 ```
 
 ### Configure ccstatusline
@@ -238,19 +179,19 @@ ccstatusline works seamlessly on Windows with full feature compatibility across 
 irm bun.sh/install.ps1 | iex
 
 # Run ccstatusline
-bunx ccstatusline-usage@latest
+bunx ccstatusline@latest
 ```
 
 #### Option 2: Using Node.js
 ```powershell
 # Using npm
-npx ccstatusline-usage@latest
+npx ccstatusline@latest
 
 # Or with Yarn
-yarn dlx ccstatusline-usage@latest
+yarn dlx ccstatusline@latest
 
 # Or with pnpm
-pnpm dlx ccstatusline-usage@latest
+pnpm dlx ccstatusline@latest
 ```
 
 ### Windows-Specific Features
@@ -305,7 +246,7 @@ winget install Git.Git
 **Issue**: Permission errors during installation
 ```powershell
 # Use non-global installation (recommended)
-npx ccstatusline-usage@latest
+npx ccstatusline@latest
 
 # Or run PowerShell as Administrator for global install
 ```
@@ -333,7 +274,7 @@ ccstatusline works perfectly in WSL environments:
 # Install in WSL Ubuntu/Debian
 curl -fsSL https://bun.sh/install | bash
 source ~/.bashrc
-bunx ccstatusline-usage@latest
+bunx ccstatusline@latest
 ```
 
 **WSL Benefits**:
@@ -370,14 +311,14 @@ Configure ccstatusline in your Claude Code settings:
 **For Bun users**:
 ```json
 {
-  "statusLine": "bunx ccstatusline-usage@latest"
+  "statusLine": "bunx ccstatusline@latest"
 }
 ```
 
 **For npm users**:
 ```json
 {
-  "statusLine": "npx ccstatusline-usage@latest"
+  "statusLine": "npx ccstatusline@latest"
 }
 ```
 
@@ -408,15 +349,7 @@ Once configured, ccstatusline automatically formats your Claude Code status line
 
 ### 📊 Available Widgets
 
-#### API Usage Widgets ([pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage))
-- **Session Usage** - 5-hour session utilization with progress bar (e.g., "Session: [████░░░░░░░░░░░] 29.0%")
-- **Weekly Usage** - 7-day utilization with progress bar (e.g., "Weekly: [█░░░░░░░░░░░░░░] 7.0%")
-- **Reset Timer / Extra Usage** - Time until 5-hour session window resets (e.g., "2:59 hr"), or extra usage spending when weekly limit is reached (e.g., "Extra: €41.24/€47.00")
-- **Context Bar** - Visual context window usage with bar (e.g., "Context: [███████░░░░░░░░] 103k/200k (51%)")
-
-#### Standard Widgets
 - **Model Name** - Shows the current Claude model (e.g., "Claude 3.5 Sonnet")
-- **Claude Session ID** - Shows the current session UUID
 - **Git Branch** - Displays current git branch name
 - **Git Changes** - Shows uncommitted insertions/deletions (e.g., "+42,-10")
 - **Git Worktree** - Shows the name of the current git worktree
@@ -546,7 +479,7 @@ Execute shell commands and display their output dynamically:
 3. Set timeout: `5000` (5 seconds for initial download)
 4. Enable "preserve colors" to keep ccusage's color formatting
 
-![ccusage integration](screenshots/ccusage.png)
+![ccusage integration](https://raw.githubusercontent.com/sirmalloc/ccstatusline/main/screenshots/ccusage.png)
 
 > 📄 **How it works:** The command receives Claude Code's JSON data via stdin, allowing ccusage to access session information, model details, and transcript data for accurate usage tracking.
 
@@ -667,17 +600,6 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ---
 
-## 🗑️ Uninstall
-
-```bash
-npm uninstall -g ccstatusline-usage
-rm -rf ~/.npm/_npx ~/.config/ccstatusline ~/.cache/ccstatusline*
-jq 'del(.statusLine)' ~/.claude/settings.json > /tmp/cs.json && cat /tmp/cs.json > ~/.claude/settings.json
-```
-
----
-
-
 ## 📄 License
 
 [MIT](LICENSE) © Matthew Breedlove
@@ -689,11 +611,6 @@ jq 'del(.statusLine)' ~/.claude/settings.json > /tmp/cs.json && cat /tmp/cs.json
 **Matthew Breedlove**
 
 - GitHub: [@sirmalloc](https://github.com/sirmalloc)
-
-**PC van Velzen** ([pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage) fork)
-
-- GitHub: [@pcvelz](https://github.com/pcvelz)
-
 
 ---
 
@@ -732,8 +649,8 @@ Give a ⭐ if this project helped you!
 [![GitHub forks](https://img.shields.io/github/forks/sirmalloc/ccstatusline?style=social)](https://github.com/sirmalloc/ccstatusline/network/members)
 [![GitHub watchers](https://img.shields.io/github/watchers/sirmalloc/ccstatusline?style=social)](https://github.com/sirmalloc/ccstatusline/watchers)
 
-[![npm version](https://img.shields.io/npm/v/ccstatusline-usage.svg)](https://www.npmjs.com/package/ccstatusline-usage)
-[![npm downloads](https://img.shields.io/npm/dm/ccstatusline-usage.svg)](https://www.npmjs.com/package/ccstatusline-usage)
+[![npm version](https://img.shields.io/npm/v/ccstatusline.svg)](https://www.npmjs.com/package/ccstatusline)
+[![npm downloads](https://img.shields.io/npm/dm/ccstatusline.svg)](https://www.npmjs.com/package/ccstatusline)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/sirmalloc/ccstatusline/blob/main/LICENSE)
 [![Made with Bun](https://img.shields.io/badge/Made%20with-Bun-000000.svg?logo=bun)](https://bun.sh)
 
