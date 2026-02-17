@@ -46,6 +46,12 @@
 
 ## 🆕 Recent Updates
 
+### [v2.1.2](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.1.2) - Token auth fallback and 401 handling
+
+- [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): macOS file credential fallback — reads `~/.claude/.credentials.json` when Keychain entry is missing
+- [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): 401 auth error handling — invalidates cached token so next call re-reads from disk after `/login`
+- Synced with upstream (101 commits)
+
 ### v2.0.16 - Add fish style path abbreviation toggle to Current Working Directory widget
 
 ### v2.0.15 - Block Timer calculation fixes
