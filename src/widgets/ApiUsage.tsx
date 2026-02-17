@@ -40,6 +40,35 @@ let cacheTime = 0;
 let cachedToken: string | null = null;
 let tokenCacheTime = 0;
 
+const CRED_FILE = path.join(process.env.HOME ?? '', '.claude', '.credentials.json');
+
+function readTokenFromFile(): string | null {
+    try {
+        const creds = JSON.parse(fs.readFileSync(CRED_FILE, 'utf8'));
+        return creds?.claudeAiOauth?.accessToken ?? null;
+    } catch {
+        return null;
+    }
+}
+
+function readTokenFromKeychain(): string | null {
+    try {
+        const result = execSync(
+            'security find-generic-password -s "Claude Code-credentials" -w 2>/dev/null',
+            { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] }
+        ).trim();
+        const parsed = JSON.parse(result);
+        return parsed?.claudeAiOauth?.accessToken ?? null;
+    } catch {
+        return null;
+    }
+}
+
+function invalidateTokenCache(): void {
+    cachedToken = null;
+    tokenCacheTime = 0;
+}
+
 function getToken(): string | null {
     const now = Math.floor(Date.now() / 1000);
 
@@ -48,35 +77,19 @@ function getToken(): string | null {
         return cachedToken;
     }
 
-    try {
-        const isMac = process.platform === 'darwin';
-        if (isMac) {
-            // macOS: read from keychain
-            const result = execSync(
-                'security find-generic-password -s "Claude Code-credentials" -w 2>/dev/null',
-                { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] }
-            ).trim();
-            const parsed = JSON.parse(result);
-            const token = parsed?.claudeAiOauth?.accessToken ?? null;
-            if (token) {
-                cachedToken = token;
-                tokenCacheTime = now;
-            }
-            return token;
-        } else {
-            // Linux: read from credentials file
-            const credFile = path.join(process.env.HOME ?? '', '.claude', '.credentials.json');
-            const creds = JSON.parse(fs.readFileSync(credFile, 'utf8'));
-            const token = creds?.claudeAiOauth?.accessToken ?? null;
-            if (token) {
-                cachedToken = token;
-                tokenCacheTime = now;
-            }
-            return token;
-        }
-    } catch {
-        return null;
+    // macOS: try Keychain first, fall back to credentials file
+    // Linux/other: read from credentials file
+    let token: string | null = null;
+    if (process.platform === 'darwin')
+        token = readTokenFromKeychain();
+    if (!token)
+        token = readTokenFromFile();
+
+    if (token) {
+        cachedToken = token;
+        tokenCacheTime = now;
     }
+    return token;
 }
 
 function readStaleCache(): ApiData | null {
@@ -87,9 +100,13 @@ function readStaleCache(): ApiData | null {
     }
 }
 
+// Fetch result: null = network/other error, 'auth-error' = 401, string = response body
+type FetchResult = string | 'auth-error' | null;
+
 // Fetch API using Node's built-in https module (no curl dependency)
-function fetchFromApi(token: string): string | null {
+function fetchFromApi(token: string): FetchResult {
     // Use Node to make HTTPS request synchronously via spawnSync
+    // Exit code 2 = auth error (401), exit code 1 = other error
     const script = `
         const https = require('https');
         const options = {
@@ -108,6 +125,8 @@ function fetchFromApi(token: string): string | null {
             res.on('end', () => {
                 if (res.statusCode === 200) {
                     process.stdout.write(data);
+                } else if (res.statusCode === 401) {
+                    process.exit(2);
                 } else {
                     process.exit(1);
                 }
@@ -124,7 +143,14 @@ function fetchFromApi(token: string): string | null {
         env: { ...process.env, TOKEN: token }
     });
 
-    if (result.error || result.status !== 0 || !result.stdout) {
+    if (result.error || !result.stdout) {
+        if (result.status === 2)
+            return 'auth-error';
+        return null;
+    }
+    if (result.status !== 0) {
+        if (result.status === 2)
+            return 'auth-error';
         return null;
     }
 
@@ -194,6 +220,16 @@ function fetchApiData(): ApiData {
     try {
         const response = fetchFromApi(token);
 
+        // On auth error, invalidate cached token so next call re-reads from disk
+        // (Claude Code may have refreshed the token via /login)
+        if (response === 'auth-error') {
+            invalidateTokenCache();
+            const stale = readStaleCache();
+            if (stale && !stale.error)
+                return stale;
+            return { error: 'api-error' };
+        }
+
         if (!response) {
             const stale = readStaleCache();
             if (stale && !stale.error)
@@ -258,8 +294,13 @@ function getErrorMessage(error: ApiError): string {
     }
 }
 
+const MOBILE_THRESHOLD = 80;
 const MOBILE_BAR_WIDTH = 4;
 const DEFAULT_BAR_WIDTH = 15;
+
+function isMobileWidth(context: RenderContext): boolean {
+    return (context.terminalWidth ?? 0) > 0 && (context.terminalWidth ?? 0) < MOBILE_THRESHOLD;
+}
 
 function makeProgressBar(percent: number, width = DEFAULT_BAR_WIDTH): string {
     const filled = Math.round((percent / 100) * width);
@@ -292,7 +333,7 @@ export class SessionUsageWidget implements Widget {
         if (data.sessionUsage === undefined)
             return null;
 
-        return formatUsageBar('Session', 'S', data.sessionUsage, Boolean(context.terminalEnv?.isMobile));
+        return formatUsageBar('Session', 'S', data.sessionUsage, isMobileWidth(context));
     }
 
     supportsRawValue(): boolean { return false; }
@@ -319,7 +360,7 @@ export class WeeklyUsageWidget implements Widget {
         if (data.weeklyUsage === undefined)
             return null;
 
-        return formatUsageBar('Weekly', 'W', data.weeklyUsage, Boolean(context.terminalEnv?.isMobile));
+        return formatUsageBar('Weekly', 'W', data.weeklyUsage, isMobileWidth(context));
     }
 
     supportsRawValue(): boolean { return false; }
@@ -430,7 +471,7 @@ export class ContextBarWidget implements Widget {
         const usedK = Math.round(used / 1000);
         const totalK = Math.round(total / 1000);
 
-        const mobile = Boolean(context.terminalEnv?.isMobile);
+        const mobile = isMobileWidth(context);
         const bar = makeProgressBar(percent, mobile ? MOBILE_BAR_WIDTH : DEFAULT_BAR_WIDTH);
         const label = mobile ? 'C' : 'Context';
         const suffix = mobile ? '' : ` (${Math.round(percent)}%)`;
