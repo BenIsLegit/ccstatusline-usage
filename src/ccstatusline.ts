@@ -26,6 +26,12 @@ import {
 } from './utils/renderer';
 import { getTerminalWidth } from './utils/terminal';
 
+function isTmuxCompact(): boolean {
+    if (!process.env.TMUX) return false;
+    const width = getTerminalWidth();
+    return width !== null && width > 0 && width < 80;
+}
+
 async function readStdin(): Promise<string | null> {
     // Check if stdin is a TTY (terminal) - if it is, there's no piped data
     if (process.stdin.isTTY) {
@@ -91,19 +97,12 @@ async function renderMultipleLines(data: StatusJSON) {
         blockMetrics = getBlockMetrics();
     }
 
-    // Calculate effective terminal width (after flex mode deductions)
-    // so widgets can switch to compact/mobile rendering
-    const rawWidth = getTerminalWidth();
-    const deduction = settings.flexMode === 'full-minus-40' ? 40 : 6;
-    const effectiveWidth = rawWidth ? rawWidth - deduction : null;
-
     // Create render context
     const context: RenderContext = {
         data,
         tokenMetrics,
         sessionDuration,
         blockMetrics,
-        terminalWidth: effectiveWidth,
         isPreview: false
     };
 
@@ -111,8 +110,10 @@ async function renderMultipleLines(data: StatusJSON) {
     const preRenderedLines = preRenderAllWidgets(lines, settings, context);
     const preCalculatedMaxWidths = calculateMaxWidthsFromPreRendered(preRenderedLines, settings);
 
-    // Render each line
-    const mobile = effectiveWidth !== null && effectiveWidth > 0 && effectiveWidth < 80;
+    // Tmux compact: merge all lines into one when pane is narrow
+    const compact = isTmuxCompact();
+
+    // Render each line using pre-rendered content
     const renderedLines: string[] = [];
     let globalSeparatorIndex = 0;
     for (let i = 0; i < lines.length; i++) {
@@ -122,32 +123,33 @@ async function renderMultipleLines(data: StatusJSON) {
             const preRenderedWidgets = preRenderedLines[i] ?? [];
             const line = renderStatusLine(lineItems, settings, lineContext, preRenderedWidgets, preCalculatedMaxWidths);
 
-            // Only include the line if it has content (not just ANSI codes)
+            // Only output the line if it has content (not just ANSI codes)
             const strippedLine = line.replace(/\x1b\[[0-9;]*m/g, '').trim();
             if (strippedLine.length > 0) {
                 const nonMergedWidgets = lineItems.filter((_, idx) => idx === lineItems.length - 1 || !lineItems[idx]?.merge);
                 if (nonMergedWidgets.length > 1)
                     globalSeparatorIndex += nonMergedWidgets.length - 1;
 
-                renderedLines.push(line);
+                if (compact) {
+                    renderedLines.push(line);
+                } else {
+                    // Normal mode: output inline (matches upstream)
+                    let outputLine = line.replace(/ /g, '\u00A0');
+                    outputLine = '\x1b[0m' + outputLine;
+                    console.log(outputLine);
+                }
             }
         }
     }
 
-    // In compact mode (tmux/narrow), merge all lines into one
-    if (mobile && renderedLines.length > 1) {
+    // Tmux compact: merge collected lines into one
+    if (compact && renderedLines.length > 0) {
         const sep = settings.defaultSeparator ?? '|';
         const separator = sep === '|' ? ' | ' : ` ${sep} `;
         const merged = renderedLines.join(separator);
         let outputLine = merged.replace(/ /g, '\u00A0');
         outputLine = '\x1b[0m' + outputLine;
         console.log(outputLine);
-    } else {
-        for (const line of renderedLines) {
-            let outputLine = line.replace(/ /g, '\u00A0');
-            outputLine = '\x1b[0m' + outputLine;
-            console.log(outputLine);
-        }
     }
 
     // Check if there's an update message to display
