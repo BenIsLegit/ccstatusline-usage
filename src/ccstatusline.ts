@@ -10,6 +10,7 @@ import type { RenderContext } from './types/RenderContext';
 import type { StatusJSON } from './types/StatusJSON';
 import { StatusJSONSchema } from './types/StatusJSON';
 import { updateColorMap } from './utils/colors';
+import { renderCompactOutput } from './utils/compact-renderer';
 import {
     loadSettings,
     saveSettings
@@ -26,10 +27,10 @@ import {
 } from './utils/renderer';
 import { getTerminalWidth } from './utils/terminal';
 
-function isTmuxCompact(): boolean {
-    if (!process.env.TMUX) return false;
-    const width = getTerminalWidth();
-    return width !== null && width > 0 && width < 80;
+const COMPACT_THRESHOLD = 80;
+
+function isCompactWidth(width: number | null): boolean {
+    return width !== null && width > 0 && width < COMPACT_THRESHOLD;
 }
 
 async function readStdin(): Promise<string | null> {
@@ -97,24 +98,30 @@ async function renderMultipleLines(data: StatusJSON) {
         blockMetrics = getBlockMetrics();
     }
 
+    // Detect terminal width once for widget compact rendering
+    const terminalWidth = getTerminalWidth();
+
     // Create render context
     const context: RenderContext = {
         data,
         tokenMetrics,
         sessionDuration,
         blockMetrics,
+        terminalWidth,
         isPreview: false
     };
 
     // Always pre-render all widgets once (for efficiency)
     const preRenderedLines = preRenderAllWidgets(lines, settings, context);
-    const preCalculatedMaxWidths = calculateMaxWidthsFromPreRendered(preRenderedLines, settings);
 
-    // Tmux compact: merge all lines into one when pane is narrow
-    const compact = isTmuxCompact();
+    // Compact mode: widget-level flex-wrap rendering for narrow terminals
+    const compact = isCompactWidth(terminalWidth);
 
+    if (compact && terminalWidth) {
+        renderCompactOutput(preRenderedLines, settings, terminalWidth - 6);
+    } else {
     // Render each line using pre-rendered content
-    const renderedLines: string[] = [];
+    const preCalculatedMaxWidths = calculateMaxWidthsFromPreRendered(preRenderedLines, settings);
     let globalSeparatorIndex = 0;
     for (let i = 0; i < lines.length; i++) {
         const lineItems = lines[i];
@@ -130,26 +137,12 @@ async function renderMultipleLines(data: StatusJSON) {
                 if (nonMergedWidgets.length > 1)
                     globalSeparatorIndex += nonMergedWidgets.length - 1;
 
-                if (compact) {
-                    renderedLines.push(line);
-                } else {
-                    // Normal mode: output inline (matches upstream)
-                    let outputLine = line.replace(/ /g, '\u00A0');
-                    outputLine = '\x1b[0m' + outputLine;
-                    console.log(outputLine);
-                }
+                let outputLine = line.replace(/ /g, '\u00A0');
+                outputLine = '\x1b[0m' + outputLine;
+                console.log(outputLine);
             }
         }
     }
-
-    // Tmux compact: merge collected lines into one
-    if (compact && renderedLines.length > 0) {
-        const sep = settings.defaultSeparator ?? '|';
-        const separator = sep === '|' ? ' | ' : ` ${sep} `;
-        const merged = renderedLines.join(separator);
-        let outputLine = merged.replace(/ /g, '\u00A0');
-        outputLine = '\x1b[0m' + outputLine;
-        console.log(outputLine);
     }
 
     // Check if there's an update message to display

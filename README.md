@@ -46,6 +46,15 @@
 
 ## 🆕 Recent Updates
 
+### [v2.1.4](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.1.4) - Compact mode widget-boundary wrapping
+
+- [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **Widget-boundary wrapping** — compact mode now wraps at widget boundaries instead of mid-widget, using a dedicated compact renderer (`compact-renderer.ts`). Widgets that don't fit on the current line cleanly wrap to the next:
+  ```
+  S: [░░░░] 2.0% | W: [██░░] 43.0% | 4:36 hr
+  M: o4.6 ▌▌▌ | S: 5647528d | C: [██░░] 119k/200k
+  ```
+- [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **Terminal-agnostic compact detection** — compact mode now triggers on any narrow terminal (< 80 columns), not just tmux
+
 ### [v2.1.3](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.1.3) - Mobile/compact mode and thinking effort bars
 
 - [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **Mobile/compact mode** — in narrow terminals (< 80 effective columns, e.g. tmux panes), widgets auto-switch to compact rendering: `M: o4.6` instead of `Model: claude-opus-4-6`, session ID truncated to 8 chars, and multiple status lines merge into one
