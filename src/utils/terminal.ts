@@ -34,8 +34,23 @@ export function getPackageVersion(): string {
 
 // Get terminal width
 export function getTerminalWidth(): number | null {
+    // In tmux, use pane width — most accurate for the actual visible area
+    if (process.env.TMUX) {
+        try {
+            const output = execSync(
+                'tmux display-message -p \'#{pane_width}\'',
+                { encoding: 'utf8', stdio: ['pipe', 'pipe', 'ignore'], timeout: 2000 }
+            ).trim();
+            const parsed = parseInt(output, 10);
+            if (!isNaN(parsed) && parsed > 0)
+                return parsed;
+        } catch {
+            // tmux command failed, fall through
+        }
+    }
+
     try {
-        // First try to get the tty of the parent process
+        // Try to get the tty of the parent process
         const tty = execSync('ps -o tty= -p $(ps -o ppid= -p $$)', {
             encoding: 'utf8',
             stdio: ['pipe', 'pipe', 'ignore'],
