@@ -46,6 +46,12 @@
 
 ## 🆕 Recent Updates
 
+### [v2.1.3](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.1.3) - Mobile/compact mode and thinking effort bars
+
+- [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **Mobile/compact mode** — in narrow terminals (< 80 effective columns, e.g. tmux panes), widgets auto-switch to compact rendering: `M: o4.6` instead of `Model: claude-opus-4-6`, session ID truncated to 8 chars, and multiple status lines merge into one
+- [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **Thinking effort bars** — Model widget shows `▌▌▌` bars indicating Claude Code's effort level (1=low, 2=medium, 3=high). Reads from `CLAUDE_CODE_EFFORT_LEVEL` env var or `~/.claude/settings.json`
+- [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **Tmux pane width detection** — correctly detects actual pane width via `tmux display-message` instead of falling back to default 80 columns
+
 ### [v2.1.2](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.1.2) - Token auth fallback and 401 handling
 
 - [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): macOS file credential fallback — reads `~/.claude/.credentials.json` when Keychain entry is missing
@@ -355,7 +361,7 @@ Once configured, ccstatusline automatically formats your Claude Code status line
 
 ### 📊 Available Widgets
 
-- **Model Name** - Shows the current Claude model (e.g., "Claude 3.5 Sonnet")
+- **Model Name** - Shows the current Claude model with thinking effort bars (`▌▌▌`) indicating low/medium/high effort
 - **Git Branch** - Displays current git branch name
 - **Git Changes** - Shows uncommitted insertions/deletions (e.g., "+42,-10")
 - **Git Worktree** - Shows the name of the current git worktree
@@ -370,8 +376,8 @@ Once configured, ccstatusline automatically formats your Claude Code status line
 - **Tokens Cached** - Shows cached tokens used
 - **Tokens Total** - Shows total tokens used
 - **Context Length** - Shows current context length in tokens
-- **Context Percentage** - Shows percentage of context limit used (dynamic: 1M for Sonnet 4.5 with `[1m]` suffix, 200k otherwise)
-- **Context Percentage (usable)** - Shows percentage of usable context (dynamic: 800k for Sonnet 4.5 with `[1m]` suffix, 160k otherwise, accounting for auto-compact at 80%)
+- **Context Percentage** - Shows percentage of context limit used (dynamic: 1M for Sonnet 4.5/Opus 4.6 with `[1m]` suffix, 200k otherwise)
+- **Context Percentage (usable)** - Shows percentage of usable context (dynamic: 800k for Sonnet 4.5/Opus 4.6 with `[1m]` suffix, 160k otherwise, accounting for auto-compact at 80%)
 - **Terminal Width** - Shows detected terminal width (for debugging)
 - **Custom Text** - Add your own custom text to the status line
 - **Custom Command** - Execute shell commands and display their output (refreshes whenever the statusline is updated by Claude Code)
@@ -441,7 +447,7 @@ The Block Timer widget helps you track your progress through Claude Code's 5-hou
 ### 🔤 Raw Value Mode
 
 Some widgets support "raw value" mode which displays just the value without a label:
-- Normal: `Model: Claude 3.5 Sonnet` → Raw: `Claude 3.5 Sonnet`
+- Normal: `Model: Claude Opus 4.6` → Raw: `Claude Opus 4.6`
 - Normal: `Session: 2hr 15m` → Raw: `2hr 15m`
 - Normal: `Block: 3hr 45m` → Raw: `3hr 45m`
 - Normal: `Ctx: 18.6k` → Raw: `18.6k`
@@ -618,6 +624,11 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 - GitHub: [@sirmalloc](https://github.com/sirmalloc)
 
+**Fork maintained by Peter van Velzen**
+
+- GitHub: [@pcvelz](https://github.com/pcvelz)
+- Fork: [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage)
+
 ---
 
 ## 🔗 Related Projects
@@ -637,11 +648,11 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## Star History
 
-<a href="https://www.star-history.com/#sirmalloc/ccstatusline&Timeline">
+<a href="https://www.star-history.com/#pcvelz/ccstatusline-usage&Timeline">
  <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=sirmalloc/ccstatusline&type=Timeline&theme=dark" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=sirmalloc/ccstatusline&type=Timeline" />
-   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=sirmalloc/ccstatusline&type=Timeline" />
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=pcvelz/ccstatusline-usage&type=Timeline&theme=dark" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=pcvelz/ccstatusline-usage&type=Timeline" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=pcvelz/ccstatusline-usage&type=Timeline" />
  </picture>
 </a>
 
@@ -651,21 +662,21 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 Give a ⭐ if this project helped you!
 
-[![GitHub stars](https://img.shields.io/github/stars/sirmalloc/ccstatusline?style=social)](https://github.com/sirmalloc/ccstatusline/stargazers)
-[![GitHub forks](https://img.shields.io/github/forks/sirmalloc/ccstatusline?style=social)](https://github.com/sirmalloc/ccstatusline/network/members)
-[![GitHub watchers](https://img.shields.io/github/watchers/sirmalloc/ccstatusline?style=social)](https://github.com/sirmalloc/ccstatusline/watchers)
+[![GitHub stars](https://img.shields.io/github/stars/pcvelz/ccstatusline-usage?style=social)](https://github.com/pcvelz/ccstatusline-usage/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/pcvelz/ccstatusline-usage?style=social)](https://github.com/pcvelz/ccstatusline-usage/network/members)
+[![GitHub watchers](https://img.shields.io/github/watchers/pcvelz/ccstatusline-usage?style=social)](https://github.com/pcvelz/ccstatusline-usage/watchers)
 
-[![npm version](https://img.shields.io/npm/v/ccstatusline.svg)](https://www.npmjs.com/package/ccstatusline)
-[![npm downloads](https://img.shields.io/npm/dm/ccstatusline.svg)](https://www.npmjs.com/package/ccstatusline)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/sirmalloc/ccstatusline/blob/main/LICENSE)
+[![npm version](https://img.shields.io/npm/v/ccstatusline-usage.svg)](https://www.npmjs.com/package/ccstatusline-usage)
+[![npm downloads](https://img.shields.io/npm/dm/ccstatusline-usage.svg)](https://www.npmjs.com/package/ccstatusline-usage)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/pcvelz/ccstatusline-usage/blob/main/LICENSE)
 [![Made with Bun](https://img.shields.io/badge/Made%20with-Bun-000000.svg?logo=bun)](https://bun.sh)
 
-[![Issues](https://img.shields.io/github/issues/sirmalloc/ccstatusline)](https://github.com/sirmalloc/ccstatusline/issues)
-[![Pull Requests](https://img.shields.io/github/issues-pr/sirmalloc/ccstatusline)](https://github.com/sirmalloc/ccstatusline/pulls)
-[![Contributors](https://img.shields.io/github/contributors/sirmalloc/ccstatusline)](https://github.com/sirmalloc/ccstatusline/graphs/contributors)
+[![Issues](https://img.shields.io/github/issues/pcvelz/ccstatusline-usage)](https://github.com/pcvelz/ccstatusline-usage/issues)
+[![Pull Requests](https://img.shields.io/github/issues-pr/pcvelz/ccstatusline-usage)](https://github.com/pcvelz/ccstatusline-usage/pulls)
+[![Contributors](https://img.shields.io/github/contributors/pcvelz/ccstatusline-usage)](https://github.com/pcvelz/ccstatusline-usage/graphs/contributors)
 
 ### 💬 Connect
 
-[Report Bug](https://github.com/sirmalloc/ccstatusline/issues) · [Request Feature](https://github.com/sirmalloc/ccstatusline/issues) · [Discussions](https://github.com/sirmalloc/ccstatusline/discussions)
+[Report Bug](https://github.com/pcvelz/ccstatusline-usage/issues) · [Request Feature](https://github.com/pcvelz/ccstatusline-usage/issues) · [Discussions](https://github.com/pcvelz/ccstatusline-usage/discussions)
 
 </div>

@@ -35,7 +35,7 @@ export const SettingsSchema = z.object({
                 { id: 'sep2', type: 'separator' },
                 { id: 'reset-timer', type: 'reset-timer', color: 'brightBlue' },
                 { id: 'sep3', type: 'separator' },
-                { id: 'model', type: 'model', color: 'magenta' },
+                { id: 'model', type: 'model', color: 'ansi256:124' },
                 { id: 'sep4', type: 'separator' },
                 { id: 'session-id', type: 'claude-session-id', color: 'cyan' }
             ],
