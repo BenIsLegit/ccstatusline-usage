@@ -120,29 +120,29 @@ async function renderMultipleLines(data: StatusJSON) {
     if (compact && terminalWidth) {
         renderCompactOutput(preRenderedLines, settings, terminalWidth - 6);
     } else {
-    // Render each line using pre-rendered content
-    const preCalculatedMaxWidths = calculateMaxWidthsFromPreRendered(preRenderedLines, settings);
-    let globalSeparatorIndex = 0;
-    for (let i = 0; i < lines.length; i++) {
-        const lineItems = lines[i];
-        if (lineItems && lineItems.length > 0) {
-            const lineContext = { ...context, lineIndex: i, globalSeparatorIndex };
-            const preRenderedWidgets = preRenderedLines[i] ?? [];
-            const line = renderStatusLine(lineItems, settings, lineContext, preRenderedWidgets, preCalculatedMaxWidths);
+        // Render each line using pre-rendered content
+        const preCalculatedMaxWidths = calculateMaxWidthsFromPreRendered(preRenderedLines, settings);
+        let globalSeparatorIndex = 0;
+        for (let i = 0; i < lines.length; i++) {
+            const lineItems = lines[i];
+            if (lineItems && lineItems.length > 0) {
+                const lineContext = { ...context, lineIndex: i, globalSeparatorIndex };
+                const preRenderedWidgets = preRenderedLines[i] ?? [];
+                const line = renderStatusLine(lineItems, settings, lineContext, preRenderedWidgets, preCalculatedMaxWidths);
 
-            // Only output the line if it has content (not just ANSI codes)
-            const strippedLine = line.replace(/\x1b\[[0-9;]*m/g, '').trim();
-            if (strippedLine.length > 0) {
-                const nonMergedWidgets = lineItems.filter((_, idx) => idx === lineItems.length - 1 || !lineItems[idx]?.merge);
-                if (nonMergedWidgets.length > 1)
-                    globalSeparatorIndex += nonMergedWidgets.length - 1;
+                // Only output the line if it has content (not just ANSI codes)
+                const strippedLine = line.replace(/\x1b\[[0-9;]*m/g, '').trim();
+                if (strippedLine.length > 0) {
+                    const nonMergedWidgets = lineItems.filter((_, idx) => idx === lineItems.length - 1 || !lineItems[idx]?.merge);
+                    if (nonMergedWidgets.length > 1)
+                        globalSeparatorIndex += nonMergedWidgets.length - 1;
 
-                let outputLine = line.replace(/ /g, '\u00A0');
-                outputLine = '\x1b[0m' + outputLine;
-                console.log(outputLine);
+                    let outputLine = line.replace(/ /g, '\u00A0');
+                    outputLine = '\x1b[0m' + outputLine;
+                    console.log(outputLine);
+                }
             }
         }
-    }
     }
 
     // Check if there's an update message to display

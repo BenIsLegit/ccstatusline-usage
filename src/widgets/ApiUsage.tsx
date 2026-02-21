@@ -318,6 +318,7 @@ export class SessionUsageWidget implements Widget {
     getDefaultColor(): string { return 'brightBlue'; }
     getDescription(): string { return 'Shows daily/session API usage percentage'; }
     getDisplayName(): string { return 'Session Usage'; }
+    getCategory(): string { return 'API Usage'; }
 
     getEditorDisplay(item: WidgetItem): WidgetEditorDisplay {
         return { displayText: this.getDisplayName() };
@@ -345,6 +346,7 @@ export class WeeklyUsageWidget implements Widget {
     getDefaultColor(): string { return 'brightBlue'; }
     getDescription(): string { return 'Shows weekly API usage percentage'; }
     getDisplayName(): string { return 'Weekly Usage'; }
+    getCategory(): string { return 'API Usage'; }
 
     getEditorDisplay(item: WidgetItem): WidgetEditorDisplay {
         return { displayText: this.getDisplayName() };
@@ -372,6 +374,7 @@ export class ResetTimerWidget implements Widget {
     getDefaultColor(): string { return 'brightBlue'; }
     getDescription(): string { return 'Shows extra usage spending or time until limit reset'; }
     getDisplayName(): string { return 'Reset Timer'; }
+    getCategory(): string { return 'API Usage'; }
 
     getEditorDisplay(item: WidgetItem): WidgetEditorDisplay {
         return { displayText: this.getDisplayName() };
@@ -436,6 +439,7 @@ export class ContextBarWidget implements Widget {
     getDefaultColor(): string { return 'blue'; }
     getDescription(): string { return 'Shows context usage as a progress bar'; }
     getDisplayName(): string { return 'Context Bar'; }
+    getCategory(): string { return 'API Usage'; }
 
     getEditorDisplay(item: WidgetItem): WidgetEditorDisplay {
         return { displayText: this.getDisplayName() };
