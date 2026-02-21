@@ -14,6 +14,7 @@ import type {
     WidgetEditorProps,
     WidgetItem
 } from '../types/Widget';
+import { shouldInsertInput } from '../utils/input-guards';
 
 export class CustomTextWidget implements Widget {
     getDefaultColor(): string { return 'white'; }
@@ -129,7 +130,7 @@ const CustomTextEditor: React.FC<WidgetEditorProps> = ({ widget, onComplete, onC
                     setText(text.slice(0, deleteFromIndex) + text.slice(deleteToIndex));
                 }
             }
-        } else if (input && !key.ctrl && !key.meta) {
+        } else if (shouldInsertInput(input, key)) {
             // Insert the input at cursor position
             const newText = text.slice(0, cursorPos) + input + text.slice(cursorPos);
             setText(newText);

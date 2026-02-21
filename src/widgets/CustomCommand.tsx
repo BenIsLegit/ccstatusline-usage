@@ -15,6 +15,7 @@ import type {
     WidgetEditorProps,
     WidgetItem
 } from '../types/Widget';
+import { shouldInsertInput } from '../utils/input-guards';
 
 export class CustomCommandWidget implements Widget {
     getDefaultColor(): string { return 'white'; }
@@ -160,7 +161,7 @@ const CustomCommandEditor: React.FC<WidgetEditorProps> = ({ widget, onComplete, 
                 if (commandCursorPos < commandInput.length) {
                     setCommandInput(commandInput.slice(0, commandCursorPos) + commandInput.slice(commandCursorPos + 1));
                 }
-            } else if (input) {
+            } else if (shouldInsertInput(input, key)) {
                 setCommandInput(commandInput.slice(0, commandCursorPos) + input + commandInput.slice(commandCursorPos));
                 setCommandCursorPos(commandCursorPos + input.length);
             }
@@ -178,7 +179,7 @@ const CustomCommandEditor: React.FC<WidgetEditorProps> = ({ widget, onComplete, 
                 onCancel();
             } else if (key.backspace) {
                 setWidthInput(widthInput.slice(0, -1));
-            } else if (input && /\d/.test(input)) {
+            } else if (shouldInsertInput(input, key) && /\d/.test(input)) {
                 setWidthInput(widthInput + input);
             }
         } else if (mode === 'timeout') {
@@ -195,7 +196,7 @@ const CustomCommandEditor: React.FC<WidgetEditorProps> = ({ widget, onComplete, 
                 onCancel();
             } else if (key.backspace) {
                 setTimeoutInput(timeoutInput.slice(0, -1));
-            } else if (input && /\d/.test(input)) {
+            } else if (shouldInsertInput(input, key) && /\d/.test(input)) {
                 setTimeoutInput(timeoutInput + input);
             }
         }

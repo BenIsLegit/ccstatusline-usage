@@ -15,6 +15,7 @@ import type {
     WidgetEditorProps,
     WidgetItem
 } from '../types/Widget';
+import { shouldInsertInput } from '../utils/input-guards';
 
 export class CurrentWorkingDirWidget implements Widget {
     getDefaultColor(): string { return 'blue'; }
@@ -200,7 +201,7 @@ const CurrentWorkingDirEditor: React.FC<WidgetEditorProps> = ({ widget, onComple
                 onCancel();
             } else if (key.backspace) {
                 setSegmentsInput(segmentsInput.slice(0, -1));
-            } else if (input && /\d/.test(input) && !key.ctrl) {
+            } else if (shouldInsertInput(input, key) && /\d/.test(input)) {
                 setSegmentsInput(segmentsInput + input);
             }
         }
