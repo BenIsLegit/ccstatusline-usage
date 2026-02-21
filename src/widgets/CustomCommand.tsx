@@ -20,6 +20,7 @@ export class CustomCommandWidget implements Widget {
     getDefaultColor(): string { return 'white'; }
     getDescription(): string { return 'Executes a custom shell command and displays output'; }
     getDisplayName(): string { return 'Custom Command'; }
+    getCategory(): string { return 'Custom'; }
 
     getEditorDisplay(item: WidgetItem): WidgetEditorDisplay {
         const cmd = item.commandPath ?? 'No command';

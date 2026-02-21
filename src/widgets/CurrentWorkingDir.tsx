@@ -20,6 +20,7 @@ export class CurrentWorkingDirWidget implements Widget {
     getDefaultColor(): string { return 'blue'; }
     getDescription(): string { return 'Shows the current working directory'; }
     getDisplayName(): string { return 'Current Working Dir'; }
+    getCategory(): string { return 'Environment'; }
     getEditorDisplay(item: WidgetItem): WidgetEditorDisplay {
         const segments = item.metadata?.segments ? parseInt(item.metadata.segments, 10) : undefined;
         const fishStyle = item.metadata?.fishStyle === 'true';
