@@ -25,6 +25,7 @@ export const StatusJSONSchema = z.looseObject({
         total_lines_added: z.number().optional(),
         total_lines_removed: z.number().optional()
     }).optional(),
+    agent: z.object({ name: z.string().optional() }).optional(),
     context_window: z.object({
         context_window_size: z.number().nullable().optional(),
         total_input_tokens: z.number().nullable().optional(),

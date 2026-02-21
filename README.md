@@ -46,6 +46,10 @@
 
 ## 🆕 Recent Updates
 
+### [v2.1.5](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.1.5) - Claude Code Teams compatibility
+
+- [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **Teams mode support** — automatically detects Claude Code's native Teams sessions (orchestrator + teammates in tmux split panes) and applies compact rendering for the narrow orchestrator pane. Widgets render at half terminal width to fit CC's two-column status bar layout.
+
 ### [v2.1.4](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.1.4) - Compact mode widget-boundary wrapping
 
 - [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **Widget-boundary wrapping** — compact mode now wraps at widget boundaries instead of mid-widget, using a dedicated compact renderer (`compact-renderer.ts`). Widgets that don't fit on the current line cleanly wrap to the next:

@@ -27,10 +27,15 @@ import {
 } from './utils/renderer';
 import { getTerminalWidth } from './utils/terminal';
 
-const COMPACT_THRESHOLD = 80;
+const COMPACT_THRESHOLD = 100;
+const TEAM_LEAD_DEFAULT_WIDTH = 60;
 
-function isCompactWidth(width: number | null): boolean {
-    return width !== null && width > 0 && width < COMPACT_THRESHOLD;
+function shouldUseCompactMode(width: number | null, data: StatusJSON): boolean {
+    if (width !== null && width > 0 && width < COMPACT_THRESHOLD)
+        return true;
+    if (data.agent?.name === 'team-lead')
+        return true;
+    return false;
 }
 
 async function readStdin(): Promise<string | null> {
@@ -101,24 +106,30 @@ async function renderMultipleLines(data: StatusJSON) {
     // Detect terminal width once for widget compact rendering
     const terminalWidth = getTerminalWidth();
 
-    // Create render context
+    // Determine compact mode BEFORE widget rendering so widgets can adapt
+    const compact = shouldUseCompactMode(terminalWidth, data);
+    const compactWidth = compact
+        ? (terminalWidth !== null && terminalWidth > 0
+            ? (terminalWidth >= 80 ? Math.floor(terminalWidth / 2) - 4 : terminalWidth - 6)
+            : TEAM_LEAD_DEFAULT_WIDTH)
+        : null;
+
+    // Create render context — use compactWidth as terminalWidth so widgets render shorter
+    const effectiveWidth = compactWidth ?? terminalWidth;
     const context: RenderContext = {
         data,
         tokenMetrics,
         sessionDuration,
         blockMetrics,
-        terminalWidth,
+        terminalWidth: effectiveWidth,
         isPreview: false
     };
 
     // Always pre-render all widgets once (for efficiency)
     const preRenderedLines = preRenderAllWidgets(lines, settings, context);
 
-    // Compact mode: widget-level flex-wrap rendering for narrow terminals
-    const compact = isCompactWidth(terminalWidth);
-
-    if (compact && terminalWidth) {
-        renderCompactOutput(preRenderedLines, settings, terminalWidth - 6);
+    if (compact && compactWidth) {
+        renderCompactOutput(preRenderedLines, settings, compactWidth);
     } else {
         // Render each line using pre-rendered content
         const preCalculatedMaxWidths = calculateMaxWidthsFromPreRendered(preRenderedLines, settings);
