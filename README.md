@@ -46,6 +46,10 @@
 
 ## 🆕 Recent Updates
 
+### [v2.1.6](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.1.6) - Upstream sync
+
+- [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **Upstream sync** — merged 9 upstream commits: Session Name widget, Git Root Dir widget, CWD home abbreviation, block timer caching, git widget refactor, Windows UTF-8 fix, widget picker UX, TUI editor input fix
+
 ### v2.0.26 - v2.0.28 - Performance, git internals, and workflow improvements
 
 - **⚡ Block timer cache (v2.0.28)** - Cache block timer metrics to reduce JSONL parsing on every render, with per-config hashed cache files and automatic 5-hour block invalidation.
