@@ -16,7 +16,7 @@ import {
     saveSettings
 } from './utils/config';
 import {
-    getBlockMetrics,
+    getCachedBlockMetrics,
     getSessionDuration,
     getTokenMetrics
 } from './utils/jsonl';
@@ -67,6 +67,19 @@ async function readStdin(): Promise<string | null> {
     }
 }
 
+async function ensureWindowsUtf8CodePage() {
+    if (process.platform !== 'win32') {
+        return;
+    }
+
+    try {
+        const { execFileSync } = await import('child_process');
+        execFileSync('chcp.com', ['65001'], { stdio: 'ignore' });
+    } catch {
+        // Ignore failures to preserve statusline output even in restricted shells.
+    }
+}
+
 async function renderMultipleLines(data: StatusJSON) {
     const settings = await loadSettings();
 
@@ -100,7 +113,7 @@ async function renderMultipleLines(data: StatusJSON) {
 
     let blockMetrics: BlockMetrics | null = null;
     if (hasBlockTimer) {
-        blockMetrics = getBlockMetrics();
+        blockMetrics = getCachedBlockMetrics();
     }
 
     // Detect terminal width once for widget compact rendering
@@ -189,6 +202,8 @@ async function renderMultipleLines(data: StatusJSON) {
 async function main() {
     // Check if we're in a piped/non-TTY environment first
     if (!process.stdin.isTTY) {
+        await ensureWindowsUtf8CodePage();
+
         // We're receiving piped input
         const input = await readStdin();
         if (input && input.trim() !== '') {

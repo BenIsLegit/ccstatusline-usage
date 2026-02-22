@@ -11,6 +11,7 @@ const widgetRegistry = new Map<WidgetItemType, Widget>([
     ['output-style', new widgets.OutputStyleWidget()],
     ['git-branch', new widgets.GitBranchWidget()],
     ['git-changes', new widgets.GitChangesWidget()],
+    ['git-root-dir', new widgets.GitRootDirWidget()],
     ['git-worktree', new widgets.GitWorktreeWidget()],
     ['current-working-dir', new widgets.CurrentWorkingDirWidget()],
     ['tokens-input', new widgets.TokensInputWidget()],
@@ -31,7 +32,8 @@ const widgetRegistry = new Map<WidgetItemType, Widget>([
     ['session-usage', new widgets.SessionUsageWidget()],
     ['weekly-usage', new widgets.WeeklyUsageWidget()],
     ['reset-timer', new widgets.ResetTimerWidget()],
-    ['context-bar', new widgets.ContextBarWidget()]
+    ['context-bar', new widgets.ContextBarWidget()],
+    ['session-name', new widgets.SessionNameWidget()]
 ]);
 
 export function getWidget(type: WidgetItemType): Widget | null {
