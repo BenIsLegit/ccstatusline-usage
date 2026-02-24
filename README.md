@@ -54,8 +54,9 @@
 
 - [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **Upstream sync** — merged 9 upstream commits: Session Name widget, Git Root Dir widget, CWD home abbreviation, block timer caching, git widget refactor, Windows UTF-8 fix, widget picker UX, TUI editor input fix
 
-### v2.0.26 - v2.0.28 - Performance, git internals, and workflow improvements
+### v2.0.26 - v2.0.29 - Performance, git internals, and workflow improvements
 
+- **🧠 Memory Usage widget (v2.0.29)** - Added a new widget that shows current system memory usage (`Mem: used/total`).
 - **⚡ Block timer cache (v2.0.28)** - Cache block timer metrics to reduce JSONL parsing on every render, with per-config hashed cache files and automatic 5-hour block invalidation.
 - **🧱 Git widget command refactor (v2.0.28)** - Refactored git widgets to use shared git command helpers and expanded coverage for failure and edge-case tests.
 - **🪟 Windows UTF-8 piped output fix (v2.0.28)** - Sets the Windows UTF-8 code page for piped status line rendering.
@@ -389,6 +390,7 @@ Once configured, ccstatusline automatically formats your Claude Code status line
 - **Context Percentage** - Shows percentage of context limit used (dynamic: 1M for Sonnet 4.5 with `[1m]` suffix, 200k otherwise)
 - **Context Percentage (usable)** - Shows percentage of usable context (dynamic: 800k for Sonnet 4.5 with `[1m]` suffix, 160k otherwise, accounting for auto-compact at 80%)
 - **Terminal Width** - Shows detected terminal width (for debugging)
+- **Memory Usage** - Shows system memory usage (used/total, e.g., "Mem: 12.4G/16.0G")
 - **Custom Text** - Add your own custom text to the status line
 - **Custom Command** - Execute shell commands and display their output (refreshes whenever the statusline is updated by Claude Code)
 - **Separator** - Visual divider between widgets (customizable: |, -, comma, space)
@@ -619,6 +621,14 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 3. Commit your changes (`git commit -m 'Add some amazing feature'`)
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
+
+---
+
+## Support
+
+If ccstatusline is useful to you, consider buying me a coffee:
+
+<a href="https://www.buymeacoffee.com/sirmalloc" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
 
 ---
 
