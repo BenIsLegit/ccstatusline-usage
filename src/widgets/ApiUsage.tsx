@@ -388,8 +388,9 @@ export class ResetTimerWidget implements Widget {
         if (data.error)
             return getErrorMessage(data.error);
 
-        // When extra usage is active, show spending instead of reset timer
-        if (data.extraUsageEnabled && data.extraUsageUsed !== undefined && data.extraUsageLimit !== undefined) {
+        // When extra usage is active AND weekly limit is reached (100%), show spending instead of reset timer
+        if (data.extraUsageEnabled && data.weeklyUsage !== undefined && data.weeklyUsage >= 100
+            && data.extraUsageUsed !== undefined && data.extraUsageLimit !== undefined) {
             const used = formatCents(data.extraUsageUsed);
             const limit = formatCents(data.extraUsageLimit);
             return `Extra: ${used}/${limit}`;

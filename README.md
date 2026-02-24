@@ -46,6 +46,10 @@
 
 ## 🆕 Recent Updates
 
+### [v2.1.7](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.1.7) - Extra usage widget fix
+
+- [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **Extra usage conditional display** — Extra spending widget now only appears when the weekly budget is fully used (100%), instead of always when extra usage is enabled
+
 ### [v2.1.6](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.1.6) - Upstream sync
 
 - [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **Upstream sync** — merged 9 upstream commits: Session Name widget, Git Root Dir widget, CWD home abbreviation, block timer caching, git widget refactor, Windows UTF-8 fix, widget picker UX, TUI editor input fix
