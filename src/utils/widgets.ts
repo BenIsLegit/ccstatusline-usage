@@ -34,7 +34,8 @@ const widgetRegistry = new Map<WidgetItemType, Widget>([
     ['reset-timer', new widgets.ResetTimerWidget()],
     ['context-bar', new widgets.ContextBarWidget()],
     ['session-name', new widgets.SessionNameWidget()],
-    ['free-memory', new widgets.FreeMemoryWidget()]
+    ['free-memory', new widgets.FreeMemoryWidget()],
+    ['battery', new widgets.BatteryWidget()]
 ]);
 
 export function getWidget(type: WidgetItemType): Widget | null {

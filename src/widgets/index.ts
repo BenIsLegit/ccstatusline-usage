@@ -23,3 +23,4 @@ export { ClaudeSessionIdWidget } from './ClaudeSessionId';
 export { ContextBarWidget, ResetTimerWidget, SessionUsageWidget, WeeklyUsageWidget } from './ApiUsage';
 export { SessionNameWidget } from './SessionName';
 export { FreeMemoryWidget } from './FreeMemory';
+export { BatteryWidget } from './Battery';

@@ -34,6 +34,8 @@ export const SettingsSchema = z.object({
                 { id: 'weekly-usage', type: 'weekly-usage', color: 'brightBlue' },
                 { id: 'sep2', type: 'separator' },
                 { id: 'reset-timer', type: 'reset-timer', color: 'brightBlue' },
+                { id: 'sep-battery', type: 'separator' },
+                { id: 'battery', type: 'battery', color: 'yellow' },
                 { id: 'sep3', type: 'separator' },
                 { id: 'model', type: 'model', color: 'ansi256:124' },
                 { id: 'sep4', type: 'separator' },

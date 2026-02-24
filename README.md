@@ -46,9 +46,11 @@
 
 ## 🆕 Recent Updates
 
-### [v2.1.7](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.1.7) - Extra usage widget fix
+### [v2.1.7](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.1.7) - Battery widget, extra usage fix & upstream sync
 
+- [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **Battery widget** — shows `B: xx%` on macOS and Linux when on battery power (hidden when charging)
 - [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **Extra usage conditional display** — Extra spending widget now only appears when the weekly budget is fully used (100%), instead of always when extra usage is enabled
+- [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **Upstream sync** — Memory Usage widget (v2.0.29)
 
 ### [v2.1.6](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.1.6) - Upstream sync
 
@@ -391,6 +393,7 @@ Once configured, ccstatusline automatically formats your Claude Code status line
 - **Context Percentage (usable)** - Shows percentage of usable context (dynamic: 800k for Sonnet 4.5 with `[1m]` suffix, 160k otherwise, accounting for auto-compact at 80%)
 - **Terminal Width** - Shows detected terminal width (for debugging)
 - **Memory Usage** - Shows system memory usage (used/total, e.g., "Mem: 12.4G/16.0G")
+- **Battery** - Shows battery percentage on macOS and Linux (only visible when on battery power, hidden when charging)
 - **Custom Text** - Add your own custom text to the status line
 - **Custom Command** - Execute shell commands and display their output (refreshes whenever the statusline is updated by Claude Code)
 - **Separator** - Visual divider between widgets (customizable: |, -, comma, space)
