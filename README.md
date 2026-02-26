@@ -46,6 +46,10 @@
 
 ## 🆕 Recent Updates
 
+### [v2.1.8](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.1.8) - Windows support for API usage widgets
+
+- [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **Windows compatibility** — API usage widgets now work on Windows by using `os.homedir()` instead of `process.env.HOME` for credential and cache file paths
+
 ### [v2.1.7](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.1.7) - Battery widget, extra usage fix & upstream sync
 
 - [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **Battery widget** — shows `B: xx%` on macOS and Linux when on battery power (hidden when charging)
