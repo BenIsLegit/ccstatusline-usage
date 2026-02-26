@@ -3,6 +3,7 @@ import {
     spawnSync
 } from 'child_process';
 import * as fs from 'fs';
+import * as os from 'os';
 import * as path from 'path';
 
 import type { RenderContext } from '../types/RenderContext';
@@ -14,8 +15,8 @@ import type {
 } from '../types/Widget';
 
 // Cache configuration
-const CACHE_FILE = path.join(process.env.HOME ?? '', '.cache', 'ccstatusline-api.json');
-const LOCK_FILE = path.join(process.env.HOME ?? '', '.cache', 'ccstatusline-api.lock');
+const CACHE_FILE = path.join(os.homedir(), '.cache', 'ccstatusline-api.json');
+const LOCK_FILE = path.join(os.homedir(), '.cache', 'ccstatusline-api.lock');
 const CACHE_MAX_AGE = 180; // seconds
 const LOCK_MAX_AGE = 30;   // rate limit: only try API once per 30 seconds
 const TOKEN_CACHE_MAX_AGE = 3600; // 1 hour
@@ -40,7 +41,7 @@ let cacheTime = 0;
 let cachedToken: string | null = null;
 let tokenCacheTime = 0;
 
-const CRED_FILE = path.join(process.env.HOME ?? '', '.claude', '.credentials.json');
+const CRED_FILE = path.join(os.homedir(), '.claude', '.credentials.json');
 
 function readTokenFromFile(): string | null {
     try {
