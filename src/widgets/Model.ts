@@ -51,9 +51,9 @@ function getEffortLevel(): string {
 // Map effort level to 1-3 bars
 function effortToLevel(effort: string): number {
     switch (effort) {
-        case 'low': return 1;
-        case 'medium': return 2;
-        default: return 3;
+    case 'low': return 1;
+    case 'medium': return 2;
+    default: return 3;
     }
 }
 

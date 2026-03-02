@@ -17,8 +17,6 @@
     "example": "cat scripts/payload.example.json | bun start",
     "prepublishOnly": "bun run build",
     "lint": "bun tsc --noEmit; eslint . --config eslint.config.js --max-warnings=999999 --fix",
-    "test": "bun vitest",
-    "publish:safe": "bash scripts/safe-publish.sh",
     "docs": "typedoc",
     "docs:clean": "rm -rf docs"
   },
