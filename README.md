@@ -38,7 +38,7 @@ This fork adds API-based usage widgets beyond the upstream:
 ### Enhanced Status Line Preview
 
 ```
-Session: [████░░░░░░░░░░░] 27.0% | Weekly: [████████████░░░] 86.0% | 1:56 hr | Model: Opus 4.6 ▌▌▌ | Session ID: 0109b99d...
+Session: [████░░░░░░░░░░░] 27.0% | Weekly: [███████████████] 100.0% | Extra: €2.50/€50.00 | Model: Opus 4.6 ▌▌▌ | Session ID: 0109b99d...
   Context: [███████░░░░░░░░] 103k/200k (51%)
 ```
 
@@ -63,6 +63,10 @@ Session: [████░░░░░░░░░░░] 27.0% | Weekly: [██
 ---
 
 ## 🆕 Recent Updates
+
+### [v2.1.11](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.1.11) - Configurable extra usage balance
+
+- [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **Configurable extra usage balance** — Add `extraUsageBalance` setting (in cents) to `~/.config/ccstatusline/settings.json` to override the API's monthly limit with your actual prepaid balance (e.g., `"extraUsageBalance": 5000` shows `Extra: €0.00/€50.00`)
 
 ### [v2.1.8](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.1.8) - Windows support for API usage widgets
 
