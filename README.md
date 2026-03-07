@@ -38,7 +38,7 @@ This fork adds API-based usage widgets beyond the upstream:
 ### Enhanced Status Line Preview
 
 ```
-Session: [████░░░░░░░░░░░] 27.0% | Weekly: [███████████████] 100.0% | Extra: €2.50/€50.00 | Model: Opus 4.6 ▌▌▌ | Session ID: 0109b99d...
+Session: [████░░░░░░░░░░░] 27.0% | Weekly: [███████████████] 100.0% | Extra: €2.50/€50.00 | Model: Opus 4.6 | Session ID: 0109b99d...
   Context: [███████░░░░░░░░] 103k/200k (51%)
 ```
 
@@ -63,6 +63,10 @@ Session: [████░░░░░░░░░░░] 27.0% | Weekly: [██
 ---
 
 ## 🆕 Recent Updates
+
+### [v2.1.12](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.1.12) - Remove thinking effort bars from model widget
+
+- [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **Remove thinking effort bars** — Claude Code now shows thinking intensity natively in its own UI, so the `▌▌▌` bars after the model name have been removed from the Model widget
 
 ### [v2.1.11](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.1.11) - Configurable extra usage balance
 
