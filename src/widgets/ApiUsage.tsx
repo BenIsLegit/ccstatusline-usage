@@ -17,8 +17,8 @@ import type {
 // Cache configuration
 const CACHE_FILE = path.join(os.homedir(), '.cache', 'ccstatusline-api.json');
 const LOCK_FILE = path.join(os.homedir(), '.cache', 'ccstatusline-api.lock');
-const CACHE_MAX_AGE = 180; // seconds
-const LOCK_MAX_AGE = 30;   // rate limit: only try API once per 30 seconds
+const CACHE_MAX_AGE = 600; // 10 minutes: usage data doesn't change fast
+const LOCK_MAX_AGE = 60;   // rate limit: only try API once per 60 seconds
 const TOKEN_CACHE_MAX_AGE = 3600; // 1 hour
 
 // Error types matching shell script
@@ -32,6 +32,7 @@ interface ApiData {
     extraUsageLimit?: number;      // in cents
     extraUsageUsed?: number;       // in cents
     extraUsageUtilization?: number;
+    fetchedAt?: number;     // unix timestamp when data was fetched from API
     error?: ApiError;
 }
 
@@ -101,8 +102,8 @@ function readStaleCache(): ApiData | null {
     }
 }
 
-// Fetch result: null = network/other error, 'auth-error' = 401, string = response body
-type FetchResult = string | 'auth-error' | null;
+// Fetch result: null = network/other error, 'auth-error' = 401, 'rate-limited' = 429, string = response body
+type FetchResult = string | 'auth-error' | 'rate-limited' | null;
 
 // Fetch API using Node's built-in https module (no curl dependency)
 function fetchFromApi(token: string): FetchResult {
@@ -128,6 +129,8 @@ function fetchFromApi(token: string): FetchResult {
                     process.stdout.write(data);
                 } else if (res.statusCode === 401) {
                     process.exit(2);
+                } else if (res.statusCode === 429) {
+                    process.exit(3);
                 } else {
                     process.exit(1);
                 }
@@ -147,11 +150,15 @@ function fetchFromApi(token: string): FetchResult {
     if (result.error || !result.stdout) {
         if (result.status === 2)
             return 'auth-error';
+        if (result.status === 3)
+            return 'rate-limited';
         return null;
     }
     if (result.status !== 0) {
         if (result.status === 2)
             return 'auth-error';
+        if (result.status === 3)
+            return 'rate-limited';
         return null;
     }
 
@@ -182,12 +189,11 @@ function fetchApiData(): ApiData {
         // File doesn't exist or read error - continue to API call
     }
 
-    // Rate limit: only try API once per 30 seconds
+    // Rate limit: only try API once per LOCK_MAX_AGE seconds
     try {
         const lockStat = fs.statSync(LOCK_FILE);
         const lockAge = now - Math.floor(lockStat.mtimeMs / 1000);
         if (lockAge < LOCK_MAX_AGE) {
-            // Rate limited - return stale cache or timeout error
             const stale = readStaleCache();
             if (stale && !stale.error)
                 return stale;
@@ -222,13 +228,26 @@ function fetchApiData(): ApiData {
         const response = fetchFromApi(token);
 
         // On auth error, invalidate cached token so next call re-reads from disk
-        // (Claude Code may have refreshed the token via /login)
         if (response === 'auth-error') {
             invalidateTokenCache();
             const stale = readStaleCache();
             if (stale && !stale.error)
                 return stale;
             return { error: 'api-error' };
+        }
+
+        // On rate limit (429), extend lock to back off properly
+        if (response === 'rate-limited') {
+            try {
+                const futureTime = new Date(Date.now() + 90_000);
+                fs.utimesSync(LOCK_FILE, futureTime, futureTime);
+            } catch {
+                // Ignore
+            }
+            const stale = readStaleCache();
+            if (stale && !stale.error)
+                return stale;
+            return { error: 'timeout' };
         }
 
         if (!response) {
@@ -264,7 +283,8 @@ function fetchApiData(): ApiData {
             return { error: 'parse-error' };
         }
 
-        // Save to cache
+        // Save to cache with fetch timestamp
+        apiData.fetchedAt = now;
         try {
             const cacheDir = path.dirname(CACHE_FILE);
             if (!fs.existsSync(cacheDir)) {
