@@ -64,6 +64,10 @@ Session: [████░░░░░░░░░░░] 27.0% | Weekly: [██
 
 ## 🆕 Recent Updates
 
+### [v2.1.15](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.1.15) - Show extra usage balance on 1M context models
+
+- [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **Extra usage on 1M models** — Reset Timer widget now shows extra usage spending (`Extra: €X.XX/€Y.YY`) whenever a 1M context model is active (Opus/Sonnet with 1M context window), in addition to the existing trigger when weekly limit reaches 100%
+
 ### [v2.1.14](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.1.14) - Reduce API polling frequency to prevent rate limiting
 
 - [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **Reduced polling** — API cache extended from 3 to 10 minutes (~6 calls/hr instead of ~20), verified over 6 hours with zero 429 rate limit errors

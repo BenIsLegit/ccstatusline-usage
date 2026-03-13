@@ -409,8 +409,12 @@ export class ResetTimerWidget implements Widget {
         if (data.error)
             return getErrorMessage(data.error);
 
-        // When extra usage is active AND weekly limit is reached (100%), show spending instead of reset timer
-        if (data.extraUsageEnabled && data.weeklyUsage !== undefined && data.weeklyUsage >= 100
+        // When extra usage is active AND (weekly limit reached OR 1M model selected), show spending
+        const model = context.data?.model;
+        const modelId = typeof model === 'string' ? model : model?.id ?? '';
+        const contextWindowSize = context.data?.context_window?.context_window_size;
+        const is1mModel = modelId.includes('[1m]') || (contextWindowSize !== null && contextWindowSize !== undefined && contextWindowSize >= 1_000_000);
+        if (data.extraUsageEnabled && (is1mModel || (data.weeklyUsage !== undefined && data.weeklyUsage >= 100))
             && data.extraUsageUsed !== undefined && data.extraUsageLimit !== undefined) {
             const used = formatCents(data.extraUsageUsed);
             const displayLimit = settings.extraUsageBalance ?? data.extraUsageLimit;
