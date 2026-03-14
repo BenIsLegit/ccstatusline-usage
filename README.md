@@ -64,9 +64,11 @@ Session: [████░░░░░░░░░░░] 27.0% | Weekly: [██
 
 ## 🆕 Recent Updates
 
-### [v2.1.17](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.1.17) - Fix credentials in tmux/SSH sessions
+### [v2.1.17](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.1.17) - Upstream sync + 1M context display
 
-- [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **Keychain file fallback** — On macOS, usage widget now falls back to `~/.claude/.credentials.json` when Keychain is unavailable (e.g. tmux or SSH sessions). Previously showed `[No credentials]` in any session without Keychain access.
+- [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **Upstream sync** — Merged 46 upstream commits: new widgets (Skills, ThinkingEffort, InputSpeed, OutputSpeed, TotalSpeed, Link, GitInsertions, GitDeletions, WeeklyResetTimer), CI pipeline, Dependabot, --config flag, --hook mode, usage API proxy support, 429 backoff, CoercedNumberSchema
+- [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **1M context display** — Context bar now shows `68k/1M` instead of `68k/1000k` for 1M context models
+- [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **Keychain file fallback** — On macOS, usage widget falls back to `~/.claude/.credentials.json` when Keychain is unavailable (tmux/SSH sessions)
 
 ### [v2.1.16](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.1.16) - Show [1m] suffix on model widget for 1M context models
 
