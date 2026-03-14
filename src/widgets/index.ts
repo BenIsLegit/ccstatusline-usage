@@ -32,3 +32,4 @@ export { LinkWidget } from './Link';
 export { SkillsWidget } from './Skills';
 export { ThinkingEffortWidget } from './ThinkingEffort';
 export { BatteryWidget } from './Battery';
+export { WeeklyPaceWidget } from './WeeklyPace';
