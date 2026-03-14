@@ -7,14 +7,14 @@ import type {
 } from '../types/Widget';
 import {
     getUsageErrorMessage,
-    getWeeklyUsageWindowFromResetAt
+    resolveWeeklyUsageWindow
 } from '../utils/usage';
 
 export class WeeklyPaceWidget implements Widget {
     getDefaultColor(): string { return 'brightYellow'; }
     getDescription(): string { return 'Shows if weekly usage pace is on track, overcooking, or underutilized'; }
     getDisplayName(): string { return 'Weekly Pace'; }
-    getCategory(): string { return 'API Usage'; }
+    getCategory(): string { return 'Usage'; }
 
     getEditorDisplay(item: WidgetItem): WidgetEditorDisplay {
         return { displayText: this.getDisplayName() };
@@ -30,7 +30,7 @@ export class WeeklyPaceWidget implements Widget {
         if (data.error) return getUsageErrorMessage(data.error);
         if (data.weeklyUsage === undefined) return null;
 
-        const window = getWeeklyUsageWindowFromResetAt(data.weeklyResetAt);
+        const window = resolveWeeklyUsageWindow(data);
         if (!window) return null;
 
         const actualPercent = Math.max(0, Math.min(100, data.weeklyUsage));
