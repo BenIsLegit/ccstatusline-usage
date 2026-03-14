@@ -5,7 +5,10 @@ import type {
     WidgetEditorDisplay,
     WidgetItem
 } from '../types/Widget';
+import { getContextWindowInputTotalTokens } from '../utils/context-window';
 import { formatTokens } from '../utils/renderer';
+
+import { formatRawOrLabeledValue } from './shared/raw-or-labeled';
 
 export class TokensInputWidget implements Widget {
     getDefaultColor(): string { return 'blue'; }
@@ -18,9 +21,16 @@ export class TokensInputWidget implements Widget {
 
     render(item: WidgetItem, context: RenderContext, settings: Settings): string | null {
         if (context.isPreview) {
-            return item.rawValue ? '15.2k' : 'In: 15.2k';
-        } else if (context.tokenMetrics) {
-            return item.rawValue ? formatTokens(context.tokenMetrics.inputTokens) : `In: ${formatTokens(context.tokenMetrics.inputTokens)}`;
+            return formatRawOrLabeledValue(item, 'In: ', '15.2k');
+        }
+
+        const inputTotalTokens = getContextWindowInputTotalTokens(context.data);
+        if (inputTotalTokens !== null) {
+            return formatRawOrLabeledValue(item, 'In: ', formatTokens(inputTotalTokens));
+        }
+
+        if (context.tokenMetrics) {
+            return formatRawOrLabeledValue(item, 'In: ', formatTokens(context.tokenMetrics.inputTokens));
         }
         return null;
     }

@@ -496,13 +496,13 @@ export class ContextBarWidget implements Widget {
         const percent = total > 0 ? (used / total) * 100 : 0;
 
         const usedK = Math.round(used / 1000);
-        const totalK = Math.round(total / 1000);
+        const totalStr = total >= 1000000 ? `${Math.round(total / 1000000)}M` : `${Math.round(total / 1000)}k`;
 
         const mobile = isMobileWidth(context);
         const bar = makeProgressBar(percent, mobile ? MOBILE_BAR_WIDTH : DEFAULT_BAR_WIDTH);
         const label = mobile ? 'C' : 'Context';
         const suffix = mobile ? '' : ` (${Math.round(percent)}%)`;
-        return `${label}: ${bar} ${usedK}k/${totalK}k${suffix}`;
+        return `${label}: ${bar} ${usedK}k/${totalStr}${suffix}`;
     }
 
     supportsRawValue(): boolean { return false; }
