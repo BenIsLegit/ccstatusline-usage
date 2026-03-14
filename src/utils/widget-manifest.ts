@@ -54,7 +54,8 @@ export const WIDGET_MANIFEST: WidgetManifestEntry[] = [
     { type: 'skills', create: () => new widgets.SkillsWidget() },
     { type: 'thinking-effort', create: () => new widgets.ThinkingEffortWidget() },
     { type: 'battery', create: () => new widgets.BatteryWidget() },
-    { type: 'vim-mode', create: () => new widgets.VimModeWidget() }
+    { type: 'vim-mode', create: () => new widgets.VimModeWidget() },
+    { type: 'weekly-pace', create: () => new widgets.WeeklyPaceWidget() }
 ];
 
 export const LAYOUT_WIDGET_MANIFEST: LayoutWidgetManifestEntry[] = [
