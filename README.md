@@ -64,9 +64,14 @@ Session: [████░░░░░░░░░░░] 27.0% | Weekly: [██
 
 ## 🆕 Recent Updates
 
+### [v2.1.16](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.1.16) - Show [1m] suffix on model widget for 1M context models
+
+- [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **1M context indicator** — Model widget now appends `[1m]` when a 1M context model is active, both in full (`Model: claude-sonnet-4-6 [1m]`) and compact (`M: s4.6[1m]`) display modes
+- [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **Revert extra usage on 1M** — Removed the v2.1.15 trigger that showed extra usage spending on 1M models. 1M context is not included in Max without extra usage — the `[1m]` suffix on the Model widget now makes this visible, so the Reset Timer no longer needs to duplicate that awareness
+
 ### [v2.1.15](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.1.15) - Show extra usage balance on 1M context models
 
-- [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **Extra usage on 1M models** — Reset Timer widget now shows extra usage spending (`Extra: €X.XX/€Y.YY`) whenever a 1M context model is active (Opus/Sonnet with 1M context window), in addition to the existing trigger when weekly limit reaches 100%
+- [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **Extra usage on 1M models** — Reset Timer widget now shows extra usage spending (`Extra: €X.XX/€Y.YY`) whenever a 1M context model is active (Opus/Sonnet with 1M context window), in addition to the existing trigger when weekly limit reaches 100%. *Reverted in v2.1.16.*
 
 ### [v2.1.14](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.1.14) - Reduce API polling frequency to prevent rate limiting
 

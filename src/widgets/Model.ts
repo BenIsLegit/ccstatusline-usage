@@ -44,12 +44,18 @@ export class ModelWidget implements Widget {
         if (!modelDisplayName)
             return null;
 
+        const is1m = modelId?.includes('[1m]') ?? false;
+        const suffix = is1m ? '[1m]' : '';
+        // Strip [1m] from displayName in case it fell back to model.id
+        const cleanDisplayName = modelDisplayName.replace(/\[1m\]/gi, '').trim();
+
         const mobile = (context.terminalWidth ?? 0) > 0 && (context.terminalWidth ?? 0) < MOBILE_THRESHOLD;
         if (mobile && modelId) {
-            return `M: ${compactModelName(modelId)}`;
+            return `M: ${compactModelName(modelId)}${suffix}`;
         }
 
-        return item.rawValue ? modelDisplayName : `Model: ${modelDisplayName}`;
+        const display = suffix ? `${cleanDisplayName} ${suffix}` : cleanDisplayName;
+        return item.rawValue ? display : `Model: ${display}`;
     }
 
     supportsRawValue(): boolean { return true; }
