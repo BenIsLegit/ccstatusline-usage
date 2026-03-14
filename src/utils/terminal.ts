@@ -32,8 +32,7 @@ export function getPackageVersion(): string {
     return '';
 }
 
-// Get terminal width
-export function getTerminalWidth(): number | null {
+function probeTerminalWidth(): number | null {
     // In tmux, use pane width — most accurate for the actual visible area
     if (process.env.TMUX) {
         try {
@@ -47,6 +46,12 @@ export function getTerminalWidth(): number | null {
         } catch {
             // tmux command failed, fall through
         }
+    }
+
+    // Preserve historical behavior on Windows: width detection is unavailable.
+    // This avoids Unix fallback command behavior (e.g. 2>/dev/null) on Windows.
+    if (process.platform === 'win32') {
+        return null;
     }
 
     try {
@@ -96,46 +101,12 @@ export function getTerminalWidth(): number | null {
     return null;
 }
 
+// Get terminal width
+export function getTerminalWidth(): number | null {
+    return probeTerminalWidth();
+}
+
 // Check if terminal width detection is available
 export function canDetectTerminalWidth(): boolean {
-    try {
-        // First try to get the tty of the parent process
-        const tty = execSync('ps -o tty= -p $(ps -o ppid= -p $$)', {
-            encoding: 'utf8',
-            stdio: ['pipe', 'pipe', 'ignore'],
-            shell: '/bin/sh'
-        }).trim();
-
-        // Check if we got a valid tty
-        if (tty && tty !== '??' && tty !== '?') {
-            const width = execSync(
-                `stty size < /dev/${tty} | awk '{print $2}'`,
-                {
-                    encoding: 'utf8',
-                    stdio: ['pipe', 'pipe', 'ignore'],
-                    shell: '/bin/sh'
-                }
-            ).trim();
-
-            const parsed = parseInt(width, 10);
-            if (!isNaN(parsed) && parsed > 0) {
-                return true;
-            }
-        }
-    } catch {
-        // Try fallback
-    }
-
-    // Fallback: try tput cols
-    try {
-        const width = execSync('tput cols 2>/dev/null', {
-            encoding: 'utf8',
-            stdio: ['pipe', 'pipe', 'ignore']
-        }).trim();
-
-        const parsed = parseInt(width, 10);
-        return !isNaN(parsed) && parsed > 0;
-    } catch {
-        return false;
-    }
+    return probeTerminalWidth() !== null;
 }

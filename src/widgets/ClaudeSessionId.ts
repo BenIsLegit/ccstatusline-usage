@@ -18,19 +18,13 @@ export class ClaudeSessionIdWidget implements Widget {
     render(item: WidgetItem, context: RenderContext, settings: Settings): string | null {
         if (context.isPreview) {
             return item.rawValue ? 'preview-session-id' : 'Session ID: preview-session-id';
+        } else {
+            const sessionId = context.data?.session_id;
+            if (!sessionId) {
+                return null;
+            }
+            return item.rawValue ? sessionId : `Session ID: ${sessionId}`;
         }
-
-        const sessionId = context.data?.session_id;
-        if (!sessionId) {
-            return null;
-        }
-
-        const mobile = (context.terminalWidth ?? 0) > 0 && (context.terminalWidth ?? 0) < 80;
-        if (mobile) {
-            return `S: ${sessionId.slice(0, 8)}`;
-        }
-
-        return item.rawValue ? sessionId : `Session ID: ${sessionId}`;
     }
 
     supportsRawValue(): boolean { return true; }

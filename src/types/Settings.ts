@@ -37,7 +37,7 @@ export const SettingsSchema = z.object({
                 { id: 'sep-battery', type: 'separator' },
                 { id: 'battery', type: 'battery', color: 'yellow' },
                 { id: 'sep3', type: 'separator' },
-                { id: 'model', type: 'model', color: 'ansi256:124' },
+                { id: 'model', type: 'model', color: 'cyan' },
                 { id: 'sep4', type: 'separator' },
                 { id: 'session-id', type: 'claude-session-id', color: 'cyan' }
             ],
@@ -64,7 +64,6 @@ export const SettingsSchema = z.object({
         theme: undefined,
         autoAlign: false
     }),
-    extraUsageBalance: z.number().optional(), // Override extra usage limit display (in cents, e.g. 5000 = $50.00)
     updatemessage: z.object({
         message: z.string().nullable().optional(),
         remaining: z.number().nullable().optional()
