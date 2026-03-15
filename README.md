@@ -64,6 +64,11 @@ Session: [████░░░░░░░░░░░] 27.0% | Weekly: [██
 
 ## 🆕 Recent Updates
 
+### [v2.3.0](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.3.0) - Upstream sync + Vim Mode widget
+
+- [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **Upstream sync** — Merged 14 upstream commits: Vim Mode widget, hyperlink support for GitBranch/GitRootDir, ESLint 10 upgrade, timer day display fix (≥24h), macOS keychain token fallback, ink-gradient 4.0.0
+- [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **Version scheme** — Switched to staying one minor version ahead of upstream (upstream 2.2.x → fork 2.3.x)
+
 ### [v2.1.17](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.1.17) - Upstream sync + 1M context display
 
 - [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **Upstream sync** — Merged 46 upstream commits: new widgets (Skills, ThinkingEffort, InputSpeed, OutputSpeed, TotalSpeed, Link, GitInsertions, GitDeletions, WeeklyResetTimer), CI pipeline, Dependabot, --config flag, --hook mode, usage API proxy support, 429 backoff, CoercedNumberSchema
