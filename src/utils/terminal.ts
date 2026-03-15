@@ -48,8 +48,17 @@ function probeTerminalWidth(): number | null {
         }
     }
 
-    // Preserve historical behavior on Windows: width detection is unavailable.
-    // This avoids Unix fallback command behavior (e.g. 2>/dev/null) on Windows.
+    // Windows: width detection is unavailable in piped mode (Claude Code statusline).
+    //
+    // Attempted fixes that made things WORSE:
+    // - process.stderr.columns / process.stdout.columns: undefined in piped mode
+    // - COLUMNS env var: not reliably set in piped subprocess context
+    // - tput cols: returns wrong value (Git Bash console width, not IDE pane width)
+    // - mode con: returns Windows console buffer width, not IDE terminal pane width
+    //   → caused premature truncation/ellipsification in JetBrains terminals
+    //
+    // Returning null disables truncation — Claude Code's Ink renderer handles layout.
+    // See: https://github.com/sirmalloc/ccstatusline/issues/232
     if (process.platform === 'win32') {
         return null;
     }
