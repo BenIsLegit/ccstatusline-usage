@@ -127,6 +127,22 @@ Default to using Bun instead of Node.js:
 - Use `bun build` with appropriate options for building
 - Bun automatically loads .env, so don't use dotenv
 
+## Current Work
+
+### Branch: fix/windows-terminal-rendering (based on feat/weekly-pace)
+
+Investigating terminal rendering corruption (duplicated/overlapping lines) in JetBrains IDE terminals on Windows. The issue appeared after installing ccstatusline.
+
+**Investigation findings:**
+- Windows `probeTerminalWidth()` returns `null` (no width detection) — this is intentional
+- Attempted width detection via `process.stderr.columns`, `COLUMNS` env var, `tput cols`, and `mode con` — all return incorrect values in the piped subprocess context Claude Code uses for statusline commands
+- `mode con` returns the Windows console buffer width, not the IDE terminal pane width, causing premature truncation/ellipsification
+- Upstream maintainer (sirmalloc) believes the rendering issue is a Claude Code regression, not ccstatusline — see https://github.com/sirmalloc/ccstatusline/issues/232
+- Related Claude Code issues: #10304, #1486, #947, #826
+- Currently monitoring whether the issue persists with ccstatusline enabled and no code changes
+
+**Status:** Monitoring. If rendering corruption continues, the fix is on Claude Code's side.
+
 ## Important Notes
 
 - **ink@6.2.0 patch**: The project uses a patch for ink@6.2.0 to fix backspace key handling on macOS
