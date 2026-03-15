@@ -137,11 +137,21 @@ Investigating terminal rendering corruption (duplicated/overlapping lines) in Je
 - Windows `probeTerminalWidth()` returns `null` (no width detection) — this is intentional
 - Attempted width detection via `process.stderr.columns`, `COLUMNS` env var, `tput cols`, and `mode con` — all return incorrect values in the piped subprocess context Claude Code uses for statusline commands
 - `mode con` returns the Windows console buffer width, not the IDE terminal pane width, causing premature truncation/ellipsification
+- `CCSTATUSLINE_WIDTH` env var override was considered but rejected — user has multiple windows at different widths, static value doesn't work
 - Upstream maintainer (sirmalloc) believes the rendering issue is a Claude Code regression, not ccstatusline — see https://github.com/sirmalloc/ccstatusline/issues/232
 - Related Claude Code issues: #10304, #1486, #947, #826
 - Currently monitoring whether the issue persists with ccstatusline enabled and no code changes
 
-**Status:** Monitoring. If rendering corruption continues, the fix is on Claude Code's side.
+**Root cause:** Claude Code's Ink renderer has a bug with terminal line positioning/rewriting that causes duplicate/overlapping lines. ccstatusline cannot fix this — it only outputs text to stdout, Claude Code handles all terminal rendering. Width-based truncation approaches all fail because there is no reliable way to detect the actual IDE terminal pane width from a piped subprocess on Windows.
+
+**Dead ends (do not retry):**
+1. `process.stderr.columns` / `process.stdout.columns` — undefined in piped mode
+2. `COLUMNS` env var — not reliably set in piped subprocess context
+3. `tput cols` — returns Git Bash console width, not IDE pane width
+4. `mode con` — returns Windows console buffer width, not IDE pane width
+5. Static env var override — doesn't work with multiple windows at different widths
+
+**Status:** No fix possible from ccstatusline side. Monitoring for Claude Code upstream fix.
 
 ## Important Notes
 
