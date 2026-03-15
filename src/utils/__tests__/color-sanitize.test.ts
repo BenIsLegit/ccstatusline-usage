@@ -5,6 +5,7 @@ import {
 } from 'vitest';
 
 import type { WidgetItem } from '../../types/Widget';
+import { getWidget } from '../widgets';
 import {
     hasCustomWidgetColors,
     sanitizeLinesForColorLevel
@@ -33,7 +34,7 @@ describe('color sanitize helpers', () => {
 
         const sanitized = sanitizeLinesForColorLevel(lines, 2);
 
-        expect(sanitized[0]?.[0]?.color).toBe('cyan');
+        expect(sanitized[0]?.[0]?.color).toBe(getWidget('model')?.getDefaultColor());
         expect(sanitized[0]?.[0]?.backgroundColor).toBeUndefined();
         expect(sanitized[0]?.[1]?.color).toBe('ansi256:111');
         expect(sanitized[0]?.[1]?.backgroundColor).toBe('ansi256:24');
@@ -47,7 +48,7 @@ describe('color sanitize helpers', () => {
 
         const sanitized = sanitizeLinesForColorLevel(lines, 3);
 
-        expect(sanitized[0]?.[0]?.color).toBe('cyan');
+        expect(sanitized[0]?.[0]?.color).toBe(getWidget('model')?.getDefaultColor());
         expect(sanitized[0]?.[0]?.backgroundColor).toBeUndefined();
         expect(sanitized[0]?.[1]?.color).toBe('hex:AA11BB');
         expect(sanitized[0]?.[1]?.backgroundColor).toBe('hex:112233');
@@ -61,7 +62,7 @@ describe('color sanitize helpers', () => {
 
         const sanitized = sanitizeLinesForColorLevel(lines, 1);
 
-        expect(sanitized[0]?.[0]?.color).toBe('cyan');
+        expect(sanitized[0]?.[0]?.color).toBe(getWidget('model')?.getDefaultColor());
         expect(sanitized[0]?.[0]?.backgroundColor).toBeUndefined();
         // Preserve existing behavior: separator foreground is not reset by current logic.
         expect(sanitized[0]?.[1]?.color).toBe('hex:ABCDEF');
