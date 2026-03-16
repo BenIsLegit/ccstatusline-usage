@@ -2,7 +2,7 @@ import { execFileSync } from 'child_process';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
-import { fileURLToPath } from 'url';
+import { fileURLToPath, pathToFileURL } from 'url';
 import {
     describe,
     expect,
@@ -127,7 +127,8 @@ https.request = (...args) => {
     return request;
 };
 
-const { fetchUsageData } = await import(${JSON.stringify(usageModulePath)});
+import { pathToFileURL } from 'url';
+const { fetchUsageData } = await import(pathToFileURL(${JSON.stringify(usageModulePath)}).href);
 
 const lockFile = path.join(os.homedir(), '.cache', 'ccstatusline', 'usage.lock');
 const cacheFile = path.join(os.homedir(), '.cache', 'ccstatusline', 'usage.json');
@@ -184,6 +185,7 @@ process.stdout.write(JSON.stringify({
             env: {
                 ...process.env,
                 HOME: options.home,
+                USERPROFILE: options.home,
                 PATH: options.pathDir ?? '/nonexistent',
                 TEST_NOW_MS: String(options.nowMs),
                 TEST_REQUEST_MODE: options.mode ?? 'success',
