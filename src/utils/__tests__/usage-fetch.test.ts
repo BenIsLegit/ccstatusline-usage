@@ -43,6 +43,7 @@ function createProbeHarness() {
     const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'ccstatusline-usage-test-'));
     const probeScriptPath = path.join(tempRoot, 'probe-usage.mjs');
     const usageModulePath = fileURLToPath(new URL('../usage.ts', import.meta.url));
+    const usageModuleUrl = pathToFileURL(usageModulePath).href;
 
     const probeScript = `
 import * as fs from 'fs';
@@ -127,8 +128,7 @@ https.request = (...args) => {
     return request;
 };
 
-import { pathToFileURL } from 'url';
-const { fetchUsageData } = await import(pathToFileURL(${JSON.stringify(usageModulePath)}).href);
+const { fetchUsageData } = await import(${JSON.stringify(usageModuleUrl)});
 
 const lockFile = path.join(os.homedir(), '.cache', 'ccstatusline', 'usage.lock');
 const cacheFile = path.join(os.homedir(), '.cache', 'ccstatusline', 'usage.json');
