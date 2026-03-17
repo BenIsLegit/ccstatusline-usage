@@ -15,9 +15,10 @@ import type { UsageWindowMetrics } from '../../utils/usage-types';
 import { WeeklyPaceWidget } from '../WeeklyPace';
 
 const BASE_ITEM: WidgetItem = { id: 'pace', type: 'weekly-pace' };
+const PENDULUM_ITEM: WidgetItem = { ...BASE_ITEM, metadata: { display: 'pendulum' } };
 
-function render(context: RenderContext = {}): string | null {
-    return new WeeklyPaceWidget().render(BASE_ITEM, context, DEFAULT_SETTINGS);
+function render(context: RenderContext = {}, item: WidgetItem = BASE_ITEM): string | null {
+    return new WeeklyPaceWidget().render(item, context, DEFAULT_SETTINGS);
 }
 
 function makeWindow(elapsedPercent: number): UsageWindowMetrics {
@@ -52,10 +53,25 @@ describe('WeeklyPaceWidget', () => {
         expect(new WeeklyPaceWidget().getCategory()).toBe('Usage');
     });
 
+    it('supports raw value', () => {
+        expect(new WeeklyPaceWidget().supportsRawValue()).toBe(true);
+    });
+
     // --- Preview ---
 
-    it('returns preview string', () => {
+    it('returns preview string in text mode', () => {
         expect(render({ isPreview: true })).toBe('D4/7: On Pace');
+    });
+
+    it('returns pendulum bar preview in pendulum mode', () => {
+        const result = render({ isPreview: true }, PENDULUM_ITEM);
+        expect(result).toBe('Pace: [░░░░░░░|█░░░░░░] D4/7 +10%');
+    });
+
+    it('omits label in pendulum preview when rawValue is true', () => {
+        const rawItem: WidgetItem = { ...PENDULUM_ITEM, rawValue: true };
+        const result = render({ isPreview: true }, rawItem);
+        expect(result).toBe('[░░░░░░░|█░░░░░░] D4/7 +10%');
     });
 
     // --- Null / error guards ---
@@ -168,5 +184,105 @@ describe('WeeklyPaceWidget', () => {
     it('clamps weeklyUsage below 0 to 0', () => {
         mockResolveWeeklyUsageWindow.mockReturnValue(makeWindow(50));
         expect(render({ usageData: { weeklyUsage: -10 } })).toMatch(/Underusing -50%/);
+    });
+
+    // --- rawValue support ---
+
+    it('omits label prefix in text mode when rawValue is true', () => {
+        mockResolveWeeklyUsageWindow.mockReturnValue(makeWindow(50));
+        const rawItem: WidgetItem = { ...BASE_ITEM, rawValue: true };
+        expect(render({ usageData: { weeklyUsage: 50 } }, rawItem)).toBe('D4/7: On Pace');
+    });
+
+    it('omits Pace: prefix in pendulum mode when rawValue is true', () => {
+        mockResolveWeeklyUsageWindow.mockReturnValue(makeWindow(50));
+        const rawItem: WidgetItem = { ...PENDULUM_ITEM, rawValue: true };
+        const result = render({ usageData: { weeklyUsage: 60 } }, rawItem);
+        expect(result).not.toMatch(/^Pace:/);
+        expect(result).toMatch(/^\[/);
+    });
+
+    it('includes Pace: prefix in pendulum mode when rawValue is false', () => {
+        mockResolveWeeklyUsageWindow.mockReturnValue(makeWindow(50));
+        const result = render({ usageData: { weeklyUsage: 60 } }, PENDULUM_ITEM);
+        expect(result).toMatch(/^Pace: \[/);
+    });
+
+    // --- Pendulum bar rendering ---
+
+    it('renders pendulum bar with positive delta (ahead of pace)', () => {
+        // 30% elapsed, 50% usage → delta = +20%
+        mockResolveWeeklyUsageWindow.mockReturnValue(makeWindow(30));
+        const result = render({ usageData: { weeklyUsage: 50 } }, PENDULUM_ITEM);
+        expect(result).toMatch(/\[░+\|█+░*\]/);
+        expect(result).toContain('D3/7 +20%');
+    });
+
+    it('renders pendulum bar with negative delta (behind pace)', () => {
+        // 50% elapsed, 30% usage → delta = -20%
+        mockResolveWeeklyUsageWindow.mockReturnValue(makeWindow(50));
+        const result = render({ usageData: { weeklyUsage: 30 } }, PENDULUM_ITEM);
+        expect(result).toMatch(/\[░*█+\|░+\]/);
+        expect(result).toContain('D4/7 -20%');
+    });
+
+    it('renders pendulum bar on pace (delta near zero)', () => {
+        mockResolveWeeklyUsageWindow.mockReturnValue(makeWindow(50));
+        const result = render({ usageData: { weeklyUsage: 50 } }, PENDULUM_ITEM);
+        expect(result).toContain('[░░░░░░░|░░░░░░░]');
+        expect(result).toContain('D4/7 +0%');
+    });
+
+    // --- Pendulum preview ---
+
+    it('shows pendulum bar in preview with positive delta', () => {
+        const result = render({ isPreview: true }, PENDULUM_ITEM);
+        expect(result).toMatch(/\[░+\|█+░*\]/);
+        expect(result).toContain('D4/7 +10%');
+    });
+
+    // --- Display mode toggle ---
+
+    it('toggles from text to pendulum mode', () => {
+        const widget = new WeeklyPaceWidget();
+        const result = widget.handleEditorAction('toggle-pendulum', BASE_ITEM);
+        expect(result?.metadata?.display).toBe('pendulum');
+    });
+
+    it('toggles from pendulum back to text mode', () => {
+        const widget = new WeeklyPaceWidget();
+        const result = widget.handleEditorAction('toggle-pendulum', PENDULUM_ITEM);
+        expect(result?.metadata?.display).toBe('text');
+    });
+
+    it('returns null for unknown editor action', () => {
+        const widget = new WeeklyPaceWidget();
+        expect(widget.handleEditorAction('unknown', BASE_ITEM)).toBeNull();
+    });
+
+    // --- Custom keybinds ---
+
+    it('exposes pendulum toggle keybind', () => {
+        const widget = new WeeklyPaceWidget();
+        const keybinds = widget.getCustomKeybinds();
+        expect(keybinds).toEqual([
+            { key: 'p', label: '(p)endulum toggle', action: 'toggle-pendulum' }
+        ]);
+    });
+
+    // --- Editor display ---
+
+    it('shows no modifier text in text mode', () => {
+        const widget = new WeeklyPaceWidget();
+        const display = widget.getEditorDisplay(BASE_ITEM);
+        expect(display.displayText).toBe('Weekly Pace');
+        expect(display.modifierText).toBeUndefined();
+    });
+
+    it('shows (pendulum bar) modifier text in pendulum mode', () => {
+        const widget = new WeeklyPaceWidget();
+        const display = widget.getEditorDisplay(PENDULUM_ITEM);
+        expect(display.displayText).toBe('Weekly Pace');
+        expect(display.modifierText).toBe('(pendulum bar)');
     });
 });
