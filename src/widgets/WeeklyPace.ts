@@ -38,7 +38,7 @@ export class WeeklyPaceWidget implements Widget {
         const delta = actualPercent - expectedPercent;
 
         // Day 1-7 within the weekly window
-        const dayOfWeek = Math.min(7, Math.floor(window.elapsedPercent * 7 / 100) + 1);
+        const dayOfWeek = Math.max(1, Math.min(7, Math.ceil(window.elapsedPercent * 7 / 100)));
 
         let status: string;
         if (delta > 15) {
