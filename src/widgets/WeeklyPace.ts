@@ -93,12 +93,16 @@ export class WeeklyPaceWidget implements Widget {
         }
 
         const data = context.usageData;
-        if (!data) return null;
-        if (data.error) return getUsageErrorMessage(data.error);
-        if (data.weeklyUsage === undefined) return null;
+        if (!data)
+            return null;
+        if (data.error)
+            return getUsageErrorMessage(data.error);
+        if (data.weeklyUsage === undefined)
+            return null;
 
         const window = resolveWeeklyUsageWindow(data);
-        if (!window) return null;
+        if (!window)
+            return null;
 
         const actualPercent = Math.max(0, Math.min(100, data.weeklyUsage));
         const { delta, dayOfWeek, status } = computePace(actualPercent, window.elapsedPercent);

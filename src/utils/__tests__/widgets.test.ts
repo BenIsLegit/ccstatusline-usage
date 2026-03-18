@@ -37,7 +37,6 @@ describe('widget catalog', () => {
         const outputSpeed = catalog.find(entry => entry.type === 'output-speed');
         const totalSpeed = catalog.find(entry => entry.type === 'total-speed');
         const resetTimer = catalog.find(entry => entry.type === 'reset-timer');
-        const weeklyResetTimer = catalog.find(entry => entry.type === 'weekly-reset-timer');
 
         expect(model?.displayName).toBe('Model');
         expect(model?.category).toBe('Core');

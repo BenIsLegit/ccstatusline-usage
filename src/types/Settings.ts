@@ -66,6 +66,7 @@ export const SettingsSchema = z.object({
         theme: undefined,
         autoAlign: false
     }),
+    extraUsageBalance: z.number().optional(),
     updatemessage: z.object({
         message: z.string().nullable().optional(),
         remaining: z.number().nullable().optional()
