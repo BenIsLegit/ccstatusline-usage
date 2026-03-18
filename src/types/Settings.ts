@@ -42,7 +42,9 @@ export const SettingsSchema = z.object({
                 { id: 'session-id', type: 'claude-session-id', color: 'cyan' }
             ],
             [
-                { id: 'context-bar', type: 'context-bar', color: 'blue' }
+                { id: 'context-bar', type: 'context-bar', color: 'blue' },
+                { id: 'sep-off-peak', type: 'separator' },
+                { id: 'off-peak', type: 'off-peak', color: 'green' }
             ],
             []
         ]),

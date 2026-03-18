@@ -409,9 +409,15 @@ export class ResetTimerWidget implements Widget {
         if (data.error)
             return getErrorMessage(data.error);
 
-        // When extra usage is active AND weekly limit is reached (100%), show spending instead of reset timer
-        if (data.extraUsageEnabled && data.weeklyUsage !== undefined && data.weeklyUsage >= 100
-            && data.extraUsageUsed !== undefined && data.extraUsageLimit !== undefined) {
+        // Determine if the current model charges extra usage (Sonnet [1m] does, Opus [1m] does not)
+        const modelId = context.data?.model?.id ?? '';
+        const is1mModel = modelId.includes('[1m]');
+        const isOpus = modelId.includes('opus');
+        const isChargedModel = is1mModel && !isOpus;
+
+        // Show extra usage spending when: weekly limit reached (100%) OR using a charged [1m] model (e.g. Sonnet [1m])
+        if (data.extraUsageEnabled && data.extraUsageUsed !== undefined && data.extraUsageLimit !== undefined
+            && ((data.weeklyUsage !== undefined && data.weeklyUsage >= 100) || isChargedModel)) {
             const used = formatCents(data.extraUsageUsed);
             const displayLimit = settings.extraUsageBalance ?? data.extraUsageLimit;
             const limit = formatCents(displayLimit);
