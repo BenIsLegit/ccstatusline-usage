@@ -60,27 +60,9 @@ export default ts.config([
         rules: {
             'no-control-regex': 'off', // We intentionally match ANSI escape sequences
             'eqeqeq': 'error',
-            'import/order': ['error', {
-                alphabetize: {
-                    'order': 'asc',
-                    'orderImportKind': 'asc',
-                    'caseInsensitive': false
-                },
-                named: {
-                    'enabled': true,
-                    'types': 'types-last'
-                },
-                pathGroupsExcludedImportTypes: ["builtin"],
-                groups: [
-                    ['builtin', 'external'],
-                    'internal',
-                    'parent',
-                    'sibling',
-                    'index',
-                    'unknown'
-                ],
-                'newlines-between': 'always'
-            }],
+            // Disabled: eslint-plugin-import@2.x import/order crashes with ESLint 10
+            // (sourceCode.getTokenOrCommentBefore is not a function)
+            'import/order': 'off',
             'import-newlines/enforce': ['error', {
                 items: 1,
                 semi: true

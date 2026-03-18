@@ -24,6 +24,29 @@ const TOKEN_CACHE_MAX_AGE = 3600; // 1 hour
 // Error types matching shell script
 type ApiError = 'no-credentials' | 'timeout' | 'api-error' | 'parse-error';
 
+interface OAuthCredentials { accessToken?: string }
+interface CredentialsFile { claudeAiOauth?: OAuthCredentials }
+
+interface FiveHourUsage {
+    utilization?: number;
+    resets_at?: string;
+}
+
+interface SevenDayUsage { utilization?: number }
+
+interface ExtraUsage {
+    is_enabled?: boolean;
+    monthly_limit?: number;
+    used_credits?: number;
+    utilization?: number;
+}
+
+interface ApiResponseData {
+    five_hour?: FiveHourUsage;
+    seven_day?: SevenDayUsage;
+    extra_usage?: ExtraUsage;
+}
+
 interface ApiData {
     sessionUsage?: number;  // five_hour.utilization (percentage)
     sessionResetAt?: string; // five_hour.reset_at
@@ -46,8 +69,8 @@ const CRED_FILE = path.join(os.homedir(), '.claude', '.credentials.json');
 
 function readTokenFromFile(): string | null {
     try {
-        const creds = JSON.parse(fs.readFileSync(CRED_FILE, 'utf8'));
-        return creds?.claudeAiOauth?.accessToken ?? null;
+        const creds = JSON.parse(fs.readFileSync(CRED_FILE, 'utf8')) as CredentialsFile;
+        return creds.claudeAiOauth?.accessToken ?? null;
     } catch {
         return null;
     }
@@ -59,8 +82,8 @@ function readTokenFromKeychain(): string | null {
             'security find-generic-password -s "Claude Code-credentials" -w 2>/dev/null',
             { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] }
         ).trim();
-        const parsed = JSON.parse(result);
-        return parsed?.claudeAiOauth?.accessToken ?? null;
+        const parsed = JSON.parse(result) as CredentialsFile;
+        return parsed.claudeAiOauth?.accessToken ?? null;
     } catch {
         return null;
     }
@@ -84,8 +107,7 @@ function getToken(): string | null {
     let token: string | null = null;
     if (process.platform === 'darwin')
         token = readTokenFromKeychain();
-    if (!token)
-        token = readTokenFromFile();
+    token ??= readTokenFromFile();
 
     if (token) {
         cachedToken = token;
@@ -96,14 +118,13 @@ function getToken(): string | null {
 
 function readStaleCache(): ApiData | null {
     try {
-        return JSON.parse(fs.readFileSync(CACHE_FILE, 'utf8'));
+        return JSON.parse(fs.readFileSync(CACHE_FILE, 'utf8')) as ApiData;
     } catch {
         return null;
     }
 }
 
-// Fetch result: null = network/other error, 'auth-error' = 401, 'rate-limited' = 429, string = response body
-type FetchResult = string | 'auth-error' | 'rate-limited' | null;
+type FetchResult = string | null;
 
 // Fetch API using Node's built-in https module (no curl dependency)
 function fetchFromApi(token: string): FetchResult {
@@ -178,7 +199,7 @@ function fetchApiData(): ApiData {
         const stat = fs.statSync(CACHE_FILE);
         const fileAge = now - Math.floor(stat.mtimeMs / 1000);
         if (fileAge < CACHE_MAX_AGE) {
-            const fileData: ApiData = JSON.parse(fs.readFileSync(CACHE_FILE, 'utf8'));
+            const fileData = JSON.parse(fs.readFileSync(CACHE_FILE, 'utf8')) as ApiData;
             if (!fileData.error) {
                 cachedData = fileData;
                 cacheTime = now;
@@ -257,7 +278,7 @@ function fetchApiData(): ApiData {
             return { error: 'api-error' };
         }
 
-        const data = JSON.parse(response);
+        const data = JSON.parse(response) as ApiResponseData;
 
         // Extract utilization data
         const apiData: ApiData = {};
@@ -308,10 +329,10 @@ function fetchApiData(): ApiData {
 
 function getErrorMessage(error: ApiError): string {
     switch (error) {
-    case 'no-credentials': return '[No credentials]';
-    case 'timeout': return '[Timeout]';
-    case 'api-error': return '[API Error]';
-    case 'parse-error': return '[Parse Error]';
+        case 'no-credentials': return '[No credentials]';
+        case 'timeout': return '[Timeout]';
+        case 'api-error': return '[API Error]';
+        case 'parse-error': return '[Parse Error]';
     }
 }
 
@@ -410,7 +431,8 @@ export class ResetTimerWidget implements Widget {
             return getErrorMessage(data.error);
 
         // Determine if the current model charges extra usage (Sonnet [1m] does, Opus [1m] does not)
-        const modelId = context.data?.model?.id ?? '';
+        const model = context.data?.model;
+        const modelId = (typeof model === 'string' ? model : model?.id) ?? '';
         const is1mModel = modelId.includes('[1m]');
         const isOpus = modelId.includes('opus');
         const isChargedModel = is1mModel && !isOpus;

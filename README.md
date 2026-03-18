@@ -66,6 +66,11 @@ Session: [████░░░░░░░░░░░] 27.0% | Weekly: [██
 
 ## 🆕 Recent Updates
 
+### [v2.3.3](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.3.3) - CI pipeline fix
+
+- [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **CI pipeline fix** — Fixed TypeScript errors (model union type narrowing, missing `extraUsageBalance` setting), disabled broken `import/order` ESLint rule (incompatible with ESLint 10), resolved all remaining lint errors in fork-specific files
+- [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **Release workflow** — Added mandatory CI pipeline check before tagging/releasing
+
 ### [v2.3.2](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.3.2) - Off Peak widget + WeeklyPace compact fix
 
 - [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **Off Peak widget** — New widget showing `Off peak: Off-peak 2x` or `Off peak: Peak` during the Anthropic March 2026 Spring Break promotion (off-peak = weekdays outside 8 AM–2 PM ET, weekends all day). Widget automatically hides after March 28, 2026 23:59 PT.
