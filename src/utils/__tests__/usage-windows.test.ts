@@ -4,7 +4,10 @@ import {
     it
 } from 'vitest';
 
-import { getUsageErrorMessage, makePendulumBar } from '../usage-windows';
+import {
+    getUsageErrorMessage,
+    makePendulumBar
+} from '../usage-windows';
 
 describe('getUsageErrorMessage', () => {
     it('returns the rate-limited label', () => {
