@@ -5,6 +5,7 @@ export {
     getUsageWindowFromBlockMetrics,
     getUsageWindowFromResetAt,
     getWeeklyUsageWindowFromResetAt,
+    makePendulumBar,
     makeUsageProgressBar,
     resolveUsageWindowWithFallback,
     resolveWeeklyUsageWindow

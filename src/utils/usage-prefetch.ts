@@ -8,7 +8,8 @@ const USAGE_WIDGET_TYPES = new Set<string>([
     'weekly-usage',
     'block-timer',
     'reset-timer',
-    'weekly-reset-timer'
+    'weekly-reset-timer',
+    'weekly-pace'
 ]);
 
 export function hasUsageDependentWidgets(lines: WidgetItem[][]): boolean {

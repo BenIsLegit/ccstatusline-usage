@@ -117,3 +117,12 @@ export function makeUsageProgressBar(percent: number, width = 15): string {
     const empty = width - filled;
     return '[' + '█'.repeat(filled) + '░'.repeat(empty) + ']';
 }
+
+export function makePendulumBar(delta: number, halfWidth = 7): string {
+    const clamped = Math.max(-100, Math.min(100, delta));
+    const fill = Math.min(halfWidth, Math.round((Math.abs(clamped) / 100) * halfWidth));
+    if (clamped < 0) {
+        return '[' + '░'.repeat(halfWidth - fill) + '█'.repeat(fill) + '|' + '░'.repeat(halfWidth) + ']';
+    }
+    return '[' + '░'.repeat(halfWidth) + '|' + '█'.repeat(fill) + '░'.repeat(halfWidth - fill) + ']';
+}
