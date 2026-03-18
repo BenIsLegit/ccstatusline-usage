@@ -34,3 +34,4 @@ export { ThinkingEffortWidget } from './ThinkingEffort';
 export { BatteryWidget } from './Battery';
 export { VimModeWidget } from './VimMode';
 export { WeeklyPaceWidget } from './WeeklyPace';
+export { OffPeakWidget } from './OffPeak';

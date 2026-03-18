@@ -34,13 +34,14 @@ This fork adds API-based usage widgets beyond the upstream:
 - **Weekly Pace** - Pendulum bar showing if you're ahead or behind expected usage pace
 - **Reset Timer** - Time until 5-hour session window resets
 - **Context Window Display** - Visual bar showing context usage
+- **Off Peak** - Shows peak/off-peak 2x status during Anthropic usage promotions
 - **Two-line Layout** - Session info on line 1, context on line 2
 
 ### Enhanced Status Line Preview
 
 ```
 Session: [████░░░░░░░░░░░] 27.0% | Weekly: [███████████████] 100.0% | Extra: €2.50/€50.00 | Model: Opus 4.6 | Session ID: 0109b99d...
-  Context: [███████░░░░░░░░] 103k/200k (51%) | Pace: [░░░░░░░|██░░░░░] D5/7 +12%
+  Context: [███████░░░░░░░░] 103k/200k (51%) | Pace: [░░░░░░░|██░░░░░] D5/7 +12% | Off peak: Off-peak 2x
 ```
 
 ![Demo](https://raw.githubusercontent.com/sirmalloc/ccstatusline/main/screenshots/demo.gif)
@@ -64,6 +65,12 @@ Session: [████░░░░░░░░░░░] 27.0% | Weekly: [██
 ---
 
 ## 🆕 Recent Updates
+
+### [v2.3.2](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.3.2) - Off Peak widget + WeeklyPace compact fix
+
+- [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **Off Peak widget** — New widget showing `Off peak: Off-peak 2x` or `Off peak: Peak` during the Anthropic March 2026 Spring Break promotion (off-peak = weekdays outside 8 AM–2 PM ET, weekends all day). Widget automatically hides after March 28, 2026 23:59 PT.
+- [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **WeeklyPace compact fix** — Pendulum bar now falls back to text mode (`D6/7: -18%`) on narrow terminals (< 80 chars)
+- [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **Sonnet [1m] extra usage fix** — Extra usage spending now shown when a charged `[1m]` model (e.g. Sonnet) is active, regardless of weekly limit status
 
 ### [v2.3.1](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.3.1) - Weekly Pace widget
 
@@ -550,6 +557,7 @@ bun run example
 - **Skills** - Shows skill activity as last used, total count, or unique list (with optional list limit and hide-when-empty toggle)
 - **Thinking Effort** - Shows the current Claude Code thinking effort level
 - **Vim Mode** - Displays current vim editor mode
+- **Off Peak** *(ccstatusline-usage)* - Shows `Off peak: Off-peak 2x` or `Off peak: Peak` during Anthropic usage promotions (auto-hides when promotion ends)
 - **Separator** - Visual divider between widgets (available when Powerline mode is off and no default separator is configured)
 - **Flex Separator** - Expands to fill available space (available when Powerline mode is off)
 
