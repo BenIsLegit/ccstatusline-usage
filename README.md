@@ -65,6 +65,10 @@ Session: [████░░░░░░░░░░░] 27.0% | Weekly: [██
 
 ## 🆕 Recent Updates
 
+### [v2.3.1](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.3.1) - Weekly Pace widget
+
+- [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **Weekly Pace widget** — New widget showing if weekly usage pace is on track, with pendulum bar or text display mode (PR #1 by @BenIsLegit)
+
 ### [v2.3.0](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.3.0) - Upstream sync + Vim Mode widget
 
 - [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **Upstream sync** — Merged 14 upstream commits: Vim Mode widget, hyperlink support for GitBranch/GitRootDir, ESLint 10 upgrade, timer day display fix (≥24h), macOS keychain token fallback, ink-gradient 4.0.0
