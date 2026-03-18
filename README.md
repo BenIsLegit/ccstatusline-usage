@@ -31,6 +31,7 @@
 This fork adds API-based usage widgets beyond the upstream:
 
 - **Session/Weekly Usage** - Real utilization from Anthropic API with progress bars
+- **Weekly Pace** - Pendulum bar showing if you're ahead or behind expected usage pace
 - **Reset Timer** - Time until 5-hour session window resets
 - **Context Window Display** - Visual bar showing context usage
 - **Two-line Layout** - Session info on line 1, context on line 2
@@ -39,7 +40,7 @@ This fork adds API-based usage widgets beyond the upstream:
 
 ```
 Session: [████░░░░░░░░░░░] 27.0% | Weekly: [███████████████] 100.0% | Extra: €2.50/€50.00 | Model: Opus 4.6 | Session ID: 0109b99d...
-  Context: [███████░░░░░░░░] 103k/200k (51%)
+  Context: [███████░░░░░░░░] 103k/200k (51%) | Pace: [░░░░░░░|██░░░░░] D5/7 +12%
 ```
 
 ![Demo](https://raw.githubusercontent.com/sirmalloc/ccstatusline/main/screenshots/demo.gif)
@@ -538,6 +539,7 @@ bun run example
 - **Battery** *(ccstatusline-usage)* - Shows battery percentage on macOS and Linux (only visible when on battery power, hidden when charging)
 - **Session Usage** - Shows daily/session API usage percentage
 - **Weekly Usage** - Shows weekly API usage percentage
+- **Weekly Pace** - Pendulum bar or text label showing if usage pace is on track, overcooking, or underutilized (toggle with `p` key in TUI)
 - **Block Reset Timer** - Shows time remaining until current 5-hour block reset window
 - **Weekly Reset Timer** - Shows time remaining until weekly usage reset
 - **Context Bar** - Shows context usage as a progress bar with short/full display modes
@@ -631,6 +633,7 @@ Widget-specific shortcuts:
 - **Block Timer**: `p` cycle display mode (time/full bar/short bar)
 - **Block Reset Timer**: `p` cycle display mode (time/full bar/short bar)
 - **Weekly Reset Timer**: `p` cycle display mode (time/full bar/short bar)
+- **Weekly Pace**: `p` toggle pendulum bar / text label
 - **Current Working Dir**: `h` home abbreviation, `s` segment editor, `f` fish-style path
 - **Custom Command**: `e` command, `w` max width, `t` timeout, `p` preserve ANSI colors
 - **Link**: `u` URL, `e` link text
