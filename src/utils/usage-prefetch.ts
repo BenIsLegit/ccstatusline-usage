@@ -55,6 +55,10 @@ function hasCompleteRateLimitsUsageData(usageData: UsageData | null): usageData 
         && usageData.weeklyResetAt !== undefined;
 }
 
+function hasExtraUsageDependentWidgets(lines: WidgetItem[][]): boolean {
+    return lines.some(line => line.some(item => item.type === 'reset-timer'));
+}
+
 export async function prefetchUsageDataIfNeeded(lines: WidgetItem[][], data?: StatusJSON): Promise<UsageData | null> {
     if (!hasUsageDependentWidgets(lines)) {
         return null;
@@ -62,6 +66,13 @@ export async function prefetchUsageDataIfNeeded(lines: WidgetItem[][], data?: St
 
     const rateLimitsData = extractUsageDataFromRateLimits(data?.rate_limits);
     if (hasCompleteRateLimitsUsageData(rateLimitsData)) {
+        // rate_limits lacks extraUsage fields — supplement via API for reset-timer
+        if (hasExtraUsageDependentWidgets(lines)) {
+            const apiData = await fetchUsageData();
+            if (apiData.error === undefined) {
+                return { ...rateLimitsData, extraUsageEnabled: apiData.extraUsageEnabled, extraUsageLimit: apiData.extraUsageLimit, extraUsageUsed: apiData.extraUsageUsed, extraUsageUtilization: apiData.extraUsageUtilization };
+            }
+        }
         return rateLimitsData;
     }
 
