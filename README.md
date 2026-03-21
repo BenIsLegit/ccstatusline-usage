@@ -66,6 +66,11 @@ Session: [████░░░░░░░░░░░] 27.0% | Weekly: [██
 
 ## 🆕 Recent Updates
 
+### [v2.3.4](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.3.4) - Upstream sync
+
+- [sirmalloc/ccstatusline](https://github.com/sirmalloc/ccstatusline): **Native rate_limits support** — Upstream now uses Claude Code 2.1.80's native `rate_limits` field for usage data
+
+
 ### [v2.3.3](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.3.3) - CI pipeline fix
 
 - [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **CI pipeline fix** — Fixed TypeScript errors (model union type narrowing, missing `extraUsageBalance` setting), disabled broken `import/order` ESLint rule (incompatible with ESLint 10), resolved all remaining lint errors in fork-specific files
