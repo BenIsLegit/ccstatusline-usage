@@ -573,6 +573,30 @@ bun run example
 
 ---
 
+### 🎯 Recommended Status Bar Layout
+
+This two-line layout gives you a complete overview of your Claude Code session:
+
+```
+Session: [██░░░░░░░░░░░░░] 11.0% | Weekly: [█████████░░░░░░] 57.0% | 3:47 hr | Model: Opus 4.6[1m] | Session ID: a452c5fa-b8cb-4af4-8b24-34a28e8ee379
+Context: [░░░░░░░░░░░░░░░] 30k/1M (3%) | Pace: [░░░░░██|░░░░░░░] D7/7 -28%
+```
+
+**Line 1:** Session usage, weekly usage, reset timer, battery, model, session ID
+**Line 2:** Context bar, weekly pace, off-peak indicator
+
+#### Session ID Workflow
+
+The **Session ID** in the status bar doubles as a quick reference for reviewing previous sessions. Copy it and use it with the [search-chats](https://github.com/anthropics/claude-code-marketplace/tree/main/plugins/search-chats) plugin:
+
+```
+/search-chat a452c5fa
+```
+
+This extracts the last 200 lines of that session — useful for debugging, reviewing earlier work, or providing context to a new session ("I had an issue in session a452c5fa").
+
+---
+
 ### Terminal Width Options
 These settings affect where long lines are truncated, and where right-alignment occurs when using flex separators:
 - **Full width always** - Uses full terminal width (may wrap if auto-compact message appears or IDE integration adds text)
