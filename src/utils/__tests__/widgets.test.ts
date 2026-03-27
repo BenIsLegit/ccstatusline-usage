@@ -37,6 +37,7 @@ describe('widget catalog', () => {
         const outputSpeed = catalog.find(entry => entry.type === 'output-speed');
         const totalSpeed = catalog.find(entry => entry.type === 'total-speed');
         const resetTimer = catalog.find(entry => entry.type === 'reset-timer');
+        const weeklyResetTimer = catalog.find(entry => entry.type === 'weekly-reset-timer');
 
         expect(model?.displayName).toBe('Model');
         expect(model?.category).toBe('Core');
@@ -56,6 +57,8 @@ describe('widget catalog', () => {
         expect(totalSpeed?.category).toBe('Token Speed');
         expect(resetTimer?.displayName).toBe('Reset Timer');
         expect(resetTimer?.category).toBe('API Usage');
+        expect(weeklyResetTimer?.displayName).toBe('Weekly Reset Timer');
+        expect(weeklyResetTimer?.category).toBe('Usage');
     });
 
     it('hides manual separator when default separator is configured', () => {

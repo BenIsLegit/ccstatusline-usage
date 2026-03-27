@@ -18,7 +18,7 @@
 
 [![npm version](https://img.shields.io/npm/v/ccstatusline-usage.svg)](https://www.npmjs.com/package/ccstatusline-usage)
 [![npm downloads](https://img.shields.io/npm/dm/ccstatusline-usage.svg)](https://www.npmjs.com/package/ccstatusline-usage)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/sirmalloc/ccstatusline/blob/main/LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/pcvelz/ccstatusline-usage/blob/main/LICENSE)
 [![Node.js Version](https://img.shields.io/node/v/ccstatusline-usage.svg)](https://nodejs.org)
 [![install size](https://packagephobia.com/badge?p=ccstatusline-usage)](https://packagephobia.com/result?p=ccstatusline-usage)
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/pcvelz/ccstatusline-usage/graphs/commit-activity)
@@ -34,7 +34,7 @@ This fork adds API-based usage widgets beyond the upstream:
 - **Weekly Pace** - Pendulum bar showing if you're ahead or behind expected usage pace
 - **Reset Timer** - Time until 5-hour session window resets
 - **Context Window Display** - Visual bar showing context usage
-- **Off Peak** - Shows peak/off-peak 2x status during Anthropic usage promotions
+- **Off Peak** - Shows peak/off-peak status with countdown timer (peak hours drain sessions faster)
 - **Two-line Layout** - Session info on line 1, context on line 2
 
 ### Enhanced Status Line Preview
@@ -65,6 +65,12 @@ Session: [████░░░░░░░░░░░] 27.0% | Weekly: [██
 ---
 
 ## 🆕 Recent Updates
+
+### [v2.3.5](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.3.5) - Upstream sync + permanent peak/off-peak widget
+
+- [sirmalloc/ccstatusline](https://github.com/sirmalloc/ccstatusline): **Major upstream sync** — 180 commits merged, including Weekly Reset Timer widget, new test infrastructure, Windows support, and various improvements
+- [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **Permanent Off-Peak widget** — Widget no longer disappears after the March 28 promo ends; shows peak/off-peak status permanently with countdown timer (Anthropic confirmed peak hours continue to drain sessions faster)
+- [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **README fork branding fix** — Fixed upstream package name references in Windows install commands, WSL section, and dev setup
 
 ### [v2.3.4](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.3.4) - Upstream sync + extra usage fix
 
@@ -337,19 +343,19 @@ ccstatusline works seamlessly on Windows with full feature compatibility across 
 irm bun.sh/install.ps1 | iex
 
 # Run ccstatusline
-bunx -y ccstatusline@latest
+bunx -y ccstatusline-usage@latest
 ```
 
 #### Option 2: Using Node.js
 ```powershell
 # Using npm
-npx -y ccstatusline@latest
+npx -y ccstatusline-usage@latest
 
 # Or with Yarn
-yarn dlx ccstatusline@latest
+yarn dlx ccstatusline-usage@latest
 
 # Or with pnpm
-pnpm dlx ccstatusline@latest
+pnpm dlx ccstatusline-usage@latest
 ```
 
 ### Windows-Specific Features
@@ -404,7 +410,7 @@ winget install Git.Git
 **Issue**: Permission errors during installation
 ```powershell
 # Use non-global installation (recommended)
-npx -y ccstatusline@latest
+npx -y ccstatusline-usage@latest
 
 # Or run PowerShell as Administrator for global install
 ```
@@ -432,7 +438,7 @@ ccstatusline works perfectly in WSL environments:
 # Install in WSL Ubuntu/Debian
 curl -fsSL https://bun.sh/install | bash
 source ~/.bashrc
-bunx -y ccstatusline@latest
+bunx -y ccstatusline-usage@latest
 ```
 
 **WSL Benefits**:
@@ -471,7 +477,7 @@ Configure ccstatusline in your Claude Code settings:
 {
   "statusLine": {
     "type": "command",
-    "command": "bunx -y ccstatusline@latest",
+    "command": "bunx -y ccstatusline-usage@latest",
     "padding": 0
   }
 }
@@ -482,7 +488,7 @@ Configure ccstatusline in your Claude Code settings:
 {
   "statusLine": {
     "type": "command",
-    "command": "npx -y ccstatusline@latest",
+    "command": "npx -y ccstatusline-usage@latest",
     "padding": 0
   }
 }
@@ -567,7 +573,7 @@ bun run example
 - **Skills** - Shows skill activity as last used, total count, or unique list (with optional list limit and hide-when-empty toggle)
 - **Thinking Effort** - Shows the current Claude Code thinking effort level
 - **Vim Mode** - Displays current vim editor mode
-- **Off Peak** *(ccstatusline-usage)* - Shows `Off peak: Off-peak 2x` or `Off peak: Peak` during Anthropic usage promotions (auto-hides when promotion ends)
+- **Off Peak** *(ccstatusline-usage)* - Shows `Off-peak (X:XX hr)` or `Peak (X:XX hr)` with countdown to next status change. Peak hours (5-11 AM PT weekdays) drain sessions faster per Anthropic's permanent capacity policy
 - **Separator** - Visual divider between widgets (available when Powerline mode is off and no default separator is configured)
 - **Flex Separator** - Expands to fill available space (available when Powerline mode is off)
 
@@ -762,7 +768,7 @@ The documentation will be generated in the `docs/` directory and can be viewed b
 
 ```bash
 # Clone the repository
-git clone https://github.com/sirmalloc/ccstatusline.git
+git clone https://github.com/pcvelz/ccstatusline-usage.git
 cd ccstatusline
 
 # Install dependencies
@@ -922,7 +928,7 @@ Give a ⭐ if this project helped you!
 
 [![npm version](https://img.shields.io/npm/v/ccstatusline-usage.svg)](https://www.npmjs.com/package/ccstatusline-usage)
 [![npm downloads](https://img.shields.io/npm/dm/ccstatusline-usage.svg)](https://www.npmjs.com/package/ccstatusline-usage)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/sirmalloc/ccstatusline/blob/main/LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/pcvelz/ccstatusline-usage/blob/main/LICENSE)
 [![Made with Bun](https://img.shields.io/badge/Made%20with-Bun-000000.svg?logo=bun)](https://bun.sh)
 
 [![Issues](https://img.shields.io/github/issues/sirmalloc/ccstatusline)](https://github.com/sirmalloc/ccstatusline/issues)

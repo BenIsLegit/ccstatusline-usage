@@ -50,6 +50,7 @@ export const WIDGET_MANIFEST: WidgetManifestEntry[] = [
     { type: 'session-usage', create: () => new widgets.SessionUsageWidget() },
     { type: 'weekly-usage', create: () => new widgets.WeeklyUsageWidget() },
     { type: 'reset-timer', create: () => new widgets.ResetTimerWidget() },
+    { type: 'weekly-reset-timer', create: () => new widgets.WeeklyResetTimerWidget() },
     { type: 'context-bar', create: () => new widgets.ContextBarWidget() },
     { type: 'skills', create: () => new widgets.SkillsWidget() },
     { type: 'thinking-effort', create: () => new widgets.ThinkingEffortWidget() },

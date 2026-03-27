@@ -166,6 +166,7 @@ async function renderMultipleLines(data: StatusJSON) {
 
     // Create render context — use compactWidth as terminalWidth so widgets render shorter
     const effectiveWidth = compactWidth ?? terminalWidth;
+
     const context: RenderContext = {
         data,
         tokenMetrics,

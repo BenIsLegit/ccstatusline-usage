@@ -28,6 +28,7 @@ export { TotalSpeedWidget } from './TotalSpeed';
 export { FreeMemoryWidget } from './FreeMemory';
 export { SessionNameWidget } from './SessionName';
 export { ContextBarWidget, ResetTimerWidget, SessionUsageWidget, WeeklyUsageWidget } from './ApiUsage';
+export { WeeklyResetTimerWidget } from './WeeklyResetTimer';
 export { LinkWidget } from './Link';
 export { SkillsWidget } from './Skills';
 export { ThinkingEffortWidget } from './ThinkingEffort';
