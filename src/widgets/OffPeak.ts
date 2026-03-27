@@ -16,42 +16,53 @@ const PROMO_END_MS   = Date.UTC(2026, 2, 29, 6, 59, 0);   // March 28 23:59 PDT 
 const PEAK_START_UTC_HOUR = 12;
 const PEAK_END_UTC_HOUR   = 18;
 
-function isOffPeak(now: Date): boolean | null {
-    const ms = now.getTime();
-    if (ms < PROMO_START_MS || ms >= PROMO_END_MS) {
-        return null; // outside promotion window — hide widget
-    }
-
-    // getUTCDay(): 0 = Sunday, 6 = Saturday
+function isWeekend(now: Date): boolean {
     const dayOfWeek = now.getUTCDay();
-    const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
-    if (isWeekend)
-        return true;
-
-    const utcHour = now.getUTCHours();
-    const isPeak = utcHour >= PEAK_START_UTC_HOUR && utcHour < PEAK_END_UTC_HOUR;
-    return !isPeak;
+    return dayOfWeek === 0 || dayOfWeek === 6;
 }
 
-// Returns minutes until the window flips, or null if weekend (all-day off-peak, no flip today)
-function minutesUntilFlip(now: Date): number | null {
-    const dayOfWeek = now.getUTCDay();
-    const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
-    if (isWeekend)
-        return null;
+function isPeakHour(now: Date): boolean {
+    const utcHour = now.getUTCHours();
+    return utcHour >= PEAK_START_UTC_HOUR && utcHour < PEAK_END_UTC_HOUR;
+}
+
+function isPromoActive(now: Date): boolean {
+    const ms = now.getTime();
+    return ms >= PROMO_START_MS && ms < PROMO_END_MS;
+}
+
+function isOffPeak(now: Date): boolean {
+    if (isWeekend(now))
+        return true;
+    return !isPeakHour(now);
+}
+
+function minutesUntilFlip(now: Date): number {
+    if (isWeekend(now)) {
+        return minutesUntilMondayPeak(now);
+    }
 
     const utcHour = now.getUTCHours();
-    const isPeak = utcHour >= PEAK_START_UTC_HOUR && utcHour < PEAK_END_UTC_HOUR;
-
-    const flipHour = isPeak ? PEAK_END_UTC_HOUR : PEAK_START_UTC_HOUR;
+    const peak = isPeakHour(now);
+    const flipHour = peak ? PEAK_END_UTC_HOUR : PEAK_START_UTC_HOUR;
     const target = new Date(now);
 
-    if (!isPeak && utcHour >= PEAK_END_UTC_HOUR) {
+    if (!peak && utcHour >= PEAK_END_UTC_HOUR) {
         // Off-peak evening — flip is tomorrow morning
         target.setUTCDate(now.getUTCDate() + 1);
     }
     target.setUTCHours(flipHour, 0, 0, 0);
 
+    return Math.max(0, Math.round((target.getTime() - now.getTime()) / 60000));
+}
+
+function minutesUntilMondayPeak(now: Date): number {
+    const dayOfWeek = now.getUTCDay();
+    // 0=Sunday, 6=Saturday
+    const daysUntilMonday = dayOfWeek === 0 ? 1 : (8 - dayOfWeek);
+    const target = new Date(now);
+    target.setUTCDate(now.getUTCDate() + daysUntilMonday);
+    target.setUTCHours(PEAK_START_UTC_HOUR, 0, 0, 0);
     return Math.max(0, Math.round((target.getTime() - now.getTime()) / 60000));
 }
 
@@ -63,7 +74,7 @@ function formatCountdown(minutes: number): string {
 
 export class OffPeakWidget implements Widget {
     getDefaultColor(): string { return 'green'; }
-    getDescription(): string { return 'Shows peak / off-peak 2x status during the March 2026 Anthropic usage promotion'; }
+    getDescription(): string { return 'Shows peak / off-peak status with countdown timer'; }
     getDisplayName(): string { return 'Off Peak'; }
     getCategory(): string { return 'Usage'; }
     getEditorDisplay(_item: WidgetItem): WidgetEditorDisplay {
@@ -72,22 +83,27 @@ export class OffPeakWidget implements Widget {
 
     render(item: WidgetItem, context: RenderContext, _settings: Settings): string | null {
         if (context.isPreview) {
-            return item.rawValue ? 'Off-peak 2x (3:42)' : 'Off-peak 2x (3:42)';
+            return item.rawValue ? 'Off-peak (3:42 hr)' : 'Off-peak (3:42 hr)';
         }
 
         const now = new Date();
         const offPeak = isOffPeak(now);
-        if (offPeak === null)
-            return null;
-
         const mins = minutesUntilFlip(now);
-        const countdown = mins !== null ? ` (${formatCountdown(mins)} hr)` : '';
+        const countdown = ` (${formatCountdown(mins)} hr)`;
         const mobile = (context.terminalWidth ?? 0) > 0 && (context.terminalWidth ?? 0) < 80;
 
-        if (offPeak) {
-            return mobile ? `2x${countdown}` : `Off-peak 2x${countdown}`;
+        // During promo period: show 2x label for off-peak
+        if (isPromoActive(now)) {
+            if (offPeak) {
+                return mobile ? `2x${countdown}` : `Off-peak 2x${countdown}`;
+            }
+            return `Peak${countdown}`;
         }
 
+        // Post-promo: permanent peak/off-peak indicator (no 2x)
+        if (offPeak) {
+            return mobile ? `OffPk${countdown}` : `Off-peak${countdown}`;
+        }
         return `Peak${countdown}`;
     }
 
