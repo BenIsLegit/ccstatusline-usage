@@ -37,12 +37,14 @@ export const SettingsSchema = z.object({
                 { id: 'sep-battery', type: 'separator' },
                 { id: 'battery', type: 'battery', color: 'yellow' },
                 { id: 'sep3', type: 'separator' },
-                { id: 'model', type: 'model', color: 'cyan' },
+                { id: 'model', type: 'model', color: 'magenta' },
                 { id: 'sep4', type: 'separator' },
                 { id: 'session-id', type: 'claude-session-id', color: 'cyan' }
             ],
             [
                 { id: 'context-bar', type: 'context-bar', color: 'blue' },
+                { id: 'sep-weekly-pace', type: 'separator' },
+                { id: 'weekly-pace', type: 'weekly-pace', color: 'brightBlue', metadata: { display: 'pendulum' } },
                 { id: 'sep-off-peak', type: 'separator' },
                 { id: 'off-peak', type: 'off-peak', color: 'green' }
             ],

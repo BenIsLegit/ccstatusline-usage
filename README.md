@@ -40,8 +40,8 @@ This fork adds API-based usage widgets beyond the upstream:
 ### Enhanced Status Line Preview
 
 ```
-Session: [████░░░░░░░░░░░] 27.0% | Weekly: [███████████████] 100.0% | Extra: €2.50/€50.00 | Model: Opus 4.6 | Session ID: 0109b99d...
-  Context: [███████░░░░░░░░] 103k/200k (51%) | Pace: [░░░░░░░|██░░░░░] D5/7 +12% | Off peak: Off-peak 2x
+Session: [████░░░░░░░░░░░] 27.0% | Weekly: [████░░░░░░░░░░░] 34.0% | 2:03 hr | Model: Opus 4.6 | Session ID: 0109b99d...
+  Context: [██████░░░░░░░░░] 389k/1M (39%) | Pace: [░░░░░░█|░░░░░░░] D4/7 -8% | Off-peak (4:03 hr)
 ```
 
 ![Demo](https://raw.githubusercontent.com/sirmalloc/ccstatusline/main/screenshots/demo.gif)
@@ -65,6 +65,10 @@ Session: [████░░░░░░░░░░░] 27.0% | Weekly: [██
 ---
 
 ## 🆕 Recent Updates
+
+### [v2.3.7](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.3.7) - Weekly Pace as default layout
+
+- [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **Default layout update** — Weekly Pace widget (pendulum mode) is now included in the default status line layout on line 2, between the context bar and off-peak indicator. Model widget color changed to magenta.
 
 ### [v2.3.6](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.3.6) - Remove expired 2x promo code
 
