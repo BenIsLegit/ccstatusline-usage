@@ -24,7 +24,7 @@ function getPaceDisplayMode(item: WidgetItem): PaceDisplayMode {
     return item.metadata?.display === 'pendulum' ? 'pendulum' : 'text';
 }
 
-function computePace(actualPercent: number, expectedPercent: number) {
+function computePace(actualPercent: number, expectedPercent: number, showPercent = false) {
     const delta = actualPercent - expectedPercent;
     const dayOfWeek = Math.max(1, Math.min(7, Math.ceil(expectedPercent * 7 / 100)));
 
@@ -37,6 +37,9 @@ function computePace(actualPercent: number, expectedPercent: number) {
         status = `Underusing ${Math.round(delta)}%`;
     } else if (delta < -5) {
         status = `Cool ${Math.round(delta)}%`;
+    } else if (showPercent) {
+        const sign = delta >= 0 ? '+' : '';
+        status = `On Pace ${sign}${Math.round(delta)}%`;
     } else {
         status = 'On Pace';
     }
@@ -57,6 +60,9 @@ export class WeeklyPaceWidget implements Widget {
         if (mode === 'pendulum') {
             modifiers.push('pendulum bar');
         }
+        if (item.metadata?.showPercent === 'true') {
+            modifiers.push('always %');
+        }
 
         return {
             displayText: this.getDisplayName(),
@@ -65,20 +71,31 @@ export class WeeklyPaceWidget implements Widget {
     }
 
     handleEditorAction(action: string, item: WidgetItem): WidgetItem | null {
-        if (action !== 'toggle-pendulum') {
-            return null;
+        if (action === 'toggle-pendulum') {
+            const currentMode = getPaceDisplayMode(item);
+            const nextMode: PaceDisplayMode = currentMode === 'text' ? 'pendulum' : 'text';
+
+            return {
+                ...item,
+                metadata: {
+                    ...(item.metadata ?? {}),
+                    display: nextMode
+                }
+            };
         }
 
-        const currentMode = getPaceDisplayMode(item);
-        const nextMode: PaceDisplayMode = currentMode === 'text' ? 'pendulum' : 'text';
+        if (action === 'toggle-show-percent') {
+            const current = item.metadata?.showPercent === 'true';
+            return {
+                ...item,
+                metadata: {
+                    ...(item.metadata ?? {}),
+                    showPercent: current ? 'false' : 'true'
+                }
+            };
+        }
 
-        return {
-            ...item,
-            metadata: {
-                ...(item.metadata ?? {}),
-                display: nextMode
-            }
-        };
+        return null;
     }
 
     render(item: WidgetItem, context: RenderContext, settings: Settings): string | null {
@@ -106,7 +123,8 @@ export class WeeklyPaceWidget implements Widget {
             return null;
 
         const actualPercent = Math.max(0, Math.min(100, data.weeklyUsage));
-        const { delta, dayOfWeek, status } = computePace(actualPercent, window.elapsedPercent);
+        const showPercent = item.metadata?.showPercent === 'true';
+        const { delta, dayOfWeek, status } = computePace(actualPercent, window.elapsedPercent, showPercent);
 
         const width = context.terminalWidth ?? 0;
         const mobile = width > 0 && width < MOBILE_THRESHOLD;
@@ -125,7 +143,8 @@ export class WeeklyPaceWidget implements Widget {
 
     getCustomKeybinds(): CustomKeybind[] {
         return [
-            { key: 'p', label: '(p)endulum toggle', action: 'toggle-pendulum' }
+            { key: 'p', label: '(p)endulum toggle', action: 'toggle-pendulum' },
+            { key: '%', label: '(%) always show percent', action: 'toggle-show-percent' }
         ];
     }
 

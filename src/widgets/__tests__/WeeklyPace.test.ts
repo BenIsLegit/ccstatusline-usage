@@ -16,6 +16,7 @@ import { WeeklyPaceWidget } from '../WeeklyPace';
 
 const BASE_ITEM: WidgetItem = { id: 'pace', type: 'weekly-pace' };
 const PENDULUM_ITEM: WidgetItem = { ...BASE_ITEM, metadata: { display: 'pendulum' } };
+const SHOW_PERCENT_ITEM: WidgetItem = { ...BASE_ITEM, metadata: { showPercent: 'true' } };
 
 function render(context: RenderContext = {}, item: WidgetItem = BASE_ITEM): string | null {
     return new WeeklyPaceWidget().render(item, context, DEFAULT_SETTINGS);
@@ -174,6 +175,31 @@ describe('WeeklyPaceWidget', () => {
         expect(render({ usageData: { weeklyUsage: 65.1 } })).toMatch(/^D4\/7: Overcooking \+15%$/);
     });
 
+    // --- showPercent metadata ---
+
+    it('shows On Pace with percentage when showPercent is true', () => {
+        // 57.14% elapsed, 60% usage → delta ≈ +2.9%
+        mockResolveWeeklyUsageWindow.mockReturnValue(makeWindow(57.14));
+        expect(render({ usageData: { weeklyUsage: 60 } }, SHOW_PERCENT_ITEM)).toBe('D4/7: On Pace +3%');
+    });
+
+    it('shows On Pace with negative percentage when showPercent is true', () => {
+        // 50% elapsed, 47% usage → delta = -3%
+        mockResolveWeeklyUsageWindow.mockReturnValue(makeWindow(50));
+        expect(render({ usageData: { weeklyUsage: 47 } }, SHOW_PERCENT_ITEM)).toBe('D4/7: On Pace -3%');
+    });
+
+    it('shows On Pace +0% when exactly on pace with showPercent', () => {
+        mockResolveWeeklyUsageWindow.mockReturnValue(makeWindow(50));
+        expect(render({ usageData: { weeklyUsage: 50 } }, SHOW_PERCENT_ITEM)).toBe('D4/7: On Pace +0%');
+    });
+
+    it('does not affect non-On Pace labels when showPercent is true', () => {
+        // 30% elapsed, 40% usage → delta = +10% → Warm
+        mockResolveWeeklyUsageWindow.mockReturnValue(makeWindow(30));
+        expect(render({ usageData: { weeklyUsage: 40 } }, SHOW_PERCENT_ITEM)).toBe('D3/7: Warm +10%');
+    });
+
     // --- Clamping ---
 
     it('clamps weeklyUsage above 100 to 100', () => {
@@ -255,6 +281,18 @@ describe('WeeklyPaceWidget', () => {
         expect(result?.metadata?.display).toBe('text');
     });
 
+    it('toggles showPercent on', () => {
+        const widget = new WeeklyPaceWidget();
+        const result = widget.handleEditorAction('toggle-show-percent', BASE_ITEM);
+        expect(result?.metadata?.showPercent).toBe('true');
+    });
+
+    it('toggles showPercent off', () => {
+        const widget = new WeeklyPaceWidget();
+        const result = widget.handleEditorAction('toggle-show-percent', SHOW_PERCENT_ITEM);
+        expect(result?.metadata?.showPercent).toBe('false');
+    });
+
     it('returns null for unknown editor action', () => {
         const widget = new WeeklyPaceWidget();
         expect(widget.handleEditorAction('unknown', BASE_ITEM)).toBeNull();
@@ -262,11 +300,12 @@ describe('WeeklyPaceWidget', () => {
 
     // --- Custom keybinds ---
 
-    it('exposes pendulum toggle keybind', () => {
+    it('exposes pendulum and show-percent toggle keybinds', () => {
         const widget = new WeeklyPaceWidget();
         const keybinds = widget.getCustomKeybinds();
         expect(keybinds).toEqual([
-            { key: 'p', label: '(p)endulum toggle', action: 'toggle-pendulum' }
+            { key: 'p', label: '(p)endulum toggle', action: 'toggle-pendulum' },
+            { key: '%', label: '(%) always show percent', action: 'toggle-show-percent' }
         ]);
     });
 
@@ -284,5 +323,20 @@ describe('WeeklyPaceWidget', () => {
         const display = widget.getEditorDisplay(PENDULUM_ITEM);
         expect(display.displayText).toBe('Weekly Pace');
         expect(display.modifierText).toBe('(pendulum bar)');
+    });
+
+    it('shows (always %) modifier text when showPercent is true', () => {
+        const widget = new WeeklyPaceWidget();
+        const display = widget.getEditorDisplay(SHOW_PERCENT_ITEM);
+        expect(display.displayText).toBe('Weekly Pace');
+        expect(display.modifierText).toBe('(always %)');
+    });
+
+    it('shows both modifiers when pendulum and showPercent are active', () => {
+        const widget = new WeeklyPaceWidget();
+        const bothItem: WidgetItem = { ...BASE_ITEM, metadata: { display: 'pendulum', showPercent: 'true' } };
+        const display = widget.getEditorDisplay(bothItem);
+        expect(display.displayText).toBe('Weekly Pace');
+        expect(display.modifierText).toBe('(pendulum bar, always %)');
     });
 });
