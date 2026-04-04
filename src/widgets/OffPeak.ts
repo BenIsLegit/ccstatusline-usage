@@ -11,23 +11,23 @@ import type {
 const PEAK_START_UTC_HOUR = 12;
 const PEAK_END_UTC_HOUR   = 18;
 
-function isWeekend(now: Date): boolean {
+export function isWeekend(now: Date): boolean {
     const dayOfWeek = now.getUTCDay();
     return dayOfWeek === 0 || dayOfWeek === 6;
 }
 
-function isPeakHour(now: Date): boolean {
+export function isPeakHour(now: Date): boolean {
     const utcHour = now.getUTCHours();
     return utcHour >= PEAK_START_UTC_HOUR && utcHour < PEAK_END_UTC_HOUR;
 }
 
-function isOffPeak(now: Date): boolean {
+export function isOffPeak(now: Date): boolean {
     if (isWeekend(now))
         return true;
     return !isPeakHour(now);
 }
 
-function minutesUntilFlip(now: Date): number {
+export function minutesUntilFlip(now: Date): number {
     if (isWeekend(now)) {
         return minutesUntilMondayPeak(now);
     }
@@ -38,7 +38,12 @@ function minutesUntilFlip(now: Date): number {
     const target = new Date(now);
 
     if (!peak && utcHour >= PEAK_END_UTC_HOUR) {
-        // Off-peak evening — flip is tomorrow morning
+        // Off-peak evening — flip is tomorrow morning, unless tomorrow is a weekend
+        const tomorrow = new Date(now);
+        tomorrow.setUTCDate(now.getUTCDate() + 1);
+        if (isWeekend(tomorrow)) {
+            return minutesUntilMondayPeak(now);
+        }
         target.setUTCDate(now.getUTCDate() + 1);
     }
     target.setUTCHours(flipHour, 0, 0, 0);

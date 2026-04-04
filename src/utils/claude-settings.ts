@@ -10,6 +10,7 @@ import {
 } from '../types/Settings';
 
 import {
+    ensureDir,
     getConfigPath,
     isCustomConfigPath
 } from './config';
@@ -20,7 +21,6 @@ export type { ClaudeSettings };
 // Use fs.promises directly
 const readFile = fs.promises.readFile;
 const writeFile = fs.promises.writeFile;
-const mkdir = fs.promises.mkdir;
 
 export const CCSTATUSLINE_COMMANDS = {
     NPM: 'npx -y ccstatusline-usage@latest',
@@ -163,7 +163,7 @@ export async function saveClaudeSettings(
     // Backup settings before overwriting
     await backupClaudeSettings();
 
-    await mkdir(dir, { recursive: true });
+    await ensureDir(dir);
     await writeFile(settingsPath, JSON.stringify(settings, null, 2), 'utf-8');
 }
 

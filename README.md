@@ -66,6 +66,11 @@ Session: [████░░░░░░░░░░░] 27.0% | Weekly: [██
 
 ## 🆕 Recent Updates
 
+### [v2.3.8](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.3.8) - Fix off-peak countdown + Windows EEXIST fix
+
+- [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **Off-peak countdown fix** — Friday evening now correctly counts to Monday peak instead of Saturday noon. Added test coverage for the off-peak time calculation logic.
+- [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **Windows EEXIST fix** — Handle `mkdir` throwing EEXIST on Windows junction points/symlinks when saving config ([#2](https://github.com/pcvelz/ccstatusline-usage/pull/2), thanks [@BenIsLegit](https://github.com/BenIsLegit))
+
 ### [v2.3.7](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.3.7) - Weekly Pace as default layout
 
 - [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **Default layout update** — Weekly Pace widget (pendulum mode) is now included in the default status line layout on line 2, between the context bar and off-peak indicator. Model widget color changed to magenta.
