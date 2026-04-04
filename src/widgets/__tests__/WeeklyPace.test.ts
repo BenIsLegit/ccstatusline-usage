@@ -220,7 +220,14 @@ describe('WeeklyPaceWidget', () => {
         expect(render({ usageData: { weeklyUsage: 40 } }, item)).toBe('D3/7: Warm +10.000%');
     });
 
-    it('shows fractional delta with decimal precision', () => {
+    it('applies decimal precision to Underusing band', () => {
+        // 85.71% elapsed (day 6/7), usage at 40% → delta ≈ -45.71%
+        mockResolveWeeklyUsageWindow.mockReturnValue(makeWindow(85.71));
+        const item: WidgetItem = { ...BASE_ITEM, metadata: { decimals: '1' } };
+        expect(render({ usageData: { weeklyUsage: 40 } }, item)).toBe('D6/7: Underusing -45.7%');
+    });
+
+    it('does not show delta on On Pace when decimals set but showPercent absent', () => {
         // 57.14% elapsed, 60% usage → delta ≈ +2.86%
         mockResolveWeeklyUsageWindow.mockReturnValue(makeWindow(57.14));
         const item: WidgetItem = { ...BASE_ITEM, metadata: { decimals: '2' } };
@@ -345,6 +352,13 @@ describe('WeeklyPaceWidget', () => {
         const item: WidgetItem = { ...BASE_ITEM, metadata: { decimals: '1' } };
         const result = widget.handleEditorAction('cycle-decimals', item);
         expect(result?.metadata?.decimals).toBe('2');
+    });
+
+    it('cycles decimals from 2 to 3', () => {
+        const widget = new WeeklyPaceWidget();
+        const item: WidgetItem = { ...BASE_ITEM, metadata: { decimals: '2' } };
+        const result = widget.handleEditorAction('cycle-decimals', item);
+        expect(result?.metadata?.decimals).toBe('3');
     });
 
     it('cycles decimals from 3 back to 0', () => {
