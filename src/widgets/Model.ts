@@ -6,7 +6,7 @@ import type {
     WidgetItem
 } from '../types/Widget';
 
-const MOBILE_THRESHOLD = 80;
+const MEDIUM_THRESHOLD = 178;
 
 // Parse model ID into compact form: claude-opus-4-6 → o4.6, claude-sonnet-4-5-20250929 → s4.5
 function compactModelName(name: string): string {
@@ -52,7 +52,7 @@ export class ModelWidget implements Widget {
             .replace(/\(1M context\)/gi, '')
             .trim();
 
-        const mobile = (context.terminalWidth ?? 0) > 0 && (context.terminalWidth ?? 0) < MOBILE_THRESHOLD;
+        const mobile = (context.terminalWidth ?? 0) > 0 && (context.terminalWidth ?? 0) < MEDIUM_THRESHOLD;
         if (mobile && modelId) {
             return `M: ${compactModelName(modelId)}${suffix}`;
         }

@@ -15,7 +15,8 @@ import {
 import { formatRawOrLabeledValue } from './shared/raw-or-labeled';
 import { makeModifierText } from './shared/editor-display';
 
-const MOBILE_THRESHOLD = 80;
+const MOBILE_THRESHOLD = 134;
+const MEDIUM_THRESHOLD = 178;
 
 type PaceDisplayMode = 'text' | 'pendulum';
 
@@ -107,11 +108,15 @@ export class WeeklyPaceWidget implements Widget {
         const actualPercent = Math.max(0, Math.min(100, data.weeklyUsage));
         const { delta, dayOfWeek, status } = computePace(actualPercent, window.elapsedPercent);
 
-        const mobile = (context.terminalWidth ?? 0) > 0 && (context.terminalWidth ?? 0) < MOBILE_THRESHOLD;
+        const width = context.terminalWidth ?? 0;
+        const mobile = width > 0 && width < MOBILE_THRESHOLD;
+        const medium = width >= MOBILE_THRESHOLD && width < MEDIUM_THRESHOLD;
 
         if (displayMode === 'pendulum' && !mobile) {
+            const halfWidth = medium ? 4 : 7;
             const sign = delta >= 0 ? '+' : '';
-            const barDisplay = `${makePendulumBar(delta)} D${dayOfWeek}/7 ${sign}${Math.round(delta)}%`;
+            const barDisplay = `${makePendulumBar(delta, halfWidth)} D${dayOfWeek}/7 ${sign}${Math.round(delta)}%`;
+
             return formatRawOrLabeledValue(item, 'Pace: ', barDisplay);
         }
 

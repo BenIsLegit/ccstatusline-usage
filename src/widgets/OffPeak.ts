@@ -85,7 +85,7 @@ export class OffPeakWidget implements Widget {
         const offPeak = isOffPeak(now);
         const mins = minutesUntilFlip(now);
         const countdown = ` (${formatCountdown(mins)} hr)`;
-        const mobile = (context.terminalWidth ?? 0) > 0 && (context.terminalWidth ?? 0) < 80;
+        const mobile = (context.terminalWidth ?? 0) > 0 && (context.terminalWidth ?? 0) < 134;
 
         if (offPeak) {
             return mobile ? `OffPk${countdown}` : `Off-peak${countdown}`;

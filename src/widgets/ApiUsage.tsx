@@ -336,12 +336,29 @@ function getErrorMessage(error: ApiError): string {
     }
 }
 
-const MOBILE_THRESHOLD = 80;
+const MOBILE_THRESHOLD = 134;
+const MEDIUM_THRESHOLD = 178;
 const MOBILE_BAR_WIDTH = 4;
+const MEDIUM_BAR_WIDTH = 8;
 const DEFAULT_BAR_WIDTH = 15;
 
-function isMobileWidth(context: RenderContext): boolean {
-    return (context.terminalWidth ?? 0) > 0 && (context.terminalWidth ?? 0) < MOBILE_THRESHOLD;
+type DisplaySize = 'mobile' | 'medium' | 'full';
+
+function getDisplaySize(context: RenderContext): DisplaySize {
+    const w = context.terminalWidth ?? 0;
+    if (w > 0 && w < MOBILE_THRESHOLD)
+        return 'mobile';
+    if (w >= MOBILE_THRESHOLD && w < MEDIUM_THRESHOLD)
+        return 'medium';
+    return 'full';
+}
+
+function getBarWidth(size: DisplaySize): number {
+    if (size === 'mobile')
+        return MOBILE_BAR_WIDTH;
+    if (size === 'medium')
+        return MEDIUM_BAR_WIDTH;
+    return DEFAULT_BAR_WIDTH;
 }
 
 function makeProgressBar(percent: number, width = DEFAULT_BAR_WIDTH): string {
@@ -350,9 +367,9 @@ function makeProgressBar(percent: number, width = DEFAULT_BAR_WIDTH): string {
     return '[' + '█'.repeat(filled) + '░'.repeat(empty) + ']';
 }
 
-function formatUsageBar(label: string, shortLabel: string, percent: number, mobile: boolean): string {
-    const bar = makeProgressBar(percent, mobile ? MOBILE_BAR_WIDTH : DEFAULT_BAR_WIDTH);
-    return `${mobile ? shortLabel : label}: ${bar} ${percent.toFixed(1)}%`;
+function formatUsageBar(label: string, shortLabel: string, percent: number, size: DisplaySize): string {
+    const bar = makeProgressBar(percent, getBarWidth(size));
+    return `${size === 'mobile' ? shortLabel : label}: ${bar} ${percent.toFixed(1)}%`;
 }
 
 // Session Usage Widget
@@ -376,7 +393,7 @@ export class SessionUsageWidget implements Widget {
         if (data.sessionUsage === undefined)
             return null;
 
-        return formatUsageBar('Session', 'S', data.sessionUsage, isMobileWidth(context));
+        return formatUsageBar('Session', 'S', data.sessionUsage, getDisplaySize(context));
     }
 
     supportsRawValue(): boolean { return false; }
@@ -404,7 +421,7 @@ export class WeeklyUsageWidget implements Widget {
         if (data.weeklyUsage === undefined)
             return null;
 
-        return formatUsageBar('Weekly', 'W', data.weeklyUsage, isMobileWidth(context));
+        return formatUsageBar('Weekly', 'W', data.weeklyUsage, getDisplaySize(context));
     }
 
     supportsRawValue(): boolean { return false; }
@@ -526,10 +543,10 @@ export class ContextBarWidget implements Widget {
         const usedK = Math.round(used / 1000);
         const totalStr = total >= 1000000 ? `${Math.round(total / 1000000)}M` : `${Math.round(total / 1000)}k`;
 
-        const mobile = isMobileWidth(context);
-        const bar = makeProgressBar(percent, mobile ? MOBILE_BAR_WIDTH : DEFAULT_BAR_WIDTH);
-        const label = mobile ? 'C' : 'Context';
-        const suffix = mobile ? '' : ` (${Math.round(percent)}%)`;
+        const size = getDisplaySize(context);
+        const bar = makeProgressBar(percent, getBarWidth(size));
+        const label = size === 'mobile' ? 'C' : 'Context';
+        const suffix = size === 'mobile' ? '' : ` (${Math.round(percent)}%)`;
         return `${label}: ${bar} ${usedK}k/${totalStr}${suffix}`;
     }
 

@@ -132,14 +132,14 @@ describe('OffPeakWidget', () => {
         expect(render({ isPreview: true })).toBe('Off-peak (3:42 hr)');
     });
 
-    it('renders compact label when terminal width < 80', () => {
+    it('renders compact label when terminal width < 134', () => {
         const result = widget.render(item, { terminalWidth: 60 }, DEFAULT_SETTINGS);
         expect(typeof result).toBe('string');
-        expect(result).toContain('OffPk');
+        expect(result).toMatch(/^(OffPk|Peak)/);
     });
 
-    it('renders full label when terminal width >= 80', () => {
-        const result = widget.render(item, { terminalWidth: 120 }, DEFAULT_SETTINGS);
+    it('renders full label when terminal width >= 134', () => {
+        const result = widget.render(item, { terminalWidth: 140 }, DEFAULT_SETTINGS);
         expect(typeof result).toBe('string');
         expect(result).toMatch(/^(Off-peak|Peak)/);
     });

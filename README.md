@@ -66,6 +66,10 @@ Session: [████░░░░░░░░░░░] 27.0% | Weekly: [██
 
 ## 🆕 Recent Updates
 
+### [v2.3.9](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.3.9) - Medium display size for mid-width terminals
+
+- [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **Three-tier display sizing** — New medium display size for terminals between 134–177 chars wide. Progress bars render at 8 chars (between mobile's 4 and full's 15). Model and Session ID use compact format in medium mode. Weekly Pace pendulum bar scales to halfWidth=4 in medium.
+
 ### [v2.3.8](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.3.8) - Fix off-peak countdown + Windows EEXIST fix
 
 - [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **Off-peak countdown fix** — Friday evening now correctly counts to Monday peak instead of Saturday noon. Added test coverage for the off-peak time calculation logic.
