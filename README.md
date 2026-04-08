@@ -52,6 +52,7 @@ Session: [████░░░░░░░░░░░] 27.0% | Weekly: [██
 
 - [Recent Updates](#-recent-updates)
 - [Features](#-features)
+- [Localizations](#-localizations)
 - [Quick Start](#-quick-start)
 - [Windows Support](#-windows-support)
 - [Usage](#-usage)
@@ -292,6 +293,14 @@ Session: [████░░░░░░░░░░░] 27.0% | Weekly: [██
 
 ---
 
+## 🌐 Localizations
+
+The localizations in this section are third-party forks maintained outside this repository. They are not maintained, reviewed, or endorsed by this repository, so review their code and releases before using them.
+
+- 🌏 **中文版 (Chinese):** [ccstatusline-zh](https://github.com/huangguang1999/ccstatusline-zh)
+
+---
+
 ## 🚀 Quick Start
 
 ### No installation needed! Use directly with npx or bunx:
@@ -390,10 +399,12 @@ For optimal Powerline rendering on Windows:
 # Install JetBrains Mono Nerd Font via winget
 winget install DEVCOM.JetBrainsMonoNerdFont
 
-# Alternative: Install base JetBrains Mono font
-winget install "JetBrains.JetBrainsMono"
-
 # Or download manually from: https://www.nerdfonts.com/font-downloads
+
+# Alternative: Download and install base JetBrains Mono font
+# from [JetBrains](https://www.jetbrains.com/lp/mono/)
+# or [GitHub](https://github.com/JetBrains/JetBrainsMono)
+# or [Google Fonts](https://fonts.google.com/specimen/JetBrains+Mono)
 ```
 
 #### Path Handling
@@ -410,7 +421,7 @@ ccstatusline automatically handles Windows-specific paths:
 **Issue**: Powerline symbols showing as question marks or boxes
 ```powershell
 # Solution: Install a compatible Nerd Font
-winget install JetBrainsMono.NerdFont
+winget install DEVCOM.JetBrainsMonoNerdFont
 # Then set the font in your terminal settings
 ```
 
@@ -912,6 +923,7 @@ jq 'del(.statusLine)' ~/.claude/settings.json > /tmp/cs.json && cat /tmp/cs.json
 
 - [tweakcc](https://github.com/Piebald-AI/tweakcc) - Customize Claude Code themes, thinking verbs, and more.
 - [ccusage](https://github.com/ryoppippi/ccusage) - Track and display Claude Code usage metrics.
+- [codachi](https://github.com/vincent-k2026/codachi) - A tamagotchi-style statusline pet that grows with your context window.
 
 ---
 
