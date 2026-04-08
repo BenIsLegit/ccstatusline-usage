@@ -454,9 +454,11 @@ export class ResetTimerWidget implements Widget {
         const isOpus = modelId.includes('opus');
         const isChargedModel = is1mModel && !isOpus;
 
-        // Show extra usage spending when: weekly limit reached (100%) OR using a charged [1m] model (e.g. Sonnet [1m])
+        // Show extra usage spending when: weekly limit reached (100%) OR session limit reached (100%) OR using a charged [1m] model (e.g. Sonnet [1m])
         if (data.extraUsageEnabled && data.extraUsageUsed !== undefined && data.extraUsageLimit !== undefined
-            && ((data.weeklyUsage !== undefined && data.weeklyUsage >= 100) || isChargedModel)) {
+            && ((data.weeklyUsage !== undefined && data.weeklyUsage >= 100)
+                || (data.sessionUsage !== undefined && data.sessionUsage >= 100)
+                || isChargedModel)) {
             const used = formatCents(data.extraUsageUsed);
             const displayLimit = settings.extraUsageBalance ?? data.extraUsageLimit;
             const limit = formatCents(displayLimit);

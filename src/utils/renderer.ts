@@ -684,6 +684,23 @@ export function renderStatusLine(
             if (!hasContentBefore)
                 continue;
 
+            // Check if there is content between this separator and the next separator
+            // Skips the separator when the following widget(s) all return null (e.g. battery when charging)
+            let hasContentAfter = false;
+            for (let j = i + 1; j < widgets.length; j++) {
+                const nextWidget = widgets[j];
+                if (!nextWidget)
+                    continue;
+                if (nextWidget.type === 'separator' || nextWidget.type === 'flex-separator')
+                    break; // No content found before the next separator
+                if (preRenderedWidgets[j]?.content) {
+                    hasContentAfter = true;
+                    break;
+                }
+            }
+            if (!hasContentAfter)
+                continue;
+
             const sepChar = widget.character ?? (settings.defaultSeparator ?? '|');
             const formattedSep = formatSeparator(sepChar);
 

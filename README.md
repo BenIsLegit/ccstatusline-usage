@@ -67,6 +67,11 @@ Session: [████░░░░░░░░░░░] 27.0% | Weekly: [██
 
 ## 🆕 Recent Updates
 
+### [v2.3.10](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.3.10) - Extra usage on session limit, fix empty separator for null widgets
+
+- [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **Extra usage on session limit** — Reset Timer now shows extra usage spending when session limit reaches 100% (not just weekly limit or charged 1M model).
+- [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **Fix empty separator for null widgets** — Separators adjacent to widgets that return null (e.g. Battery when charging) are now suppressed correctly. Previously showed a visible `|  |` gap.
+
 ### [v2.3.9](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.3.9) - Medium display size for mid-width terminals
 
 - [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **Three-tier display sizing** — New medium display size for terminals between 134–177 chars wide. Progress bars render at 8 chars (between mobile's 4 and full's 15). Model and Session ID use compact format in medium mode. Weekly Pace pendulum bar scales to halfWidth=4 in medium.
