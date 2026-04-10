@@ -46,10 +46,10 @@ export class ModelWidget implements Widget {
 
         const is1m = modelId?.includes('[1m]') ?? false;
         const suffix = is1m ? '[1m]' : '';
-        // Strip context size indicators from displayName
+        // Strip context size indicators and any trailing parenthetical (e.g. "(1M context)")
         const cleanDisplayName = modelDisplayName
             .replace(/\[1m\]/gi, '')
-            .replace(/\(1M context\)/gi, '')
+            .replace(/\s*\(.*\)$/, '')
             .trim();
 
         const mobile = (context.terminalWidth ?? 0) > 0 && (context.terminalWidth ?? 0) < MEDIUM_THRESHOLD;

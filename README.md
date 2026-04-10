@@ -47,6 +47,7 @@ Session: [████░░░░░░░░░░░] 27.0% | Weekly: [██
 ![Demo](https://raw.githubusercontent.com/sirmalloc/ccstatusline/main/screenshots/demo.gif)
 
 </div>
+<br />
 
 ## 📚 Table of Contents
 
@@ -54,16 +55,15 @@ Session: [████░░░░░░░░░░░] 27.0% | Weekly: [██
 - [Features](#-features)
 - [Localizations](#-localizations)
 - [Quick Start](#-quick-start)
-- [Windows Support](#-windows-support)
-- [Usage](#-usage)
-- [API Documentation](#-api-documentation)
-- [Development](#️-development)
+- [Windows Support](docs/WINDOWS.md)
+- [Usage](docs/USAGE.md)
+- [Development](docs/DEVELOPMENT.md)
 - [Contributing](#-contributing)
 - [Uninstall](#️-uninstall)
 - [License](#-license)
 - [Related Projects](#-related-projects)
 
----
+<br />
 
 ## 🆕 Recent Updates
 
@@ -182,6 +182,10 @@ Session: [████░░░░░░░░░░░] 27.0% | Weekly: [██
 - **🔗 Git widget link modes (v2.2.6)** - `Git Branch` can render clickable GitHub branch links, and `Git Root Dir` can render clickable IDE links for VS Code and Cursor.
 - **🤝 Better subagent-aware speed reporting** - Token speed calculations continue to include referenced subagent activity so displayed speeds better reflect actual concurrent work.
 
+<br />
+<details>
+<summary><b>Older updates (v2.1.10 and earlier)</b></summary>
+
 ### v2.1.0 - v2.1.10 - Usage widgets, links, new git insertions / deletions widgets, and reliability fixes
 
 - **🧩 New Usage widgets (v2.1.0)** - Added **Session Usage**, **Weekly Usage**, **Block Reset Timer**, and **Context Bar** widgets.
@@ -278,7 +282,9 @@ Session: [████░░░░░░░░░░░] 27.0% | Weekly: [██
 - **🔤 Custom Separators** - Add multiple Powerline separators with custom hex codes for font support
 - **🚀 Auto Font Install** - Automatic Powerline font installation with user consent
 
----
+</details>
+
+<br />
 
 ## ✨ Features
 
@@ -290,13 +296,13 @@ Session: [████░░░░░░░░░░░] 27.0% | Weekly: [██
 - **📐 Multi-line Support** - Configure multiple independent status lines
 - **🖥️ Interactive TUI** - Built-in configuration interface using React/Ink
 - **🔎 Fast Widget Picker** - Add/change widgets by category with search and ranked matching
-- **⚙️ Global Options** - Apply consistent formatting across all widgets (padding, separators, bold, background)
+- **⚙️ Global Options** - Apply consistent formatting across all widgets (padding, separators, bold, minimalist mode, and color overrides)
 - **🚀 Cross-platform** - Works seamlessly with both Bun and Node.js
 - **🔧 Flexible Configuration** - Supports custom Claude Code config directory via `CLAUDE_CONFIG_DIR` environment variable
 - **📏 Smart Width Detection** - Automatically adapts to terminal width with flex separators
 - **⚡ Zero Config** - Sensible defaults that work out of the box
 
----
+<br />
 
 ## 🌐 Localizations
 
@@ -304,7 +310,7 @@ The localizations in this section are third-party forks maintained outside this 
 
 - 🌏 **中文版 (Chinese):** [ccstatusline-zh](https://github.com/huangguang1999/ccstatusline-zh)
 
----
+<br />
 
 ## 🚀 Quick Start
 
@@ -318,7 +324,9 @@ npx -y ccstatusline-usage@latest
 bunx -y ccstatusline-usage@latest
 ```
 
-### Configure ccstatusline
+<br />
+<details>
+<summary><b>Configure ccstatusline</b></summary>
 
 The interactive configuration tool provides a terminal UI where you can:
 - Configure multiple separate status lines
@@ -335,14 +343,16 @@ The interactive configuration tool provides a terminal UI where you can:
 > ```bash
 > # Linux/macOS
 > export CLAUDE_CONFIG_DIR=/custom/path/to/.claude
-> 
-> # Windows PowerShell
-> $env:CLAUDE_CONFIG_DIR="C:\custom\path\.claude"
 > ```
 
 > 🌐 **Usage API proxy:** Usage widgets honor the uppercase `HTTPS_PROXY` environment variable for their direct API call to Anthropic.
 
-### Claude Code settings.json format
+> 🪟 **Windows Support:** PowerShell examples, installation notes, fonts, troubleshooting, WSL, and Windows Terminal configuration are in [docs/WINDOWS.md](docs/WINDOWS.md).
+
+</details>
+
+<details>
+<summary><b>Claude Code settings.json format</b></summary>
 
 When you install from the TUI, ccstatusline writes a `statusLine` command object to your Claude Code settings:
 
@@ -894,7 +904,6 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
----
 
 ## 🗑️ Uninstall
 
@@ -904,13 +913,11 @@ rm -rf ~/.npm/_npx ~/.config/ccstatusline ~/.cache/ccstatusline*
 jq 'del(.statusLine)' ~/.claude/settings.json > /tmp/cs.json && cat /tmp/cs.json > ~/.claude/settings.json
 ```
 
----
 
 ## 📄 License
 
 [MIT](LICENSE) © Matthew Breedlove
 
----
 
 ## 👤 Author
 
@@ -930,7 +937,6 @@ jq 'del(.statusLine)' ~/.claude/settings.json > /tmp/cs.json && cat /tmp/cs.json
 - [ccusage](https://github.com/ryoppippi/ccusage) - Track and display Claude Code usage metrics.
 - [codachi](https://github.com/vincent-k2026/codachi) - A tamagotchi-style statusline pet that grows with your context window.
 
----
 
 ## 🙏 Acknowledgments
 
@@ -938,7 +944,7 @@ jq 'del(.statusLine)' ~/.claude/settings.json > /tmp/cs.json && cat /tmp/cs.json
 - Powered by [Ink](https://github.com/vadimdemedes/ink) for the terminal UI
 - Made with ❤️ for the Claude Code community
 
----
+<br />
 
 ## Star History
 
