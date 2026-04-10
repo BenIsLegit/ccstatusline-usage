@@ -7,7 +7,6 @@
  *   full    : terminalWidth ≥ 178
  */
 
-import * as fs from 'fs';
 import {
     afterEach,
     beforeEach,
@@ -51,28 +50,9 @@ function makeWindow(elapsedPercent: number): UsageWindowMetrics {
     };
 }
 
-// Mock data returned by fetchApiData() inside ApiUsage.tsx.
-// We achieve this by making fs.statSync return a recent mtime and
-// fs.readFileSync return a serialised ApiData payload.
-function setupApiDataMock(data: Record<string, unknown>): void {
-    const now = Math.floor(Date.now() / 1000);
-
-    vi.spyOn(fs, 'statSync').mockImplementation((p: fs.PathLike | number) => {
-        const pathStr = p.toString();
-        // Make the cache file look very fresh (1 second old)
-        if (pathStr.includes('ccstatusline-api.json')) {
-            return { mtimeMs: (now - 1) * 1000 } as fs.Stats;
-        }
-        // Everything else (e.g. lock file) → throw so it is treated as absent
-        throw new Error('ENOENT');
-    });
-
-    vi.spyOn(fs, 'readFileSync').mockImplementation((p: fs.PathLike | number) => {
-        if (p.toString().includes('ccstatusline-api.json')) {
-            return JSON.stringify(data);
-        }
-        throw new Error('ENOENT');
-    });
+// No-op kept for documentation; data is now injected via ctx() usageData field.
+function setupApiDataMock(_data: Record<string, unknown>): void {
+    // ApiUsage widgets now read from context.usageData — no fs mocking needed.
 }
 
 const BASE_ITEM: WidgetItem = { id: 'test', type: 'test' };
@@ -81,6 +61,8 @@ const PENDULUM_ITEM: WidgetItem = { id: 'pace', type: 'weekly-pace', metadata: {
 // ---------------------------------------------------------------------------
 // 1. ApiUsage — SessionUsageWidget bar width tiers
 // ---------------------------------------------------------------------------
+
+const SESSION_USAGE_DATA = { usageData: { sessionUsage: 50, weeklyUsage: 50 } };
 
 describe('ApiUsage SessionUsageWidget — display size tiers', () => {
     beforeEach(() => {
@@ -94,7 +76,7 @@ describe('ApiUsage SessionUsageWidget — display size tiers', () => {
 
     it('mobile (width=60): uses short label "S:" and 4-wide bar (6 chars with brackets)', () => {
         const widget = new SessionUsageWidget();
-        const result = widget.render(BASE_ITEM, ctx(60), DEFAULT_SETTINGS);
+        const result = widget.render(BASE_ITEM, ctx(60, SESSION_USAGE_DATA), DEFAULT_SETTINGS);
         expect(result).not.toBeNull();
         expect(result).toMatch(/^S:/);
         // Bar enclosed in brackets with exactly 4 fill chars: [ + 4 chars + ]
@@ -103,7 +85,7 @@ describe('ApiUsage SessionUsageWidget — display size tiers', () => {
 
     it('medium (width=150): uses full label "Session:" and 8-wide bar (10 chars with brackets)', () => {
         const widget = new SessionUsageWidget();
-        const result = widget.render(BASE_ITEM, ctx(150), DEFAULT_SETTINGS);
+        const result = widget.render(BASE_ITEM, ctx(150, SESSION_USAGE_DATA), DEFAULT_SETTINGS);
         expect(result).not.toBeNull();
         expect(result).toMatch(/^Session:/);
         expect(result).toMatch(/\[[█░]{8}\]/);
@@ -111,7 +93,7 @@ describe('ApiUsage SessionUsageWidget — display size tiers', () => {
 
     it('full (width=200): uses full label "Session:" and 15-wide bar (17 chars with brackets)', () => {
         const widget = new SessionUsageWidget();
-        const result = widget.render(BASE_ITEM, ctx(200), DEFAULT_SETTINGS);
+        const result = widget.render(BASE_ITEM, ctx(200, SESSION_USAGE_DATA), DEFAULT_SETTINGS);
         expect(result).not.toBeNull();
         expect(result).toMatch(/^Session:/);
         expect(result).toMatch(/\[[█░]{15}\]/);
@@ -119,28 +101,28 @@ describe('ApiUsage SessionUsageWidget — display size tiers', () => {
 
     it('boundary: width=133 is still mobile', () => {
         const widget = new SessionUsageWidget();
-        const result = widget.render(BASE_ITEM, ctx(133), DEFAULT_SETTINGS);
+        const result = widget.render(BASE_ITEM, ctx(133, SESSION_USAGE_DATA), DEFAULT_SETTINGS);
         expect(result).toMatch(/^S:/);
         expect(result).toMatch(/\[[█░]{4}\]/);
     });
 
     it('boundary: width=134 switches to medium', () => {
         const widget = new SessionUsageWidget();
-        const result = widget.render(BASE_ITEM, ctx(134), DEFAULT_SETTINGS);
+        const result = widget.render(BASE_ITEM, ctx(134, SESSION_USAGE_DATA), DEFAULT_SETTINGS);
         expect(result).toMatch(/^Session:/);
         expect(result).toMatch(/\[[█░]{8}\]/);
     });
 
     it('boundary: width=177 is still medium', () => {
         const widget = new SessionUsageWidget();
-        const result = widget.render(BASE_ITEM, ctx(177), DEFAULT_SETTINGS);
+        const result = widget.render(BASE_ITEM, ctx(177, SESSION_USAGE_DATA), DEFAULT_SETTINGS);
         expect(result).toMatch(/^Session:/);
         expect(result).toMatch(/\[[█░]{8}\]/);
     });
 
     it('boundary: width=178 switches to full', () => {
         const widget = new SessionUsageWidget();
-        const result = widget.render(BASE_ITEM, ctx(178), DEFAULT_SETTINGS);
+        const result = widget.render(BASE_ITEM, ctx(178, SESSION_USAGE_DATA), DEFAULT_SETTINGS);
         expect(result).toMatch(/^Session:/);
         expect(result).toMatch(/\[[█░]{15}\]/);
     });
@@ -149,6 +131,8 @@ describe('ApiUsage SessionUsageWidget — display size tiers', () => {
 // ---------------------------------------------------------------------------
 // 2. ApiUsage — WeeklyUsageWidget bar width tiers
 // ---------------------------------------------------------------------------
+
+const WEEKLY_USAGE_DATA = { usageData: { sessionUsage: 50, weeklyUsage: 50 } };
 
 describe('ApiUsage WeeklyUsageWidget — display size tiers', () => {
     beforeEach(() => {
@@ -162,7 +146,7 @@ describe('ApiUsage WeeklyUsageWidget — display size tiers', () => {
 
     it('mobile (width=60): uses short label "W:" and 4-wide bar', () => {
         const widget = new WeeklyUsageWidget();
-        const result = widget.render(BASE_ITEM, ctx(60), DEFAULT_SETTINGS);
+        const result = widget.render(BASE_ITEM, ctx(60, WEEKLY_USAGE_DATA), DEFAULT_SETTINGS);
         expect(result).not.toBeNull();
         expect(result).toMatch(/^W:/);
         expect(result).toMatch(/\[[█░]{4}\]/);
@@ -170,7 +154,7 @@ describe('ApiUsage WeeklyUsageWidget — display size tiers', () => {
 
     it('medium (width=150): uses full label "Weekly:" and 8-wide bar', () => {
         const widget = new WeeklyUsageWidget();
-        const result = widget.render(BASE_ITEM, ctx(150), DEFAULT_SETTINGS);
+        const result = widget.render(BASE_ITEM, ctx(150, WEEKLY_USAGE_DATA), DEFAULT_SETTINGS);
         expect(result).not.toBeNull();
         expect(result).toMatch(/^Weekly:/);
         expect(result).toMatch(/\[[█░]{8}\]/);
@@ -178,7 +162,7 @@ describe('ApiUsage WeeklyUsageWidget — display size tiers', () => {
 
     it('full (width=200): uses full label "Weekly:" and 15-wide bar', () => {
         const widget = new WeeklyUsageWidget();
-        const result = widget.render(BASE_ITEM, ctx(200), DEFAULT_SETTINGS);
+        const result = widget.render(BASE_ITEM, ctx(200, WEEKLY_USAGE_DATA), DEFAULT_SETTINGS);
         expect(result).not.toBeNull();
         expect(result).toMatch(/^Weekly:/);
         expect(result).toMatch(/\[[█░]{15}\]/);

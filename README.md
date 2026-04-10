@@ -67,6 +67,10 @@ Session: [████░░░░░░░░░░░] 27.0% | Weekly: [██
 
 ## 🆕 Recent Updates
 
+### [v2.3.11](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.3.11) - Fix dual-cache drift between Weekly Usage and Weekly Pace
+
+- [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **Unified usage data source** — Session Usage, Weekly Usage, and Reset Timer widgets now read from the shared `context.usageData` pipeline instead of maintaining a separate API cache. Previously, around the weekly reset boundary the two caches could drift and show contradictory data (e.g. `Weekly: 99%` alongside `Pace: D1/7 +2%`). Deleted ~330 lines of duplicate fetching/caching infrastructure from `ApiUsage.tsx` (556 → 227 lines). Upstream merge: #278 (JSONL token overcounting fix), #283 (model display name parenthetical strip — integrated into fork's existing `[1m]`-aware display logic).
+
 ### [v2.3.10](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.3.10) - Extra usage on session limit, fix empty separator for null widgets
 
 - [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **Extra usage on session limit** — Reset Timer now shows extra usage spending when session limit reaches 100% (not just weekly limit or charged 1M model).
