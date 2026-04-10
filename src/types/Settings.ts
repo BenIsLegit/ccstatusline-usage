@@ -8,6 +8,18 @@ import { WidgetItemSchema } from './Widget';
 // Current version - bump this when making breaking changes to the schema
 export const CURRENT_VERSION = 3;
 
+// Off-hours configuration: a recurring daily window (local time) during which
+// the user is not expected to use Claude. Used by Weekly Pace to avoid having
+// the "expected %" drift upward while you sleep.
+export const OffHoursConfigSchema = z.object({
+    enabled: z.boolean().default(false),
+    // Minutes since local midnight, 0-1439. If start === end, no off-period.
+    // If end < start, the window wraps past midnight (e.g., 22:00 -> 07:00).
+    startMinutes: z.number().int().min(0).max(1439).default(22 * 60),
+    endMinutes: z.number().int().min(0).max(1439).default(7 * 60)
+});
+export type OffHoursConfig = z.infer<typeof OffHoursConfigSchema>;
+
 // Schema for v1 settings (before version field was added)
 export const SettingsSchema_v1 = z.object({
     lines: z.array(z.array(WidgetItemSchema)).optional(),
@@ -69,6 +81,11 @@ export const SettingsSchema = z.object({
         theme: undefined,
         autoAlign: false,
         continueThemeAcrossLines: false
+    }),
+    offHours: OffHoursConfigSchema.default({
+        enabled: false,
+        startMinutes: 22 * 60,
+        endMinutes: 7 * 60
     }),
     updatemessage: z.object({
         message: z.string().nullable().optional(),
