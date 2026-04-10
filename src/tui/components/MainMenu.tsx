@@ -14,6 +14,7 @@ export type MainMenuOption = 'lines'
     | 'powerline'
     | 'terminalConfig'
     | 'globalOverrides'
+    | 'offHours'
     | 'install'
     | 'configureStatusLine'
     | 'starGithub'
@@ -74,6 +75,12 @@ export const MainMenu: React.FC<MainMenuProps> = ({
             value: 'globalOverrides',
             description:
                 'Set global padding, separators, and color overrides that apply to all widgets'
+        },
+        {
+            label: '🌙 Off Hours',
+            value: 'offHours',
+            description:
+                'Declare hours you won\'t use Claude (e.g., sleep). Weekly Pace holds its expected % steady through this window so the delta doesn\'t drift while you\'re away.'
         },
         '-' as const,
         ...(isClaudeInstalled

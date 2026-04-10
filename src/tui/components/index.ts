@@ -6,6 +6,7 @@ export * from './InstallMenu';
 export * from './ItemsEditor';
 export * from './LineSelector';
 export * from './MainMenu';
+export * from './OffHoursMenu';
 export * from './PowerlineSetup';
 export * from './RefreshIntervalMenu';
 export * from './StatusLinePreview';
