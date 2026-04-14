@@ -282,42 +282,6 @@ describe('ResetTimerWidget — reads from context.usageData', () => {
         expect(result).toMatch(/^1:(14|15) hr$/);
     });
 
-    it('Extra display: monthly cap wins when ceiling > monthly limit', () => {
-        // ceiling=€50, limit=€20 → effectiveTotal=min(5000,2000)=2000 → €20.00
-        installLegacyCacheMock({ extraUsageEnabled: false });
-        const widget = new ResetTimerWidget();
-        const result = widget.render(
-            BASE_ITEM,
-            makeContext({
-                weeklyUsage: 100,
-                extraUsageEnabled: true,
-                extraUsageLimit: 2000, // €20.00
-                extraUsageUsed: 500    // €5.00
-            }),
-            { ...DEFAULT_SETTINGS, extraUsageBalance: 5000 } // ceiling €50 > monthly €20
-        );
-
-        expect(result).toMatch(/\x1b\[38;2;204;0;0mExtra: [$€]5\.00\/[$€]20\.00\x1b\[39m/);
-    });
-
-    it('Extra display: ceiling cap wins when ceiling < monthly limit', () => {
-        // ceiling=€50, limit=€300 → effectiveTotal=min(5000,30000)=5000 → €50.00
-        installLegacyCacheMock({ extraUsageEnabled: false });
-        const widget = new ResetTimerWidget();
-        const result = widget.render(
-            BASE_ITEM,
-            makeContext({
-                weeklyUsage: 100,
-                extraUsageEnabled: true,
-                extraUsageLimit: 30000, // €300.00 — high monthly limit
-                extraUsageUsed: 500     // €5.00
-            }),
-            { ...DEFAULT_SETTINGS, extraUsageBalance: 5000 } // ceiling €50 < monthly €300
-        );
-
-        expect(result).toMatch(/\x1b\[38;2;204;0;0mExtra: [$€]5\.00\/[$€]50\.00\x1b\[39m/);
-    });
-
     it('surfaces context.usageData.error rather than falling back to legacy cache', () => {
         installLegacyCacheMock({
             sessionUsage: 20,

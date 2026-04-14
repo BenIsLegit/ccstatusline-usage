@@ -70,7 +70,6 @@ export const SettingsSchema = z.object({
         autoAlign: false,
         continueThemeAcrossLines: false
     }),
-    extraUsageBalance: z.number().optional(),
     updatemessage: z.object({
         message: z.string().nullable().optional(),
         remaining: z.number().nullable().optional()

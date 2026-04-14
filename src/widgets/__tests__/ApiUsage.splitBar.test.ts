@@ -12,9 +12,8 @@
  * Normal bars clamp display percentage to 100% max — values above 100
  * (e.g. 101% from the API) must never be shown.
  *
- * settings.extraUsageBalance = ceiling in cents (spent + balance at config
- * time, e.g. €153.23 spent + €56.06 balance → set 20929). Stable: unlike
- * (extraUsed + balance), this doesn't drift as spending continues.
+ * Denominator for extraPercent is always the API's `extraUsageLimit`
+ * (monthly cap) — there is no user-configurable ceiling.
  */
 
 import {
@@ -25,7 +24,6 @@ import {
 } from 'vitest';
 
 import type { RenderContext } from '../../types/RenderContext';
-import type { Settings } from '../../types/Settings';
 import { DEFAULT_SETTINGS } from '../../types/Settings';
 import type { WidgetItem } from '../../types/Widget';
 import {
@@ -93,36 +91,6 @@ describe('WeeklyUsageWidget — split bar at 100% with extra usage', () => {
         const expected = 'W: [████] 100.0%';
 
         expect(widget.render(BASE_ITEM, context, DEFAULT_SETTINGS)).toBe(expected);
-    });
-
-    it('monthly cap applies when ceiling > monthly limit', () => {
-        const context = makeContext({
-            weeklyUsage: 100,
-            extraUsageEnabled: true,
-            extraUsageUsed: 50,
-            extraUsageLimit: 100  // monthly limit
-        }, 200);
-        const settings: Settings = { ...DEFAULT_SETTINGS, extraUsageBalance: 200 };
-        // ceiling=200 > limit=100 → effectiveTotal=min(200,100)=100
-        // extraPercent = 50/100*100 = 50%, halfWidth=7, fill=round(0.50*7)=4 (round(3.5)=4)
-        const expected = `Weekly: [███████|${DARK_RED_OPEN}████░░░${DARK_RED_CLOSE}] 100.0%`;
-
-        expect(widget.render(BASE_ITEM, context, settings)).toBe(expected);
-    });
-
-    it('ceiling cap applies when ceiling < monthly limit', () => {
-        const context = makeContext({
-            weeklyUsage: 100,
-            extraUsageEnabled: true,
-            extraUsageUsed: 50,
-            extraUsageLimit: 300  // monthly limit higher than ceiling
-        }, 200);
-        const settings: Settings = { ...DEFAULT_SETTINGS, extraUsageBalance: 200 };
-        // ceiling=200 < limit=300 → effectiveTotal=min(200,300)=200
-        // extraPercent = 50/200*100 = 25%, halfWidth=7, fill=round(0.25*7)=2 (round(1.75)=2)
-        const expected = `Weekly: [███████|${DARK_RED_OPEN}██░░░░░${DARK_RED_CLOSE}] 100.0%`;
-
-        expect(widget.render(BASE_ITEM, context, settings)).toBe(expected);
     });
 
     it('renders normal bar when weekly=99 (gate not met)', () => {

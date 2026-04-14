@@ -56,18 +56,8 @@ function formatSplitUsageBar(label: string, shortLabel: string, extraPercent: nu
     return `${size === 'mobile' ? shortLabel : label}: ${bar} 100.0%`;
 }
 
-function computeEffectiveTotal(extraUsed: number, extraLimit: number, ceiling: number | undefined): number {
-    if (ceiling === undefined)
-        return extraLimit;
-    // ceiling = spent + balance at config time (e.g. spent €153.23 + balance €56.06 → set 20929).
-    // Stable: unlike (extraUsed + balance), this value doesn't drift as spending continues.
-    // Capped at monthly limit so we never exceed what the API allows.
-    return Math.min(ceiling, extraLimit);
-}
-
-function computeExtraPercent(extraUsed: number, extraLimit: number, ceiling: number | undefined): number {
-    const denominator = computeEffectiveTotal(extraUsed, extraLimit, ceiling);
-    return denominator > 0 ? (extraUsed / denominator) * 100 : 0;
+function computeExtraPercent(extraUsed: number, extraLimit: number): number {
+    return extraLimit > 0 ? (extraUsed / extraLimit) * 100 : 0;
 }
 
 function getCurrencySymbol(): string {
@@ -97,7 +87,7 @@ export class SessionUsageWidget implements Widget {
         return { displayText: this.getDisplayName() };
     }
 
-    render(_item: WidgetItem, context: RenderContext, settings: Settings): string | null {
+    render(_item: WidgetItem, context: RenderContext, _settings: Settings): string | null {
         if (context.isPreview)
             return 'Session: [███░░░░░░░░░░░░] 20%';
 
@@ -118,7 +108,7 @@ export class SessionUsageWidget implements Widget {
             && data.sessionUsage >= 100
             && (data.weeklyUsage === undefined || data.weeklyUsage < 100)
         ) {
-            const extraPercent = computeExtraPercent(extraUsed, extraLimit, settings.extraUsageBalance);
+            const extraPercent = computeExtraPercent(extraUsed, extraLimit);
             return formatSplitUsageBar('Session', 'S', extraPercent, size);
         }
 
@@ -140,7 +130,7 @@ export class WeeklyUsageWidget implements Widget {
         return { displayText: this.getDisplayName() };
     }
 
-    render(_item: WidgetItem, context: RenderContext, settings: Settings): string | null {
+    render(_item: WidgetItem, context: RenderContext, _settings: Settings): string | null {
         if (context.isPreview)
             return 'Weekly: [██░░░░░░░░░░░░░] 12%';
 
@@ -160,7 +150,7 @@ export class WeeklyUsageWidget implements Widget {
             && extraLimit !== undefined
             && data.weeklyUsage >= 100
         ) {
-            const extraPercent = computeExtraPercent(extraUsed, extraLimit, settings.extraUsageBalance);
+            const extraPercent = computeExtraPercent(extraUsed, extraLimit);
             return formatSplitUsageBar('Weekly', 'W', extraPercent, size);
         }
 
@@ -182,7 +172,7 @@ export class ResetTimerWidget implements Widget {
         return { displayText: this.getDisplayName() };
     }
 
-    render(_item: WidgetItem, context: RenderContext, settings: Settings): string | null {
+    render(_item: WidgetItem, context: RenderContext, _settings: Settings): string | null {
         if (context.isPreview)
             return '4:30 hr';
 
@@ -203,8 +193,7 @@ export class ResetTimerWidget implements Widget {
                 || (data.sessionUsage !== undefined && data.sessionUsage >= 100)
                 || isChargedModel)) {
             const used = formatCents(data.extraUsageUsed);
-            const effectiveTotal = computeEffectiveTotal(data.extraUsageUsed, data.extraUsageLimit, settings.extraUsageBalance);
-            const limit = formatCents(effectiveTotal);
+            const limit = formatCents(data.extraUsageLimit);
             return `${DARK_RED_OPEN}Extra: ${used}/${limit}${DARK_RED_CLOSE}`;
         }
 

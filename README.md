@@ -67,6 +67,10 @@ Session: [████░░░░░░░░░░░] 27.0% | Weekly: [██
 
 ## 🆕 Recent Updates
 
+### [v2.3.14](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.3.14) - Drop extraUsageBalance setting
+
+- [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): Removed the `extraUsageBalance` setting introduced in v2.3.12. `Extra: €X/€Y` now uses the API's monthly limit directly — stable, no config, no drift.
+
 ### [v2.3.13](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.3.13) - Fix timer color regression from v2.3.12
 
 - [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **Fix timer color** — In v2.3.12, the Reset Timer widget color setting was applied to both the `Extra: €X/€Y` output and the countdown timer (e.g. `4:28 hr`), causing the timer to appear red. The dark red is now applied inline only to the `Extra:` path; the countdown timer respects the widget's configured color as before.
