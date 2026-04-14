@@ -67,6 +67,10 @@ Session: [████░░░░░░░░░░░] 27.0% | Weekly: [██
 
 ## 🆕 Recent Updates
 
+### [v2.3.13](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.3.13) - Fix timer color regression from v2.3.12
+
+- [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **Fix timer color** — In v2.3.12, the Reset Timer widget color setting was applied to both the `Extra: €X/€Y` output and the countdown timer (e.g. `4:28 hr`), causing the timer to appear red. The dark red is now applied inline only to the `Extra:` path; the countdown timer respects the widget's configured color as before.
+
 ### [v2.3.12](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.3.12) - Split bar for extra usage, stable effective-total, 100% clamp
 
 - [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **Split bar at 100%** — Session and Weekly usage bars switch to a split display when the limit is reached and extra usage is active: left half (full) shows the base usage, right half (dark red) shows how much of the extra budget has been spent.

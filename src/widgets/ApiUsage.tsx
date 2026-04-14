@@ -10,6 +10,9 @@ import {
     makeSplitUsageBar
 } from '../utils/usage';
 
+const DARK_RED_OPEN = '\x1b[38;2;204;0;0m';
+const DARK_RED_CLOSE = '\x1b[39m';
+
 const MOBILE_THRESHOLD = 134;
 const MEDIUM_THRESHOLD = 178;
 const MOBILE_BAR_WIDTH = 4;
@@ -202,7 +205,7 @@ export class ResetTimerWidget implements Widget {
             const used = formatCents(data.extraUsageUsed);
             const effectiveTotal = computeEffectiveTotal(data.extraUsageUsed, data.extraUsageLimit, settings.extraUsageBalance);
             const limit = formatCents(effectiveTotal);
-            return `Extra: ${used}/${limit}`;
+            return `${DARK_RED_OPEN}Extra: ${used}/${limit}${DARK_RED_CLOSE}`;
         }
 
         if (!data.sessionResetAt)

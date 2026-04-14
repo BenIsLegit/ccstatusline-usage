@@ -233,7 +233,7 @@ describe('ResetTimerWidget — reads from context.usageData', () => {
 
         expect(result).toBeTruthy();
         // Currency symbol is locale-dependent (€ in Europe, $ elsewhere).
-        expect(result).toMatch(/Extra: [$€]5\.00\/[$€]20\.00/);
+        expect(result).toMatch(/\x1b\[38;2;204;0;0mExtra: [$€]5\.00\/[$€]20\.00\x1b\[39m/);
     });
 
     it('renders extra-usage spending for a charged [1m] (Sonnet) model even when weekly is below 100%', () => {
@@ -255,7 +255,7 @@ describe('ResetTimerWidget — reads from context.usageData', () => {
         );
 
         expect(result).toBeTruthy();
-        expect(result).toMatch(/Extra: [$€]12\.50\/[$€]30\.00/);
+        expect(result).toMatch(/\x1b\[38;2;204;0;0mExtra: [$€]12\.50\/[$€]30\.00\x1b\[39m/);
     });
 
     it('does NOT render extra-usage for Opus [1m] (included in plan) when weekly is below 100%', () => {
@@ -297,7 +297,7 @@ describe('ResetTimerWidget — reads from context.usageData', () => {
             { ...DEFAULT_SETTINGS, extraUsageBalance: 5000 } // ceiling €50 > monthly €20
         );
 
-        expect(result).toMatch(/Extra: [$€]5\.00\/[$€]20\.00/);
+        expect(result).toMatch(/\x1b\[38;2;204;0;0mExtra: [$€]5\.00\/[$€]20\.00\x1b\[39m/);
     });
 
     it('Extra display: ceiling cap wins when ceiling < monthly limit', () => {
@@ -315,7 +315,7 @@ describe('ResetTimerWidget — reads from context.usageData', () => {
             { ...DEFAULT_SETTINGS, extraUsageBalance: 5000 } // ceiling €50 < monthly €300
         );
 
-        expect(result).toMatch(/Extra: [$€]5\.00\/[$€]50\.00/);
+        expect(result).toMatch(/\x1b\[38;2;204;0;0mExtra: [$€]5\.00\/[$€]50\.00\x1b\[39m/);
     });
 
     it('surfaces context.usageData.error rather than falling back to legacy cache', () => {
