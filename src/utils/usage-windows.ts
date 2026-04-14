@@ -118,6 +118,17 @@ export function makeUsageProgressBar(percent: number, width = 15): string {
     return '[' + '█'.repeat(filled) + '░'.repeat(empty) + ']';
 }
 
+const DARK_RED_OPEN = '\x1b[38;2;204;0;0m';
+const DARK_RED_CLOSE = '\x1b[39m';
+
+export function makeSplitUsageBar(extraPercent: number, totalWidth: number): string {
+    const halfWidth = Math.floor((totalWidth - 1) / 2);
+    const clamped = Math.max(0, Math.min(100, extraPercent));
+    const rightFilled = Math.round((clamped / 100) * halfWidth);
+    const rightEmpty = halfWidth - rightFilled;
+    return '[' + '█'.repeat(halfWidth) + '|' + DARK_RED_OPEN + '█'.repeat(rightFilled) + '░'.repeat(rightEmpty) + DARK_RED_CLOSE + ']';
+}
+
 export function makePendulumBar(delta: number, halfWidth = 7): string {
     const clamped = Math.max(-100, Math.min(100, delta));
     const fill = Math.min(halfWidth, Math.round((Math.abs(clamped) / 100) * halfWidth));

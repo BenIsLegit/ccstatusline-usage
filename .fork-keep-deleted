@@ -1,0 +1,7 @@
+# Files that exist in upstream but are intentionally removed in this fork.
+# Listed paths are automatically re-deleted during `git merge upstream/main`.
+# Add new entries here when upstream re-introduces a file we've decided to drop.
+
+docs/DEVELOPMENT.md
+docs/USAGE.md
+docs/WINDOWS.md

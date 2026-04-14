@@ -67,6 +67,13 @@ Session: [████░░░░░░░░░░░] 27.0% | Weekly: [██
 
 ## 🆕 Recent Updates
 
+### [v2.3.12](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.3.12) - Split bar for extra usage, stable effective-total, 100% clamp
+
+- [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **Split bar at 100%** — Session and Weekly usage bars switch to a split display when the limit is reached and extra usage is active: left half (full) shows the base usage, right half (dark red) shows how much of the extra budget has been spent.
+- [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **Stable effective-total** — Set `extraUsageBalance` (cents) in `~/.config/ccstatusline/settings.json` to your spending ceiling (`spent + account_balance` at config time, e.g. €153.23 + €56.06 → `20929`). The denominator stays fixed as spending continues, capped at the API monthly limit. Without this setting, the monthly limit is used directly.
+- [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **Extra usage color via config** — The `Extra: €X/€Y` Reset Timer output color is now driven by the widget's color setting (configurable in TUI or settings.json) instead of being hardcoded.
+- [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **Usage clamped to 100%** — Session and Weekly bars and percentage labels cap at 100% even if the API returns values above 100.
+
 ### [v2.3.11](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.3.11) - Fix dual-cache drift between Weekly Usage and Weekly Pace
 
 - [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **Unified usage data source** — Session Usage, Weekly Usage, and Reset Timer widgets now read from the shared `context.usageData` pipeline instead of maintaining a separate API cache. Previously, around the weekly reset boundary the two caches could drift and show contradictory data (e.g. `Weekly: 99%` alongside `Pace: D1/7 +2%`). Deleted ~330 lines of duplicate fetching/caching infrastructure from `ApiUsage.tsx` (556 → 227 lines). Upstream merge: #278 (JSONL token overcounting fix), #283 (model display name parenthetical strip — integrated into fork's existing `[1m]`-aware display logic).

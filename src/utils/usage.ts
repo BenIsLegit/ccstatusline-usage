@@ -6,6 +6,7 @@ export {
     getUsageWindowFromResetAt,
     getWeeklyUsageWindowFromResetAt,
     makePendulumBar,
+    makeSplitUsageBar,
     makeUsageProgressBar,
     resolveUsageWindowWithFallback,
     resolveWeeklyUsageWindow
