@@ -7,7 +7,8 @@ import type {
 } from '../types/Widget';
 import {
     getUsageErrorMessage,
-    makeSplitUsageBar
+    makeSplitUsageBar,
+    resolveWeeklyUsageWindow
 } from '../utils/usage';
 
 const DARK_RED_OPEN = '\x1b[38;2;204;0;0m';
@@ -51,9 +52,23 @@ function formatUsageBar(label: string, shortLabel: string, percent: number, size
     return `${size === 'mobile' ? shortLabel : label}: ${bar} ${display.toFixed(1)}%`;
 }
 
-function formatSplitUsageBar(label: string, shortLabel: string, extraPercent: number, size: DisplaySize): string {
+function formatSplitUsageBar(label: string, shortLabel: string, extraPercent: number, size: DisplaySize, extraUsed?: number, extraLimit?: number): string {
+    const displayLabel = size === 'mobile' ? shortLabel : label;
+    const suffix = extraUsed !== undefined && extraLimit !== undefined
+        ? `${DARK_RED_OPEN}${formatCents(extraUsed)}/${formatCents(extraLimit)}${DARK_RED_CLOSE}`
+        : '100.0%';
+
+    if (size === 'mobile') {
+        // Split bar is too cramped at 4 chars; use a plain full bar with used amount only
+        const bar = makeProgressBar(100, getBarWidth(size));
+        const mobileSuffix = extraUsed !== undefined
+            ? `${DARK_RED_OPEN}${formatCents(extraUsed)}${DARK_RED_CLOSE}`
+            : suffix;
+        return `${displayLabel}: ${bar} ${mobileSuffix}`;
+    }
+
     const bar = makeSplitUsageBar(extraPercent, getBarWidth(size));
-    return `${size === 'mobile' ? shortLabel : label}: ${bar} 100.0%`;
+    return `${displayLabel}: ${bar} ${suffix}`;
 }
 
 function computeExtraPercent(extraUsed: number, extraLimit: number): number {
@@ -144,14 +159,13 @@ export class WeeklyUsageWidget implements Widget {
         const extraUsed = data.extraUsageUsed;
         const extraLimit = data.extraUsageLimit;
         if (
-            size !== 'mobile'
-            && data.extraUsageEnabled === true
+            data.extraUsageEnabled === true
             && extraUsed !== undefined
             && extraLimit !== undefined
             && data.weeklyUsage >= 100
         ) {
             const extraPercent = computeExtraPercent(extraUsed, extraLimit);
-            return formatSplitUsageBar('Weekly', 'W', extraPercent, size);
+            return formatSplitUsageBar('Weekly', 'W', extraPercent, size, extraUsed, extraLimit);
         }
 
         return formatUsageBar('Weekly', 'W', data.weeklyUsage, size);
@@ -187,14 +201,21 @@ export class ResetTimerWidget implements Widget {
         const isOpus = modelId.includes('opus');
         const isChargedModel = is1mModel && !isOpus;
 
-        // Show extra usage spending when: weekly limit reached (100%) OR session limit reached (100%) OR using a charged [1m] model (e.g. Sonnet [1m])
-        if (data.extraUsageEnabled && data.extraUsageUsed !== undefined && data.extraUsageLimit !== undefined
+        // When extra usage is active (weekly/session limit reached, or charged [1m] model like Sonnet [1m]),
+        // show the WEEKLY reset time. Extra amounts now appear in the Weekly bar instead.
+        const extraActive = data.extraUsageEnabled && data.extraUsageUsed !== undefined && data.extraUsageLimit !== undefined
             && ((data.weeklyUsage !== undefined && data.weeklyUsage >= 100)
                 || (data.sessionUsage !== undefined && data.sessionUsage >= 100)
-                || isChargedModel)) {
-            const used = formatCents(data.extraUsageUsed);
-            const limit = formatCents(data.extraUsageLimit);
-            return `${DARK_RED_OPEN}Extra: ${used}/${limit}${DARK_RED_CLOSE}`;
+                || isChargedModel);
+
+        if (extraActive) {
+            const weeklyWindow = resolveWeeklyUsageWindow(data);
+            if (weeklyWindow) {
+                const hours = Math.floor(weeklyWindow.remainingMs / (1000 * 60 * 60));
+                const minutes = Math.floor((weeklyWindow.remainingMs % (1000 * 60 * 60)) / (1000 * 60));
+                return `${hours}:${minutes.toString().padStart(2, '0')} hr`;
+            }
+            // No weekly reset data — fall through to session timer below.
         }
 
         if (!data.sessionResetAt)

@@ -62,9 +62,14 @@ describe('WeeklyUsageWidget — split bar at 100% with extra usage', () => {
             extraUsageUsed: 14,
             extraUsageLimit: 100
         }, 200);
-        const expected = `Weekly: [███████|${DARK_RED_OPEN}█░░░░░░${DARK_RED_CLOSE}] 100.0%`;
+        const result = widget.render(BASE_ITEM, context, DEFAULT_SETTINGS);
 
-        expect(widget.render(BASE_ITEM, context, DEFAULT_SETTINGS)).toBe(expected);
+        // Bar structure stays the same; 100.0% is replaced by Extra amounts
+        expect(result).toContain(`Weekly: [███████|${DARK_RED_OPEN}█░░░░░░${DARK_RED_CLOSE}]`);
+        expect(result).toContain(DARK_RED_OPEN);
+        // Currency varies by locale (€ in Europe, $ elsewhere)
+        expect(result).toMatch(/[$€]0\.14\/[$€]1\.00/);
+        expect(result).not.toContain('100.0%');
     });
 
     it('renders split bar at medium size (terminalWidth=150, halfWidth=3)', () => {
@@ -75,22 +80,30 @@ describe('WeeklyUsageWidget — split bar at 100% with extra usage', () => {
             extraUsageLimit: 100
         }, 150);
         // medium width=8, halfWidth=floor((8-1)/2)=3, fill=round(0.5*3)=2
-        const expected = `Weekly: [███|${DARK_RED_OPEN}██░${DARK_RED_CLOSE}] 100.0%`;
+        const result = widget.render(BASE_ITEM, context, DEFAULT_SETTINGS);
 
-        expect(widget.render(BASE_ITEM, context, DEFAULT_SETTINGS)).toBe(expected);
+        expect(result).toContain(`Weekly: [███|${DARK_RED_OPEN}██░${DARK_RED_CLOSE}]`);
+        expect(result).toContain(DARK_RED_OPEN);
+        expect(result).toMatch(/[$€]0\.50\/[$€]1\.00/);
+        expect(result).not.toContain('100.0%');
     });
 
-    it('falls back to normal bar at mobile size (split skipped because too cramped)', () => {
+    it('shows amounts at mobile size (split bar skipped, plain full bar + amounts)', () => {
         const context = makeContext({
             weeklyUsage: 100,
             extraUsageEnabled: true,
             extraUsageUsed: 50,
             extraUsageLimit: 100
         }, 100);
-        // mobile width=4, 100% → all 4 filled, normal bar, short label W:
-        const expected = 'W: [████] 100.0%';
+        // mobile width=4, weekly=100% → all 4 filled; no split bar but amounts shown
+        const result = widget.render(BASE_ITEM, context, DEFAULT_SETTINGS);
 
-        expect(widget.render(BASE_ITEM, context, DEFAULT_SETTINGS)).toBe(expected);
+        expect(result).toContain('W: [████]');
+        expect(result).toContain(DARK_RED_OPEN);
+        // Mobile shows used amount only, no /limit
+        expect(result).toMatch(/[$€]0\.50/);
+        expect(result).not.toMatch(/[$€]0\.50\/[$€]/);
+        expect(result).not.toContain('100.0%');
     });
 
     it('renders normal bar when weekly=99 (gate not met)', () => {
@@ -140,9 +153,13 @@ describe('WeeklyUsageWidget — split bar at 100% with extra usage', () => {
             extraUsageUsed: 200,
             extraUsageLimit: 100
         }, 200);
-        const expected = `Weekly: [███████|${DARK_RED_OPEN}███████${DARK_RED_CLOSE}] 100.0%`;
+        const result = widget.render(BASE_ITEM, context, DEFAULT_SETTINGS);
 
-        expect(widget.render(BASE_ITEM, context, DEFAULT_SETTINGS)).toBe(expected);
+        expect(result).toContain(`Weekly: [███████|${DARK_RED_OPEN}███████${DARK_RED_CLOSE}]`);
+        expect(result).toContain(DARK_RED_OPEN);
+        // used=200 cents, limit=100 cents
+        expect(result).toMatch(/[$€]2\.00\/[$€]1\.00/);
+        expect(result).not.toContain('100.0%');
     });
 
     it('handles zero extra usage (right half all empty)', () => {
@@ -152,9 +169,12 @@ describe('WeeklyUsageWidget — split bar at 100% with extra usage', () => {
             extraUsageUsed: 0,
             extraUsageLimit: 100
         }, 200);
-        const expected = `Weekly: [███████|${DARK_RED_OPEN}░░░░░░░${DARK_RED_CLOSE}] 100.0%`;
+        const result = widget.render(BASE_ITEM, context, DEFAULT_SETTINGS);
 
-        expect(widget.render(BASE_ITEM, context, DEFAULT_SETTINGS)).toBe(expected);
+        expect(result).toContain(`Weekly: [███████|${DARK_RED_OPEN}░░░░░░░${DARK_RED_CLOSE}]`);
+        expect(result).toContain(DARK_RED_OPEN);
+        expect(result).toMatch(/[$€]0\.00\/[$€]1\.00/);
+        expect(result).not.toContain('100.0%');
     });
 
     it('clamps displayed percentage to 100% when API returns > 100', () => {

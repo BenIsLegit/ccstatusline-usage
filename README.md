@@ -32,7 +32,7 @@ This fork adds API-based usage widgets beyond the upstream:
 
 - **Session/Weekly Usage** - Real utilization from Anthropic API with progress bars
 - **Weekly Pace** - Pendulum bar showing if you're ahead or behind expected usage pace
-- **Reset Timer** - Time until 5-hour session window resets
+- **Reset Timer** - Time until weekly reset (when at 100% / on a charged model); otherwise time until 5-hour session window resets
 - **Context Window Display** - Visual bar showing context usage
 - **Off Peak** - Shows peak/off-peak status with countdown timer (peak hours drain sessions faster)
 - **Two-line Layout** - Session info on line 1, context on line 2
@@ -66,6 +66,11 @@ Session: [████░░░░░░░░░░░] 27.0% | Weekly: [██
 <br />
 
 ## 🆕 Recent Updates
+
+### [v2.3.15](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.3.15) - Move extra amounts into Weekly bar, Reset Timer shows weekly reset time
+
+- [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **Extra amounts in Weekly bar** — When at 100% / on a charged model, the split bar now shows `€spent/€limit` after the bar instead of `100.0%`. Mobile shows the spent amount only.
+- [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **Reset Timer shows weekly reset time** — When extra usage is active the timer now counts down to the weekly reset instead of showing the `Extra: €X/€Y` spending (which moved to the Weekly bar). Falls back to session timer if no weekly reset data is available.
 
 ### [v2.3.14](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.3.14) - Drop extraUsageBalance setting
 

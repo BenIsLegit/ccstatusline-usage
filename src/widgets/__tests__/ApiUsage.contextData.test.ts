@@ -216,14 +216,18 @@ describe('ResetTimerWidget — reads from context.usageData', () => {
         expect(result).toMatch(/^2:(29|30) hr$/);
     });
 
-    it('renders extra-usage spending when weekly >= 100%, sourced from context.usageData', () => {
+    it('shows weekly reset time when weekly >= 100% (Extra display moves to Weekly bar)', () => {
         installLegacyCacheMock({ extraUsageEnabled: false });
+
+        // Weekly reset is 2h30m in the future.
+        const weeklyResetAt = new Date(Date.now() + (2 * 60 + 30) * 60 * 1000).toISOString();
         const widget = new ResetTimerWidget();
         const result = widget.render(
             BASE_ITEM,
             makeContext({
                 weeklyUsage: 100,
                 sessionResetAt: new Date(Date.now() + 3600_000).toISOString(),
+                weeklyResetAt,
                 extraUsageEnabled: true,
                 extraUsageLimit: 2000, // $20.00
                 extraUsageUsed: 500    // $5.00
@@ -231,13 +235,18 @@ describe('ResetTimerWidget — reads from context.usageData', () => {
             DEFAULT_SETTINGS
         );
 
-        expect(result).toBeTruthy();
-        // Currency symbol is locale-dependent (€ in Europe, $ elsewhere).
-        expect(result).toMatch(/\x1b\[38;2;204;0;0mExtra: [$€]5\.00\/[$€]20\.00\x1b\[39m/);
+        expect(result).not.toBeNull();
+        // Extra amounts no longer appear in the timer — they moved to the Weekly bar.
+        expect(result).not.toContain('Extra');
+        // Timer now shows weekly reset time (allow 2:29 or 2:30 depending on sub-second timing).
+        expect(result).toMatch(/^2:(29|30) hr$/);
     });
 
-    it('renders extra-usage spending for a charged [1m] (Sonnet) model even when weekly is below 100%', () => {
+    it('shows weekly reset time for a charged [1m] (Sonnet) model even when weekly is below 100%', () => {
         installLegacyCacheMock({ extraUsageEnabled: false });
+
+        // Weekly reset is 3h45m in the future.
+        const weeklyResetAt = new Date(Date.now() + (3 * 60 + 45) * 60 * 1000).toISOString();
         const widget = new ResetTimerWidget();
         const result = widget.render(
             BASE_ITEM,
@@ -245,6 +254,7 @@ describe('ResetTimerWidget — reads from context.usageData', () => {
                 {
                     weeklyUsage: 10,
                     sessionResetAt: new Date(Date.now() + 3600_000).toISOString(),
+                    weeklyResetAt,
                     extraUsageEnabled: true,
                     extraUsageLimit: 3000,
                     extraUsageUsed: 1250
@@ -254,8 +264,33 @@ describe('ResetTimerWidget — reads from context.usageData', () => {
             DEFAULT_SETTINGS
         );
 
-        expect(result).toBeTruthy();
-        expect(result).toMatch(/\x1b\[38;2;204;0;0mExtra: [$€]12\.50\/[$€]30\.00\x1b\[39m/);
+        expect(result).not.toBeNull();
+        expect(result).not.toContain('Extra');
+        expect(result).toMatch(/^3:(44|45) hr$/);
+    });
+
+    it('falls back to session reset time when extra conditions are met but weeklyResetAt is absent', () => {
+        installLegacyCacheMock({ extraUsageEnabled: false });
+
+        // Provide a session reset time but no weeklyResetAt.
+        const sessionResetAt = new Date(Date.now() + (1 * 60 + 30) * 60 * 1000).toISOString();
+        const widget = new ResetTimerWidget();
+        const result = widget.render(
+            BASE_ITEM,
+            makeContext({
+                weeklyUsage: 100,
+                sessionResetAt,
+                extraUsageEnabled: true,
+                extraUsageLimit: 2000,
+                extraUsageUsed: 500
+            }),
+            DEFAULT_SETTINGS
+        );
+
+        expect(result).not.toBeNull();
+        expect(result).not.toContain('Extra');
+        // Falls back to session timer.
+        expect(result).toMatch(/^1:(29|30) hr$/);
     });
 
     it('does NOT render extra-usage for Opus [1m] (included in plan) when weekly is below 100%', () => {
@@ -277,8 +312,8 @@ describe('ResetTimerWidget — reads from context.usageData', () => {
             DEFAULT_SETTINGS
         );
 
-        // Should fall through to time display, NOT extra-usage.
-        expect(result).not.toContain('Extra:');
+        // Should fall through to session time display — Opus [1m] is included in plan, not charged.
+        expect(result).not.toContain('Extra');
         expect(result).toMatch(/^1:(14|15) hr$/);
     });
 
