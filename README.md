@@ -40,7 +40,7 @@ This fork adds API-based usage widgets beyond the upstream:
 ### Enhanced Status Line Preview
 
 ```
-Session: [████░░░░░░░░░░░] 27.0% | Weekly: [████░░░░░░░░░░░] 34.0% | 2:03 hr | Model: Opus 4.6 | Session ID: 0109b99d...
+Session: [████░░░░░░░░░░░] 27.0% | Weekly: [████░░░░░░░░░░░] 34.0% | 2:03 hr | Model: Opus 4.7 | Session ID: 0109b99d...
   Context: [██████░░░░░░░░░] 389k/1M (39%) | Pace: [░░░░░░█|░░░░░░░] D4/7 -8% | Off-peak (4:03 hr)
 ```
 
@@ -66,6 +66,12 @@ Session: [████░░░░░░░░░░░] 27.0% | Weekly: [██
 <br />
 
 ## 🆕 Recent Updates
+
+### [v2.3.16](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.3.16) - Reset Timer fix + model ref updates + upstream sync
+
+- [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **Reset Timer fix** — When session hits 100% but weekly is still below 100%, the Reset Timer now correctly shows the session reset countdown (5-hour window) instead of the weekly reset time. Previously it jumped to the weekly timer as soon as session filled up.
+- [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): Updated all Opus 4.6 references to Opus 4.7 throughout docs, examples, and test data.
+- Upstream sync (5 commits): refreshInterval configuration for Claude Code status line (#297), xhigh thinking effort level (#314), dev-dependency bumps.
 
 ### [v2.3.15](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.3.15) - Move extra amounts into Weekly bar, Reset Timer shows weekly reset time
 
@@ -155,7 +161,7 @@ Session: [████░░░░░░░░░░░] 27.0% | Weekly: [██
 - [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **1M context indicator** — Model widget now appends `[1m]` when a 1M context model is active, both in full (`Model: claude-sonnet-4-6 [1m]`) and compact (`M: s4.6[1m]`) display modes
 - [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **Revert extra usage on 1M** — Removed the v2.1.15 trigger that showed extra usage spending on 1M models. 1M context is not included in Max without extra usage — the `[1m]` suffix on the Model widget now makes this visible, so the Reset Timer no longer needs to duplicate that awareness
 
-### [v2.1.15](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.1.15) - Show extra usage balance on 1M context models
+### [v2.1.15](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.1.15) - Show extra usage Kelp on 1M context models
 
 - [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **Extra usage on 1M models** — Reset Timer widget now shows extra usage spending (`Extra: €X.XX/€Y.YY`) whenever a 1M context model is active (Opus/Sonnet with 1M context window), in addition to the existing trigger when weekly limit reaches 100%. *Reverted in v2.1.16.*
 
@@ -174,9 +180,9 @@ Session: [████░░░░░░░░░░░] 27.0% | Weekly: [██
 
 - [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **Remove thinking effort bars** — Claude Code now shows thinking intensity natively in its own UI, so the `▌▌▌` bars after the model name have been removed from the Model widget
 
-### [v2.1.11](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.1.11) - Configurable extra usage balance
+### [v2.1.11](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.1.11) - Configurable extra usage Kelp
 
-- [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **Configurable extra usage balance** — Add `extraUsageBalance` setting (in cents) to `~/.config/ccstatusline/settings.json` to override the API's monthly limit with your actual prepaid balance (e.g., `"extraUsageBalance": 5000` shows `Extra: €0.00/€50.00`)
+- [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **Configurable extra usage Kelp** — Add `extraUsageBalance` setting (in cents) to `~/.config/ccstatusline/settings.json` to override the API's monthly limit with your actual prepaid Kelp (e.g., `"extraUsageBalance": 5000` shows `Extra: €0.00/€50.00`)
 
 ### [v2.1.8](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.1.8) - Windows support for API usage widgets
 

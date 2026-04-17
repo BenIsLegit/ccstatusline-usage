@@ -59,7 +59,7 @@ describe('ContextBarWidget', () => {
 
     it('uses 1M context label model IDs in fallback mode', () => {
         const context: RenderContext = {
-            data: { model: { id: 'Opus 4.6 (1M context)' } },
+            data: { model: { id: 'Opus 4.7 (1M context)' } },
             tokenMetrics: {
                 inputTokens: 0,
                 outputTokens: 0,
@@ -75,7 +75,7 @@ describe('ContextBarWidget', () => {
 
     it('uses 1M in parentheses model IDs in fallback mode', () => {
         const context: RenderContext = {
-            data: { model: { id: 'Opus 4.6 (1M)' } },
+            data: { model: { id: 'Opus 4.7 (1M)' } },
             tokenMetrics: {
                 inputTokens: 0,
                 outputTokens: 0,

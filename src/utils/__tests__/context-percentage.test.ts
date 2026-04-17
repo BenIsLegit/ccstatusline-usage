@@ -105,7 +105,7 @@ describe('calculateContextPercentage', () => {
 
         it('should calculate percentage using 1M denominator with 1M context label', () => {
             const context: RenderContext = {
-                data: { model: { id: 'Opus 4.6 (1M context)' } },
+                data: { model: { id: 'Opus 4.7 (1M context)' } },
                 tokenMetrics: {
                     inputTokens: 0,
                     outputTokens: 0,
@@ -121,7 +121,7 @@ describe('calculateContextPercentage', () => {
 
         it('should calculate percentage using 1M denominator with 1M in parentheses', () => {
             const context: RenderContext = {
-                data: { model: { id: 'Opus 4.6 (1M)' } },
+                data: { model: { id: 'Opus 4.7 (1M)' } },
                 tokenMetrics: {
                     inputTokens: 0,
                     outputTokens: 0,
@@ -139,8 +139,8 @@ describe('calculateContextPercentage', () => {
             const context: RenderContext = {
                 data: {
                     model: {
-                        id: 'claude-opus-4-6',
-                        display_name: 'Opus 4.6 (1M context)'
+                        id: 'claude-opus-4-7',
+                        display_name: 'Opus 4.7 (1M context)'
                     }
                 },
                 tokenMetrics: {

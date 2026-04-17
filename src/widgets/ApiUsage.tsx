@@ -201,11 +201,11 @@ export class ResetTimerWidget implements Widget {
         const isOpus = modelId.includes('opus');
         const isChargedModel = is1mModel && !isOpus;
 
-        // When extra usage is active (weekly/session limit reached, or charged [1m] model like Sonnet [1m]),
-        // show the WEEKLY reset time. Extra amounts now appear in the Weekly bar instead.
+        // When extra usage is active (weekly limit reached, or charged [1m] model like Sonnet [1m]),
+        // show the WEEKLY reset time. Session hitting 100% alone doesn't count — session resets
+        // on its own 5-hour cycle, so keep showing the session timer until weekly is also exhausted.
         const extraActive = data.extraUsageEnabled && data.extraUsageUsed !== undefined && data.extraUsageLimit !== undefined
             && ((data.weeklyUsage !== undefined && data.weeklyUsage >= 100)
-                || (data.sessionUsage !== undefined && data.sessionUsage >= 100)
                 || isChargedModel);
 
         if (extraActive) {

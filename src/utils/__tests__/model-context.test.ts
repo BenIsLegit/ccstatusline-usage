@@ -34,8 +34,8 @@ describe('getContextConfig', () => {
             expect(config.usableTokens).toBe(800000);
         });
 
-        it('should return 1M context window for claude-opus-4-6 with [1m] suffix', () => {
-            const config = getContextConfig('claude-opus-4-6[1m]');
+        it('should return 1M context window for claude-opus-4-7 with [1m] suffix', () => {
+            const config = getContextConfig('claude-opus-4-7[1m]');
 
             expect(config.maxTokens).toBe(1000000);
             expect(config.usableTokens).toBe(800000);
@@ -58,21 +58,21 @@ describe('getContextConfig', () => {
         });
 
         it('should return 1M context window for model IDs with 1M context label', () => {
-            const config = getContextConfig('Opus 4.6 (1M context)');
+            const config = getContextConfig('Opus 4.7 (1M context)');
 
             expect(config.maxTokens).toBe(1000000);
             expect(config.usableTokens).toBe(800000);
         });
 
         it('should return 1M context window for model IDs with 1M token context label', () => {
-            const config = getContextConfig('Claude Opus 4.6 - 1M token context');
+            const config = getContextConfig('Claude Opus 4.7 - 1M token context');
 
             expect(config.maxTokens).toBe(1000000);
             expect(config.usableTokens).toBe(800000);
         });
 
         it('should return 1M context window for model IDs with 1M in parentheses', () => {
-            const config = getContextConfig('Opus 4.6 (1M)');
+            const config = getContextConfig('Opus 4.7 (1M)');
 
             expect(config.maxTokens).toBe(1000000);
             expect(config.usableTokens).toBe(800000);
@@ -135,13 +135,13 @@ describe('getModelContextIdentifier', () => {
 
     it('prefers both id and display name when available', () => {
         expect(getModelContextIdentifier({
-            id: 'claude-opus-4-6',
-            display_name: 'Opus 4.6 (1M context)'
-        })).toBe('claude-opus-4-6 Opus 4.6 (1M context)');
+            id: 'claude-opus-4-7',
+            display_name: 'Opus 4.7 (1M context)'
+        })).toBe('claude-opus-4-7 Opus 4.7 (1M context)');
     });
 
     it('returns display name when id is missing', () => {
-        expect(getModelContextIdentifier({ display_name: 'Opus 4.6 (1M context)' })).toBe('Opus 4.6 (1M context)');
+        expect(getModelContextIdentifier({ display_name: 'Opus 4.7 (1M context)' })).toBe('Opus 4.7 (1M context)');
     });
 
     it('returns undefined when no model value exists', () => {

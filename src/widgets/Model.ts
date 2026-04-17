@@ -8,7 +8,7 @@ import type {
 
 const MEDIUM_THRESHOLD = 178;
 
-// Parse model ID into compact form: claude-opus-4-6 → o4.6, claude-sonnet-4-5-20250929 → s4.5
+// Parse model ID into compact form: claude-opus-4-7 → o4.7, claude-sonnet-4-5-20250929 → s4.5
 function compactModelName(name: string): string {
     // Strip claude- prefix
     const stripped = name.replace(/^claude-/, '');
