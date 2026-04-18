@@ -67,6 +67,11 @@ Session: [████░░░░░░░░░░░] 27.0% | Weekly: [██
 
 ## 🆕 Recent Updates
 
+### [v2.3.17](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.3.17) - Local model fallback for API usage widgets
+
+- [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **Local model fallback** — When the active model is not Opus/Sonnet/Haiku (e.g. a local Ollama model like `qwen3-coder:30b`), the Session, Weekly, and Context widgets now render empty-bar placeholders (`[░░░░░░░░░░░░░░░] -.0%`) and the Reset Timer shows `-:00 hr` instead of misleading Claude API values.
+- [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): Qwen models keep showing real context usage when `context_window` is present in the payload.
+
 ### [v2.3.16](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.3.16) - Reset Timer fix + model ref updates + upstream sync
 
 - [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **Reset Timer fix** — When session hits 100% but weekly is still below 100%, the Reset Timer now correctly shows the session reset countdown (5-hour window) instead of the weekly reset time. Previously it jumped to the weekly timer as soon as session filled up.

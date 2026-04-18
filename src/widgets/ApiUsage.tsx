@@ -91,6 +91,24 @@ function formatCents(cents: number): string {
     return `${symbol}${(cents / 100).toFixed(2)}`;
 }
 
+function getModelId(context: RenderContext): string {
+    const model = context.data?.model;
+    return (typeof model === 'string' ? model : model?.id) ?? '';
+}
+
+function isLocalModel(context: RenderContext): boolean {
+    const modelId = getModelId(context);
+    if (modelId === '')
+        return false;
+    return !(modelId.includes('opus') || modelId.includes('sonnet') || modelId.includes('haiku'));
+}
+
+function renderLocalUsageFallback(label: string, shortLabel: string, size: DisplaySize): string {
+    if (size === 'mobile')
+        return `${shortLabel}: [░░░░] -.0%`;
+    return `${label}: [░░░░░░░░░░░░░░░] -.0%`;
+}
+
 // Session Usage Widget
 export class SessionUsageWidget implements Widget {
     getDefaultColor(): string { return 'brightBlue'; }
@@ -113,6 +131,10 @@ export class SessionUsageWidget implements Widget {
             return null;
 
         const size = getDisplaySize(context);
+
+        if (isLocalModel(context))
+            return renderLocalUsageFallback('Session', 'S', size);
+
         const extraUsed = data.extraUsageUsed;
         const extraLimit = data.extraUsageLimit;
         if (
@@ -156,6 +178,10 @@ export class WeeklyUsageWidget implements Widget {
             return null;
 
         const size = getDisplaySize(context);
+
+        if (isLocalModel(context))
+            return renderLocalUsageFallback('Weekly', 'W', size);
+
         const extraUsed = data.extraUsageUsed;
         const extraLimit = data.extraUsageLimit;
         if (
@@ -194,9 +220,11 @@ export class ResetTimerWidget implements Widget {
         if (data.error)
             return getUsageErrorMessage(data.error);
 
+        if (isLocalModel(context))
+            return '-:00 hr';
+
         // Determine if the current model charges extra usage (Sonnet [1m] does, Opus [1m] does not)
-        const model = context.data?.model;
-        const modelId = (typeof model === 'string' ? model : model?.id) ?? '';
+        const modelId = getModelId(context);
         const is1mModel = modelId.includes('[1m]');
         const isOpus = modelId.includes('opus');
         const isChargedModel = is1mModel && !isOpus;
@@ -259,6 +287,11 @@ export class ContextBarWidget implements Widget {
         const cw = context.data?.context_window;
         if (!cw)
             return null;
+
+        // Non-Qwen local models expose no meaningful context window via the JSON, so show a fallback.
+        // Qwen exposes real values and falls through to the standard rendering path below.
+        if (isLocalModel(context) && !getModelId(context).includes('qwen'))
+            return renderLocalUsageFallback('Context', 'C', getDisplaySize(context));
 
         const total = Number(cw.context_window_size) || 200000;
 
