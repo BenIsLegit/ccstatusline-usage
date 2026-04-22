@@ -117,7 +117,6 @@ export function makeUsageProgressBar(percent: number, width = 15): string {
     const empty = width - filled;
     return '[' + '█'.repeat(filled) + '░'.repeat(empty) + ']';
 }
-
 const DARK_RED_OPEN = '\x1b[38;2;204;0;0m';
 const DARK_RED_CLOSE = '\x1b[39m';
 

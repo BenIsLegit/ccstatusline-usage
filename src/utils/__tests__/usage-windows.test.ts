@@ -14,7 +14,6 @@ describe('getUsageErrorMessage', () => {
         expect(getUsageErrorMessage('rate-limited')).toBe('[Rate limited]');
     });
 });
-
 describe('makePendulumBar', () => {
     it('shows empty bar with center marker at delta=0', () => {
         expect(makePendulumBar(0)).toBe('[░░░░░░░|░░░░░░░]');
