@@ -36,6 +36,42 @@ This fork adds API-based usage widgets beyond the upstream:
 - **Context Window Display** - Visual bar showing context usage
 - **Off Peak** - Shows peak/off-peak status with countdown timer (peak hours drain sessions faster)
 - **Two-line Layout** - Session info on line 1, context on line 2
+- **Multi-provider routing** - Usage widgets dispatch per model: Anthropic models hit the usage API; opencode/local models (GLM, Kimi, MiniMax, Qwen, Ollama) skip the fetch and gracefully hide usage bars while keeping the real-time context bar.
+
+### Multi-Provider Routing (Opencode / Local Models)
+
+Claude Code can route individual prompts to non-Anthropic backends via opencode or a local Ollama runtime. The status line reads the `model.id` that Claude Code sends on stdin each render and dispatches through a per-provider resolver (`src/utils/usage/resolver.ts`):
+
+- **Anthropic** (`opus`, `sonnet`, `haiku` in the id) — fetches Session/Weekly/Reset from the usage API.
+- **Opencode** (`glm`, `kimi`, `minimax`, `mm-`, `qwen`, `owen`, `mimo`) — no usage API call; Session/Weekly/Reset widgets hide themselves. Context Bar still renders when `context_window` is in the payload.
+- **Unknown model id** — same behavior as opencode (hides usage widgets).
+
+This means opencode-routed turns don't trigger pointless Anthropic API calls or rate-limiting during heavy local usage.
+
+Example — configure Claude Code to route a model through opencode (edit `~/.claude/settings.json`):
+
+```jsonc
+{
+  "statusLine": {
+    "type": "command",
+    "command": "npx -y ccstatusline-usage@latest",
+    "padding": 0
+  },
+  "model": "glm-5.1"   // or "kimi-k2.6", "minimax-m2.7", "qwen-3.6-plus", "qwen3.6:35b-a3b-q4_K_M" for local Ollama
+}
+```
+
+What the status line renders per model:
+
+```
+# Anthropic (opus / sonnet / haiku)
+Session: [████░░░░░░░░░░░] 27.0% | Weekly: [████░░░░░░░░░░░] 34.0% | 2:03 hr | Model: Opus 4.7
+  Context: [██████░░░░░░░░░] 389k/1M (39%) | Pace: [░░░░░░█|░░░░░░░] D4/7 -8% | Off-peak (4:03 hr)
+
+# Opencode / local (glm-5.1, kimi, qwen, …)
+Model: glm-5.1 | Off-peak (4:03 hr)
+  Context: [██░░░░░░░░░░░░░] 50k/200k (25%)
+```
 
 ### Enhanced Status Line Preview
 
@@ -66,6 +102,13 @@ Session: [████░░░░░░░░░░░] 27.0% | Weekly: [██
 <br />
 
 ## 🆕 Recent Updates
+
+### [v2.4.0](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.4.0) - Multi-provider router for usage widgets
+
+- [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **Provider pattern end-to-end** — Usage widgets now dispatch through `resolveProvider(modelId)` in `src/utils/usage/resolver.ts`. Anthropic models (`opus`/`sonnet`/`haiku`) fetch from the usage API; opencode/local models (`glm`, `kimi`, `minimax`, `mm-`, `qwen`, `owen`, `mimo`) skip the fetch entirely so heavy local-model sessions no longer trigger needless Anthropic API calls or rate-limiting.
+- [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): The prefetch layer (`usage-prefetch.ts`) now reads `data.model.id` from the payload and dispatches via `provider.fetchUsage()` instead of the hardcoded Anthropic path. `opencodeProvider` / `nullProvider` return empty `UsageData`, so Session/Weekly/Reset widgets hide themselves naturally.
+- [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **Context Bar stays backend-agnostic** — renders whenever `context_window` is present in the payload, regardless of which provider handled the turn.
+- See the new [Multi-Provider Routing](#multi-provider-routing-opencode--local-models) section under Fork Enhancements for example config.
 
 ### [v2.3.17](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.3.17) - Local model fallback for API usage widgets
 

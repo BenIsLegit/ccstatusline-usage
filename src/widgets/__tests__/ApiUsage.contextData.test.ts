@@ -95,6 +95,7 @@ function makeContext(usageData: RenderUsageData | null, extra: Partial<RenderCon
         usageData,
         terminalWidth: 200, // full display size — avoids mobile/medium abbreviation
         isPreview: false,
+        data: { model: { id: 'claude-sonnet-4-6' } },
         ...extra
     };
 }

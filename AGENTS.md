@@ -76,6 +76,10 @@ The project has dual runtime compatibility - works with both Bun and Node.js:
   - Sonnet 4.5 WITH [1m] suffix: 1M tokens (800k usable at 80%) - requires long context beta access
   - Sonnet 4.5 WITHOUT [1m] suffix: 200k tokens (160k usable at 80%)
   - Legacy models: 200k tokens (160k usable at 80%)
+- **usage/**: Provider pattern for multi-backend usage fetch
+  - `resolver.ts`: Routes modelId → provider (anthropic / opencode / null)
+  - `providers/`: Per-backend fetch implementations
+  - Context Bar is backend-agnostic: renders whenever `context_window` is in the JSON payload
 
 ### Widgets (src/widgets/)
 Custom widgets implementing the Widget interface defined in src/types/Widget.ts:
@@ -149,3 +153,12 @@ Default to using Bun instead of Node.js:
   - Run tests with `bun test` or `bun test --watch` for watch mode
   - Test configuration: vitest.config.ts
   - Manual testing also available via piped input and TUI interaction
+
+## Fork-Specific Patterns
+
+- **Provider pattern**: Usage widgets dispatch via `resolveProvider(modelId)`. Extend the resolver for new backends, don't add `isLocalModel()`-style flat gates in widgets.
+- **Context Bar is backend-agnostic**: Renders whenever `context_window` is in the JSON payload, regardless of model backend.
+- **Render path for debugging**: If a widget shows `-.0%`, a fallback is still firing.
+  Session/Weekly/Reset → `resolveProvider(modelId)` (GATE 1: null=hides) → `provider.fetchUsage()` (GATE 2: error=error text) → render bars
+  Context Bar → `JSON.context_window` present? (GATE 3: absent=hides) → render bar
+- **Anti-patterns (session 45cf1079)**: Don't create parallel files for data that belongs in existing ones; don't conflate "tests pass" with "feature works" (pipe-verify is the only gate); always trace the full render path before claiming a display fix is done.

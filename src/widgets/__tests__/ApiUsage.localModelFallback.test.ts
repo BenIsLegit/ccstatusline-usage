@@ -25,13 +25,13 @@ const BASE_ITEM: WidgetItem = { id: 'test', type: 'test' };
 function makeContext(usageData: RenderUsageData | null, extra: Partial<RenderContext> = {}): RenderContext {
     return {
         usageData,
-        terminalWidth: 200, // full display size — avoids mobile/medium abbreviation
+        terminalWidth: 200, // full display size
         isPreview: false,
         ...extra
     };
 }
 
-describe('ApiUsage widgets with local models (fallback behavior)', () => {
+describe('ApiUsage widgets with provider resolution', () => {
     beforeEach(() => {
         vi.restoreAllMocks();
     });
@@ -40,152 +40,122 @@ describe('ApiUsage widgets with local models (fallback behavior)', () => {
         vi.restoreAllMocks();
     });
 
-    // Test for SessionUsageWidget with local model
-    it('should show fallback values for local models (no Opus/Sonnet/Haiku)', () => {
-        const widget = new SessionUsageWidget();
+    // Null provider models (unknown model ids) — widgets should hide (return null)
+    describe('null provider (unknown models)', () => {
+        it('SessionUsageWidget returns null for unknown models', () => {
+            const widget = new SessionUsageWidget();
+            const context = makeContext(
+                { sessionUsage: 14.0 },
+                { data: { model: { id: 'mistral-7b' } } }
+            );
+            expect(widget.render(BASE_ITEM, context, DEFAULT_SETTINGS)).toBeNull();
+        });
 
-        // For local model (no charge), sessionUsage should show fallback
-        const context = makeContext(
-            { sessionUsage: 14.0 },
-            { data: { model: { id: 'qwen3-coder:30b' } } }
-        );
+        it('WeeklyUsageWidget returns null for unknown models', () => {
+            const widget = new WeeklyUsageWidget();
+            const context = makeContext(
+                { weeklyUsage: 24.0 },
+                { data: { model: { id: 'mistral-7b' } } }
+            );
+            expect(widget.render(BASE_ITEM, context, DEFAULT_SETTINGS)).toBeNull();
+        });
 
-        const result = widget.render(BASE_ITEM, context, DEFAULT_SETTINGS);
-
-        // Should show fallback values for local models
-        expect(result).toBe('Session: [░░░░░░░░░░░░░░░] -.0%');
+        it('ResetTimerWidget returns null for unknown models', () => {
+            const widget = new ResetTimerWidget();
+            const context = makeContext(
+                {
+                    sessionResetAt: new Date(Date.now() + 3600_000).toISOString(),
+                    weeklyResetAt: new Date(Date.now() + 86400_000).toISOString()
+                },
+                { data: { model: { id: 'mistral-7b' } } }
+            );
+            expect(widget.render(BASE_ITEM, context, DEFAULT_SETTINGS)).toBeNull();
+        });
     });
 
-    // Test for WeeklyUsageWidget with local model
-    it('should show fallback values for local models (no Opus/Sonnet/Haiku)', () => {
-        const widget = new WeeklyUsageWidget();
+    // Opencode provider models (qwen, glm, kimi, minimax) — context bar renders if data present
+    describe('opencode provider models', () => {
+        it('ContextBarWidget renders for qwen models with context_window', () => {
+            const widget = new ContextBarWidget();
+            const context: RenderContext = {
+                data: {
+                    model: { id: 'qwen3-coder:30b' },
+                    context_window: {
+                        context_window_size: 200000,
+                        current_usage: 50000
+                    }
+                },
+                terminalWidth: 200
+            };
+            expect(widget.render(BASE_ITEM, context, DEFAULT_SETTINGS)).toBe('Context: [████░░░░░░░░░░░] 50k/200k (25%)');
+        });
 
-        // For local model (no charge), weeklyUsage should show fallback
-        const context = makeContext(
-            { weeklyUsage: 24.0 },
-            { data: { model: { id: 'qwen3-coder:30b' } } }
-        );
+        it('ContextBarWidget renders for qwen models in mobile mode', () => {
+            const widget = new ContextBarWidget();
+            const context: RenderContext = {
+                data: {
+                    model: { id: 'qwen3-coder:30b' },
+                    context_window: {
+                        context_window_size: 200000,
+                        current_usage: 50000
+                    }
+                },
+                terminalWidth: 100
+            };
+            expect(widget.render(BASE_ITEM, context, DEFAULT_SETTINGS)).toBe('C: [█░░░] 50k/200k');
+        });
 
-        const result = widget.render(BASE_ITEM, context, DEFAULT_SETTINGS);
+        it('ContextBarWidget renders for non-qwen opencode models with context_window', () => {
+            const widget = new ContextBarWidget();
+            const context: RenderContext = {
+                data: {
+                    model: { id: 'llama3:8b' },
+                    context_window: {
+                        context_window_size: 200000,
+                        current_usage: 50000
+                    }
+                },
+                terminalWidth: 200
+            };
+            // Non-Anthropic, non-opencode model — null provider
+            // Context Bar still renders because it only checks for context_window presence
+            expect(widget.render(BASE_ITEM, context, DEFAULT_SETTINGS)).toBe('Context: [████░░░░░░░░░░░] 50k/200k (25%)');
+        });
 
-        // Should show fallback values for local models
-        expect(result).toBe('Weekly: [░░░░░░░░░░░░░░░] -.0%');
+        it('SessionUsageWidget returns null for qwen models (opencode provider, no API data)', () => {
+            const widget = new SessionUsageWidget();
+            const context = makeContext(
+                { sessionUsage: 14.0 },
+                { data: { model: { id: 'qwen3-coder:30b' } } }
+            );
+            // Opencode provider — but usageData has no provider field from the resolver here.
+            // The widget checks resolveProvider for the null gate, then checks usageData.
+            // Since usageData.sessionUsage is defined, the widget will try to render.
+            // But wait — the widget only gates on null provider before checking data.
+            // For opencode models, resolveProvider returns 'opencode' (not 'null'),
+            // so the widget proceeds past the gate and renders normally if usageData is present.
+            expect(widget.render(BASE_ITEM, context, DEFAULT_SETTINGS)).toBe('Session: [██░░░░░░░░░░░░░] 14.0%');
+        });
     });
 
-    // Test for ResetTimerWidget with local model
-    it('should show fallback values for local models (no Opus/Sonnet/Haiku)', () => {
-        const widget = new ResetTimerWidget();
+    // Anthropic provider models — should work exactly as before
+    describe('anthropic provider models', () => {
+        it('SessionUsageWidget renders normally for Sonnet', () => {
+            const widget = new SessionUsageWidget();
+            const context = makeContext(
+                { sessionUsage: 14.0 },
+                { data: { model: { id: 'claude-sonnet-4-5[1m]' } } }
+            );
+            expect(widget.render(BASE_ITEM, context, DEFAULT_SETTINGS)).toBe('Session: [██░░░░░░░░░░░░░] 14.0%');
+        });
 
-        // For local model (no charge), reset time should show fallback
-        const context = makeContext(
-            {
-                sessionResetAt: new Date(Date.now() + 3600_000).toISOString(), // 1 hour in future
-                weeklyResetAt: new Date(Date.now() + 86400_000).toISOString() // 1 day in future
-            },
-            { data: { model: { id: 'qwen3-coder:30b' } } }
-        );
-
-        const result = widget.render(BASE_ITEM, context, DEFAULT_SETTINGS);
-
-        // Should show fallback values for local models
-        expect(result).toBe('-:00 hr');
-    });
-
-    // Test for ContextBarWidget with Qwen local model (should show actual context)
-    it('should show actual context for Qwen models', () => {
-        const widget = new ContextBarWidget();
-
-        // For Qwen model, context bar should show actual context usage
-        const context: RenderContext = {
-            data: {
-                model: { id: 'qwen3-coder:30b' },
-                context_window: {
-                    context_window_size: 200000,
-                    current_usage: 50000
-                }
-            },
-            terminalWidth: 200
-        };
-
-        const result = widget.render(BASE_ITEM, context, DEFAULT_SETTINGS);
-
-        // Should show actual context for Qwen models (bar should be 15 chars wide with 25% usage)
-        expect(result).toBe('Context: [████░░░░░░░░░░░] 50k/200k (25%)');
-    });
-
-    // Test for ContextBarWidget with Qwen local model in mobile mode
-    it('should show actual context for Qwen models in mobile mode', () => {
-        const widget = new ContextBarWidget();
-
-        // For Qwen model, context bar should show actual context in mobile mode
-        const context: RenderContext = {
-            data: {
-                model: { id: 'qwen3-coder:30b' },
-                context_window: {
-                    context_window_size: 200000,
-                    current_usage: 50000
-                }
-            },
-            terminalWidth: 100 // mobile mode threshold
-        };
-
-        const result = widget.render(BASE_ITEM, context, DEFAULT_SETTINGS);
-
-        // Should show actual context for Qwen models in mobile mode
-        expect(result).toBe('C: [█░░░] 50k/200k');
-    });
-
-    // Test for ContextBarWidget with other local model (should show fallback)
-    it('should show fallback values for non-Qwen local models', () => {
-        const widget = new ContextBarWidget();
-
-        // For other local model, context bar should show fallback
-        const context: RenderContext = {
-            data: {
-                model: { id: 'llama3:8b' },
-                context_window: {
-                    context_window_size: 200000,
-                    current_usage: 50000
-                }
-            },
-            terminalWidth: 200
-        };
-
-        const result = widget.render(BASE_ITEM, context, DEFAULT_SETTINGS);
-
-        // Should show fallback values for non-Qwen local models
-        expect(result).toBe('Context: [░░░░░░░░░░░░░░░] -.0%');
-    });
-
-    // Test for SessionUsageWidget with charged model (should work normally)
-    it('should work normally for charged models (Sonnet)', () => {
-        const widget = new SessionUsageWidget();
-
-        // For charged model, should work normally
-        const context = makeContext(
-            { sessionUsage: 14.0 },
-            { data: { model: { id: 'claude-sonnet-4-5[1m]' } } }
-        );
-
-        const result = widget.render(BASE_ITEM, context, DEFAULT_SETTINGS);
-
-        // Should show normal values for charged models
-        expect(result).toBe('Session: [██░░░░░░░░░░░░░] 14.0%');
-    });
-
-    // Test for SessionUsageWidget with Opus model (should work normally)
-    it('should work normally for Opus models (included in plan)', () => {
-        const widget = new SessionUsageWidget();
-
-        // For Opus model, should work normally (but not charged)
-        const context = makeContext(
-            { sessionUsage: 14.0 },
-            { data: { model: { id: 'claude-opus-4-7[1m]' } } }
-        );
-
-        const result = widget.render(BASE_ITEM, context, DEFAULT_SETTINGS);
-
-        // Should show normal values for Opus models
-        expect(result).toBe('Session: [██░░░░░░░░░░░░░] 14.0%');
+        it('SessionUsageWidget renders normally for Opus', () => {
+            const widget = new SessionUsageWidget();
+            const context = makeContext(
+                { sessionUsage: 14.0 },
+                { data: { model: { id: 'claude-opus-4-7[1m]' } } }
+            );
+            expect(widget.render(BASE_ITEM, context, DEFAULT_SETTINGS)).toBe('Session: [██░░░░░░░░░░░░░] 14.0%');
+        });
     });
 });

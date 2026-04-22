@@ -8,11 +8,11 @@ import type { RenderContext } from '../../types/RenderContext';
 import { DEFAULT_SETTINGS } from '../../types/Settings';
 import type { WidgetItem } from '../../types/Widget';
 import {
+    OffPeakWidget,
     isOffPeak,
     isPeakHour,
     isWeekend,
-    minutesUntilFlip,
-    OffPeakWidget
+    minutesUntilFlip
 } from '../OffPeak';
 
 const item: WidgetItem = { id: 'off-peak', type: 'off-peak' };

@@ -62,7 +62,7 @@ const PENDULUM_ITEM: WidgetItem = { id: 'pace', type: 'weekly-pace', metadata: {
 // 1. ApiUsage — SessionUsageWidget bar width tiers
 // ---------------------------------------------------------------------------
 
-const SESSION_USAGE_DATA = { usageData: { sessionUsage: 50, weeklyUsage: 50 } };
+const SESSION_USAGE_DATA = { usageData: { sessionUsage: 50, weeklyUsage: 50 }, data: { model: { id: 'claude-sonnet-4-6' } } };
 
 describe('ApiUsage SessionUsageWidget — display size tiers', () => {
     beforeEach(() => {
@@ -132,7 +132,7 @@ describe('ApiUsage SessionUsageWidget — display size tiers', () => {
 // 2. ApiUsage — WeeklyUsageWidget bar width tiers
 // ---------------------------------------------------------------------------
 
-const WEEKLY_USAGE_DATA = { usageData: { sessionUsage: 50, weeklyUsage: 50 } };
+const WEEKLY_USAGE_DATA = { usageData: { sessionUsage: 50, weeklyUsage: 50 }, data: { model: { id: 'claude-sonnet-4-6' } } };
 
 describe('ApiUsage WeeklyUsageWidget — display size tiers', () => {
     beforeEach(() => {
@@ -262,7 +262,7 @@ describe('WeeklyPaceWidget — pendulum bar display size tiers', () => {
         const widget = new WeeklyPaceWidget();
         const result = widget.render(
             PENDULUM_ITEM,
-            ctx(60, { usageData: { weeklyUsage: 50 } }),
+            ctx(60, { usageData: { weeklyUsage: 50 }, data: { model: { id: 'claude-sonnet-4-6' } } }),
             DEFAULT_SETTINGS
         );
         expect(result).not.toBeNull();
@@ -277,7 +277,7 @@ describe('WeeklyPaceWidget — pendulum bar display size tiers', () => {
         const widget = new WeeklyPaceWidget();
         const result = widget.render(
             PENDULUM_ITEM,
-            ctx(150, { usageData: { weeklyUsage: 50 } }),
+            ctx(150, { usageData: { weeklyUsage: 50 }, data: { model: { id: 'claude-sonnet-4-6' } } }),
             DEFAULT_SETTINGS
         );
         expect(result).not.toBeNull();
@@ -290,7 +290,7 @@ describe('WeeklyPaceWidget — pendulum bar display size tiers', () => {
         const widget = new WeeklyPaceWidget();
         const result = widget.render(
             PENDULUM_ITEM,
-            ctx(200, { usageData: { weeklyUsage: 50 } }),
+            ctx(200, { usageData: { weeklyUsage: 50 }, data: { model: { id: 'claude-sonnet-4-6' } } }),
             DEFAULT_SETTINGS
         );
         expect(result).not.toBeNull();
@@ -303,7 +303,7 @@ describe('WeeklyPaceWidget — pendulum bar display size tiers', () => {
         const widget = new WeeklyPaceWidget();
         const result = widget.render(
             PENDULUM_ITEM,
-            ctx(133, { usageData: { weeklyUsage: 50 } }),
+            ctx(133, { usageData: { weeklyUsage: 50 }, data: { model: { id: 'claude-sonnet-4-6' } } }),
             DEFAULT_SETTINGS
         );
         expect(result).not.toMatch(/\[░/);
@@ -314,7 +314,7 @@ describe('WeeklyPaceWidget — pendulum bar display size tiers', () => {
         const widget = new WeeklyPaceWidget();
         const result = widget.render(
             PENDULUM_ITEM,
-            ctx(134, { usageData: { weeklyUsage: 50 } }),
+            ctx(134, { usageData: { weeklyUsage: 50 }, data: { model: { id: 'claude-sonnet-4-6' } } }),
             DEFAULT_SETTINGS
         );
         expect(result).toMatch(/\[[░█|]{9}\]/);
@@ -325,7 +325,7 @@ describe('WeeklyPaceWidget — pendulum bar display size tiers', () => {
         const widget = new WeeklyPaceWidget();
         const result = widget.render(
             PENDULUM_ITEM,
-            ctx(177, { usageData: { weeklyUsage: 50 } }),
+            ctx(177, { usageData: { weeklyUsage: 50 }, data: { model: { id: 'claude-sonnet-4-6' } } }),
             DEFAULT_SETTINGS
         );
         expect(result).toMatch(/\[[░█|]{9}\]/);
@@ -336,7 +336,7 @@ describe('WeeklyPaceWidget — pendulum bar display size tiers', () => {
         const widget = new WeeklyPaceWidget();
         const result = widget.render(
             PENDULUM_ITEM,
-            ctx(178, { usageData: { weeklyUsage: 50 } }),
+            ctx(178, { usageData: { weeklyUsage: 50 }, data: { model: { id: 'claude-sonnet-4-6' } } }),
             DEFAULT_SETTINGS
         );
         expect(result).toMatch(/\[[░█|]{15}\]/);

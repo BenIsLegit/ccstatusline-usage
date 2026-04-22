@@ -12,8 +12,8 @@ import {
     resolveWeeklyUsageWindow
 } from '../utils/usage';
 
-import { formatRawOrLabeledValue } from './shared/raw-or-labeled';
 import { makeModifierText } from './shared/editor-display';
+import { formatRawOrLabeledValue } from './shared/raw-or-labeled';
 
 const MOBILE_THRESHOLD = 134;
 const MEDIUM_THRESHOLD = 178;

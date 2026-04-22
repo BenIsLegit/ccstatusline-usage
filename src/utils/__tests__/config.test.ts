@@ -17,7 +17,6 @@ import {
     DEFAULT_SETTINGS,
     type Settings
 } from '../../types/Settings';
-
 import { ensureDir } from '../config';
 
 const MOCK_HOME_DIR = '/tmp/ccstatusline-config-test-home';

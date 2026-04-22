@@ -5,11 +5,11 @@ import {
 } from 'vitest';
 
 import type { WidgetItem } from '../../types/Widget';
-import { getWidget } from '../widgets';
 import {
     hasCustomWidgetColors,
     sanitizeLinesForColorLevel
 } from '../color-sanitize';
+import { getWidget } from '../widgets';
 
 describe('color sanitize helpers', () => {
     it('detects custom ansi256/hex colors in foreground and background', () => {

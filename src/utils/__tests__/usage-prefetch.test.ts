@@ -8,7 +8,7 @@ import {
 } from 'vitest';
 
 import type { WidgetItem } from '../../types/Widget';
-import * as usage from '../usage';
+import * as resolver from '../usage/resolver';
 import {
     extractUsageDataFromRateLimits,
     hasUsageDependentWidgets,
@@ -21,14 +21,15 @@ function makeLines(...lineItems: WidgetItem[][]): WidgetItem[][] {
 }
 
 describe('usage prefetch', () => {
-    let mockFetchUsageData: {
-        mock: { calls: unknown[][] };
-        mockResolvedValue: (value: UsageData) => void;
-    };
+    let mockFetchUsage: ReturnType<typeof vi.fn<() => Promise<UsageData>>>;
 
     beforeEach(() => {
         vi.restoreAllMocks();
-        mockFetchUsageData = vi.spyOn(usage, 'fetchUsageData');
+        mockFetchUsage = vi.fn<() => Promise<UsageData>>();
+        vi.spyOn(resolver, 'resolveProvider').mockReturnValue({
+            name: 'anthropic',
+            fetchUsage: mockFetchUsage
+        });
     });
 
     afterEach(() => {
@@ -57,7 +58,7 @@ describe('usage prefetch', () => {
     });
 
     it('fetches usage data once when at least one usage widget exists', async () => {
-        mockFetchUsageData.mockResolvedValue({ sessionUsage: 12.3 });
+        mockFetchUsage.mockResolvedValue({ sessionUsage: 12.3 });
 
         const lines = makeLines(
             [{ id: '1', type: 'model' }],
@@ -67,7 +68,7 @@ describe('usage prefetch', () => {
         const usageData = await prefetchUsageDataIfNeeded(lines);
 
         expect(usageData).toEqual({ sessionUsage: 12.3 });
-        expect(mockFetchUsageData.mock.calls.length).toBe(1);
+        expect(mockFetchUsage.mock.calls.length).toBe(1);
     });
 
     it('does not fetch usage data when no usage widgets exist', async () => {
@@ -79,12 +80,10 @@ describe('usage prefetch', () => {
         const usageData = await prefetchUsageDataIfNeeded(lines);
 
         expect(usageData).toBeNull();
-        expect(mockFetchUsageData.mock.calls.length).toBe(0);
+        expect(mockFetchUsage.mock.calls.length).toBe(0);
     });
 
     it('uses rate_limits from StatusJSON instead of fetching from API', async () => {
-        mockFetchUsageData.mockResolvedValue({ sessionUsage: 99 });
-
         const lines = makeLines(
             [{ id: '1', type: 'session-usage' }]
         );
@@ -98,11 +97,11 @@ describe('usage prefetch', () => {
 
         expect(usageData?.sessionUsage).toBe(42);
         expect(usageData?.weeklyUsage).toBe(15);
-        expect(mockFetchUsageData.mock.calls.length).toBe(0);
+        expect(mockFetchUsage.mock.calls.length).toBe(0);
     });
 
-    it('falls back to API fetch when rate_limits is absent', async () => {
-        mockFetchUsageData.mockResolvedValue({ sessionUsage: 42 });
+    it('falls back to provider fetch when rate_limits is absent', async () => {
+        mockFetchUsage.mockResolvedValue({ sessionUsage: 42 });
 
         const lines = makeLines(
             [{ id: '1', type: 'session-usage' }]
@@ -111,11 +110,11 @@ describe('usage prefetch', () => {
         const usageData = await prefetchUsageDataIfNeeded(lines, {});
 
         expect(usageData).toEqual({ sessionUsage: 42 });
-        expect(mockFetchUsageData.mock.calls.length).toBe(1);
+        expect(mockFetchUsage.mock.calls.length).toBe(1);
     });
 
-    it('falls back to API fetch when rate_limits has no usable percentages', async () => {
-        mockFetchUsageData.mockResolvedValue({ sessionUsage: 42 });
+    it('falls back to provider fetch when rate_limits has no usable percentages', async () => {
+        mockFetchUsage.mockResolvedValue({ sessionUsage: 42 });
 
         const lines = makeLines(
             [{ id: '1', type: 'session-usage' }]
@@ -124,11 +123,11 @@ describe('usage prefetch', () => {
         const usageData = await prefetchUsageDataIfNeeded(lines, { rate_limits: { five_hour: { resets_at: 1774020000 } } });
 
         expect(usageData).toEqual({ sessionUsage: 42 });
-        expect(mockFetchUsageData.mock.calls.length).toBe(1);
+        expect(mockFetchUsage.mock.calls.length).toBe(1);
     });
 
-    it('falls back to API fetch when seven_day is absent from rate_limits', async () => {
-        mockFetchUsageData.mockResolvedValue({
+    it('falls back to provider fetch when seven_day is absent from rate_limits', async () => {
+        mockFetchUsage.mockResolvedValue({
             sessionUsage: 50,
             sessionResetAt: '2026-03-20T12:00:00.000Z',
             weeklyUsage: 10,
@@ -147,11 +146,11 @@ describe('usage prefetch', () => {
             weeklyUsage: 10,
             weeklyResetAt: '2026-03-27T12:00:00.000Z'
         });
-        expect(mockFetchUsageData.mock.calls.length).toBe(1);
+        expect(mockFetchUsage.mock.calls.length).toBe(1);
     });
 
-    it('falls back to API fetch when sessionResetAt is missing from rate_limits', async () => {
-        mockFetchUsageData.mockResolvedValue({
+    it('falls back to provider fetch when sessionResetAt is missing from rate_limits', async () => {
+        mockFetchUsage.mockResolvedValue({
             sessionUsage: 42,
             sessionResetAt: '2026-03-20T12:00:00.000Z',
             weeklyUsage: 15,
@@ -175,7 +174,54 @@ describe('usage prefetch', () => {
             weeklyUsage: 15,
             weeklyResetAt: '2026-03-27T12:00:00.000Z'
         });
-        expect(mockFetchUsageData.mock.calls.length).toBe(1);
+        expect(mockFetchUsage.mock.calls.length).toBe(1);
+    });
+
+    it('dispatches to provider resolved from model id string', async () => {
+        vi.restoreAllMocks();
+        const mockOpencodeFetch = vi.fn().mockResolvedValue({ provider: 'opencode' });
+        vi.spyOn(resolver, 'resolveProvider').mockImplementation((modelId) => {
+            if (typeof modelId === 'string' && modelId.includes('glm'))
+                return { name: 'opencode', fetchUsage: mockOpencodeFetch };
+            return { name: 'null', fetchUsage: vi.fn().mockResolvedValue({ provider: null }) };
+        });
+
+        const lines = makeLines([{ id: '1', type: 'session-usage' }]);
+        await prefetchUsageDataIfNeeded(lines, { model: 'glm-5.1' });
+
+        expect(mockOpencodeFetch.mock.calls.length).toBe(1);
+    });
+
+    it('dispatches to provider resolved from model object id', async () => {
+        vi.restoreAllMocks();
+        const mockOpencodeFetch = vi.fn().mockResolvedValue({ provider: 'opencode' });
+        vi.spyOn(resolver, 'resolveProvider').mockImplementation((modelId) => {
+            if (typeof modelId === 'string' && modelId.includes('glm'))
+                return { name: 'opencode', fetchUsage: mockOpencodeFetch };
+            return { name: 'null', fetchUsage: vi.fn().mockResolvedValue({ provider: null }) };
+        });
+
+        const lines = makeLines([{ id: '1', type: 'session-usage' }]);
+        await prefetchUsageDataIfNeeded(lines, { model: { id: 'glm-5.1' } });
+
+        expect(mockOpencodeFetch.mock.calls.length).toBe(1);
+    });
+
+    it('opencode model does not call anthropic fetch', async () => {
+        vi.restoreAllMocks();
+        const anthropicFetch = vi.fn();
+        const opencodeFetch = vi.fn().mockResolvedValue({ provider: 'opencode' });
+        vi.spyOn(resolver, 'resolveProvider').mockImplementation((modelId) => {
+            if (typeof modelId === 'string' && modelId.includes('glm'))
+                return { name: 'opencode', fetchUsage: opencodeFetch };
+            return { name: 'anthropic', fetchUsage: anthropicFetch };
+        });
+
+        const lines = makeLines([{ id: '1', type: 'session-usage' }]);
+        await prefetchUsageDataIfNeeded(lines, { model: { id: 'glm-5.1' } });
+
+        expect(opencodeFetch.mock.calls.length).toBe(1);
+        expect(anthropicFetch.mock.calls.length).toBe(0);
     });
 });
 

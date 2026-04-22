@@ -16,6 +16,7 @@ export interface UsageData {
     extraUsageUsed?: number;       // in cents
     extraUsageUtilization?: number;
     error?: UsageError;
+    provider?: 'anthropic' | 'opencode' | null;
 }
 
 export interface UsageWindowMetrics {

@@ -39,7 +39,8 @@ const CachedUsageDataSchema = z.object({
     extraUsageLimit: z.number().nullable().optional(),
     extraUsageUsed: z.number().nullable().optional(),
     extraUsageUtilization: z.number().nullable().optional(),
-    error: z.string().nullable().optional()
+    error: z.string().nullable().optional(),
+    provider: z.enum(['anthropic', 'opencode']).nullable().optional()
 });
 
 const UsageApiResponseSchema = z.object({

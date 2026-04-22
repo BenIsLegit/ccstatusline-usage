@@ -126,6 +126,29 @@ describe('getContextConfig', () => {
             expect(config.usableTokens).toBe(160000);
         });
     });
+
+    describe('Opencode models', () => {
+        it('should return 1M context window for glm-5.1', () => {
+            const config = getContextConfig('glm-5.1');
+
+            expect(config.maxTokens).toBe(1000000);
+            expect(config.usableTokens).toBe(800000);
+        });
+
+        it('should return 1M context window for mm-2.7', () => {
+            const config = getContextConfig('mm-2.7');
+
+            expect(config.maxTokens).toBe(1000000);
+            expect(config.usableTokens).toBe(800000);
+        });
+
+        it('should return 1M context window for kimi-k2.6', () => {
+            const config = getContextConfig('kimi-k2.6');
+
+            expect(config.maxTokens).toBe(1000000);
+            expect(config.usableTokens).toBe(800000);
+        });
+    });
 });
 
 describe('getModelContextIdentifier', () => {

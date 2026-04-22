@@ -10,6 +10,7 @@ import {
     makeSplitUsageBar,
     resolveWeeklyUsageWindow
 } from '../utils/usage';
+import { resolveProvider } from '../utils/usage/resolver';
 
 const DARK_RED_OPEN = '\x1b[38;2;204;0;0m';
 const DARK_RED_CLOSE = '\x1b[39m';
@@ -96,19 +97,6 @@ function getModelId(context: RenderContext): string {
     return (typeof model === 'string' ? model : model?.id) ?? '';
 }
 
-function isLocalModel(context: RenderContext): boolean {
-    const modelId = getModelId(context);
-    if (modelId === '')
-        return false;
-    return !(modelId.includes('opus') || modelId.includes('sonnet') || modelId.includes('haiku'));
-}
-
-function renderLocalUsageFallback(label: string, shortLabel: string, size: DisplaySize): string {
-    if (size === 'mobile')
-        return `${shortLabel}: [░░░░] -.0%`;
-    return `${label}: [░░░░░░░░░░░░░░░] -.0%`;
-}
-
 // Session Usage Widget
 export class SessionUsageWidget implements Widget {
     getDefaultColor(): string { return 'brightBlue'; }
@@ -132,8 +120,8 @@ export class SessionUsageWidget implements Widget {
 
         const size = getDisplaySize(context);
 
-        if (isLocalModel(context))
-            return renderLocalUsageFallback('Session', 'S', size);
+        if (resolveProvider(getModelId(context)).name === 'null')
+            return null;
 
         const extraUsed = data.extraUsageUsed;
         const extraLimit = data.extraUsageLimit;
@@ -179,8 +167,8 @@ export class WeeklyUsageWidget implements Widget {
 
         const size = getDisplaySize(context);
 
-        if (isLocalModel(context))
-            return renderLocalUsageFallback('Weekly', 'W', size);
+        if (resolveProvider(getModelId(context)).name === 'null')
+            return null;
 
         const extraUsed = data.extraUsageUsed;
         const extraLimit = data.extraUsageLimit;
@@ -220,8 +208,8 @@ export class ResetTimerWidget implements Widget {
         if (data.error)
             return getUsageErrorMessage(data.error);
 
-        if (isLocalModel(context))
-            return '-:00 hr';
+        if (resolveProvider(getModelId(context)).name === 'null')
+            return null;
 
         // Determine if the current model charges extra usage (Sonnet [1m] does, Opus [1m] does not)
         const modelId = getModelId(context);
@@ -287,11 +275,6 @@ export class ContextBarWidget implements Widget {
         const cw = context.data?.context_window;
         if (!cw)
             return null;
-
-        // Non-Qwen local models expose no meaningful context window via the JSON, so show a fallback.
-        // Qwen exposes real values and falls through to the standard rendering path below.
-        if (isLocalModel(context) && !getModelId(context).includes('qwen'))
-            return renderLocalUsageFallback('Context', 'C', getDisplaySize(context));
 
         const total = Number(cw.context_window_size) || 200000;
 

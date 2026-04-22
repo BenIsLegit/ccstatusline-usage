@@ -2,7 +2,7 @@ import type { StatusJSON } from '../types/StatusJSON';
 import type { WidgetItem } from '../types/Widget';
 
 import type { UsageData } from './usage';
-import { fetchUsageData } from './usage';
+import { resolveProvider } from './usage/resolver';
 
 const USAGE_WIDGET_TYPES = new Set<string>([
     'session-usage',
@@ -64,11 +64,15 @@ export async function prefetchUsageDataIfNeeded(lines: WidgetItem[][], data?: St
         return null;
     }
 
+    const model = data?.model;
+    const modelId = (typeof model === 'string' ? model : model?.id) ?? '';
+    const provider = resolveProvider(modelId);
+
     const rateLimitsData = extractUsageDataFromRateLimits(data?.rate_limits);
     if (hasCompleteRateLimitsUsageData(rateLimitsData)) {
         // rate_limits lacks extraUsage fields — supplement via API for reset-timer
         if (hasExtraUsageDependentWidgets(lines)) {
-            const apiData = await fetchUsageData();
+            const apiData = await provider.fetchUsage();
             if (apiData.error === undefined) {
                 return { ...rateLimitsData, extraUsageEnabled: apiData.extraUsageEnabled, extraUsageLimit: apiData.extraUsageLimit, extraUsageUsed: apiData.extraUsageUsed, extraUsageUtilization: apiData.extraUsageUtilization };
             }
@@ -76,5 +80,5 @@ export async function prefetchUsageDataIfNeeded(lines: WidgetItem[][], data?: St
         return rateLimitsData;
     }
 
-    return fetchUsageData();
+    return provider.fetchUsage();
 }

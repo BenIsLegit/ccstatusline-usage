@@ -43,7 +43,8 @@ function makeContext(
     return {
         usageData,
         terminalWidth,
-        isPreview: false
+        isPreview: false,
+        data: { model: { id: 'claude-sonnet-4-6' } }
     };
 }
 

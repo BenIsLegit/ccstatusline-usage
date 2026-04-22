@@ -12,6 +12,7 @@ import type { StatusJSON } from './types/StatusJSON';
 import { StatusJSONSchema } from './types/StatusJSON';
 import { getVisibleText } from './utils/ansi';
 import { updateColorMap } from './utils/colors';
+import { renderCompactOutput } from './utils/compact-renderer';
 import {
     initConfigPath,
     loadSettings,
@@ -37,7 +38,6 @@ import {
     getWidgetSpeedWindowSeconds,
     isWidgetSpeedWindowEnabled
 } from './utils/speed-window';
-import { renderCompactOutput } from './utils/compact-renderer';
 import { getTerminalWidth } from './utils/terminal';
 import { prefetchUsageDataIfNeeded } from './utils/usage-prefetch';
 
