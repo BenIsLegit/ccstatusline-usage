@@ -1,5 +1,3 @@
-<div align="center">
-
 <pre>
               _        _             _ _            
   ___ ___ ___| |_ __ _| |_ _   _ ___| (_)_ __   ___ 
@@ -82,7 +80,6 @@ Session: [████░░░░░░░░░░░] 27.0% | Weekly: [██
 
 ![Demo](https://raw.githubusercontent.com/sirmalloc/ccstatusline/main/screenshots/demo.gif)
 
-</div>
 <br />
 
 ## 📚 Table of Contents
