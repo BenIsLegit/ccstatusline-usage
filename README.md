@@ -1,5 +1,3 @@
-<div align="center">
-
 <pre>
               _        _             _ _            
   ___ ___ ___| |_ __ _| |_ _   _ ___| (_)_ __   ___ 
@@ -82,7 +80,6 @@ Session: [████░░░░░░░░░░░] 27.0% | Weekly: [██
 
 ![Demo](https://raw.githubusercontent.com/sirmalloc/ccstatusline/main/screenshots/demo.gif)
 
-</div>
 <br />
 
 ## 📚 Table of Contents
@@ -102,6 +99,13 @@ Session: [████░░░░░░░░░░░] 27.0% | Weekly: [██
 <br />
 
 ## 🆕 Recent Updates
+
+### [v2.4.1](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.4.1) - Weekly Pace: showPercent toggle + decimal precision
+
+- [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **`%` keybind — always show delta on `On Pace`** — Previously `On Pace` was the only pace band that hid its delta. Toggle `showPercent` in the editor to render `D4/7: On Pace +3%` (or `-2%`, or `+0%`) so you can see how close to a band edge you are.
+- [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage): **`.` keybind — decimal precision** — Cycles 0 → 1 → 2 → 3 → 0 decimal places for all deltas (Warm/Cool/Overcooking/Underusing, `On Pace` when `showPercent` is on, and the pendulum bar). Replaces `Math.round()` with `toFixed(decimals)` in a shared `formatDelta` helper.
+- Both toggles are metadata-gated and orthogonal — omitted keys behave identically to before.
+- Thanks to @BenIsLegit ([#3](https://github.com/pcvelz/ccstatusline-usage/pull/3)).
 
 ### [v2.4.0](https://github.com/pcvelz/ccstatusline-usage/releases/tag/v2.4.0) - Multi-provider router for usage widgets
 

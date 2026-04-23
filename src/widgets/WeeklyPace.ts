@@ -24,19 +24,33 @@ function getPaceDisplayMode(item: WidgetItem): PaceDisplayMode {
     return item.metadata?.display === 'pendulum' ? 'pendulum' : 'text';
 }
 
-function computePace(actualPercent: number, expectedPercent: number) {
+type DecimalPrecision = 0 | 1 | 2 | 3;
+
+function getDecimalPrecision(item: WidgetItem): DecimalPrecision {
+    const val = Number(item.metadata?.decimals);
+    return (val === 1 || val === 2 || val === 3) ? val : 0;
+}
+
+function formatDelta(delta: number, decimals: DecimalPrecision): string {
+    return delta.toFixed(decimals);
+}
+
+function computePace(actualPercent: number, expectedPercent: number, showPercent = false, decimals: DecimalPrecision = 0) {
     const delta = actualPercent - expectedPercent;
     const dayOfWeek = Math.max(1, Math.min(7, Math.ceil(expectedPercent * 7 / 100)));
 
     let status: string;
     if (delta > 15) {
-        status = `Overcooking +${Math.round(delta)}%`;
+        status = `Overcooking +${formatDelta(delta, decimals)}%`;
     } else if (delta > 5) {
-        status = `Warm +${Math.round(delta)}%`;
+        status = `Warm +${formatDelta(delta, decimals)}%`;
     } else if (delta < -15) {
-        status = `Underusing ${Math.round(delta)}%`;
+        status = `Underusing ${formatDelta(delta, decimals)}%`;
     } else if (delta < -5) {
-        status = `Cool ${Math.round(delta)}%`;
+        status = `Cool ${formatDelta(delta, decimals)}%`;
+    } else if (showPercent) {
+        const sign = delta >= 0 ? '+' : '';
+        status = `On Pace ${sign}${formatDelta(delta, decimals)}%`;
     } else {
         status = 'On Pace';
     }
@@ -57,6 +71,13 @@ export class WeeklyPaceWidget implements Widget {
         if (mode === 'pendulum') {
             modifiers.push('pendulum bar');
         }
+        if (item.metadata?.showPercent === 'true') {
+            modifiers.push('always %');
+        }
+        const decimals = getDecimalPrecision(item);
+        if (decimals > 0) {
+            modifiers.push(`.${'0'.repeat(decimals)}`);
+        }
 
         return {
             displayText: this.getDisplayName(),
@@ -65,20 +86,43 @@ export class WeeklyPaceWidget implements Widget {
     }
 
     handleEditorAction(action: string, item: WidgetItem): WidgetItem | null {
-        if (action !== 'toggle-pendulum') {
-            return null;
+        if (action === 'toggle-pendulum') {
+            const currentMode = getPaceDisplayMode(item);
+            const nextMode: PaceDisplayMode = currentMode === 'text' ? 'pendulum' : 'text';
+
+            return {
+                ...item,
+                metadata: {
+                    ...(item.metadata ?? {}),
+                    display: nextMode
+                }
+            };
         }
 
-        const currentMode = getPaceDisplayMode(item);
-        const nextMode: PaceDisplayMode = currentMode === 'text' ? 'pendulum' : 'text';
+        if (action === 'toggle-show-percent') {
+            const current = item.metadata?.showPercent === 'true';
+            return {
+                ...item,
+                metadata: {
+                    ...(item.metadata ?? {}),
+                    showPercent: current ? 'false' : 'true'
+                }
+            };
+        }
 
-        return {
-            ...item,
-            metadata: {
-                ...(item.metadata ?? {}),
-                display: nextMode
-            }
-        };
+        if (action === 'cycle-decimals') {
+            const current = getDecimalPrecision(item);
+            const next = current >= 3 ? 0 : current + 1;
+            return {
+                ...item,
+                metadata: {
+                    ...(item.metadata ?? {}),
+                    decimals: String(next)
+                }
+            };
+        }
+
+        return null;
     }
 
     render(item: WidgetItem, context: RenderContext, settings: Settings): string | null {
@@ -106,7 +150,9 @@ export class WeeklyPaceWidget implements Widget {
             return null;
 
         const actualPercent = Math.max(0, Math.min(100, data.weeklyUsage));
-        const { delta, dayOfWeek, status } = computePace(actualPercent, window.elapsedPercent);
+        const showPercent = item.metadata?.showPercent === 'true';
+        const decimals = getDecimalPrecision(item);
+        const { delta, dayOfWeek, status } = computePace(actualPercent, window.elapsedPercent, showPercent, decimals);
 
         const width = context.terminalWidth ?? 0;
         const mobile = width > 0 && width < MOBILE_THRESHOLD;
@@ -115,8 +161,7 @@ export class WeeklyPaceWidget implements Widget {
         if (displayMode === 'pendulum' && !mobile) {
             const halfWidth = medium ? 4 : 7;
             const sign = delta >= 0 ? '+' : '';
-            const barDisplay = `${makePendulumBar(delta, halfWidth)} D${dayOfWeek}/7 ${sign}${Math.round(delta)}%`;
-
+            const barDisplay = `${makePendulumBar(delta, halfWidth)} D${dayOfWeek}/7 ${sign}${formatDelta(delta, decimals)}%`;
             return formatRawOrLabeledValue(item, 'Pace: ', barDisplay);
         }
 
@@ -125,7 +170,9 @@ export class WeeklyPaceWidget implements Widget {
 
     getCustomKeybinds(): CustomKeybind[] {
         return [
-            { key: 'p', label: '(p)endulum toggle', action: 'toggle-pendulum' }
+            { key: 'p', label: '(p)endulum toggle', action: 'toggle-pendulum' },
+            { key: '%', label: '(%) always show percent', action: 'toggle-show-percent' },
+            { key: '.', label: '(.) decimal precision', action: 'cycle-decimals' }
         ];
     }
 

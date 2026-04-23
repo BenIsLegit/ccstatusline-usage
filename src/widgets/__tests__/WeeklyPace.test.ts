@@ -16,6 +16,7 @@ import { WeeklyPaceWidget } from '../WeeklyPace';
 
 const BASE_ITEM: WidgetItem = { id: 'pace', type: 'weekly-pace' };
 const PENDULUM_ITEM: WidgetItem = { ...BASE_ITEM, metadata: { display: 'pendulum' } };
+const SHOW_PERCENT_ITEM: WidgetItem = { ...BASE_ITEM, metadata: { showPercent: 'true' } };
 
 function render(context: RenderContext = {}, item: WidgetItem = BASE_ITEM): string | null {
     return new WeeklyPaceWidget().render(item, context, DEFAULT_SETTINGS);
@@ -174,6 +175,79 @@ describe('WeeklyPaceWidget', () => {
         expect(render({ usageData: { weeklyUsage: 65.1 } })).toMatch(/^D4\/7: Overcooking \+15%$/);
     });
 
+    // --- showPercent metadata ---
+
+    it('shows On Pace with percentage when showPercent is true', () => {
+        // 57.14% elapsed, 60% usage → delta ≈ +2.9%
+        mockResolveWeeklyUsageWindow.mockReturnValue(makeWindow(57.14));
+        expect(render({ usageData: { weeklyUsage: 60 } }, SHOW_PERCENT_ITEM)).toBe('D4/7: On Pace +3%');
+    });
+
+    it('shows On Pace with negative percentage when showPercent is true', () => {
+        // 50% elapsed, 47% usage → delta = -3%
+        mockResolveWeeklyUsageWindow.mockReturnValue(makeWindow(50));
+        expect(render({ usageData: { weeklyUsage: 47 } }, SHOW_PERCENT_ITEM)).toBe('D4/7: On Pace -3%');
+    });
+
+    it('shows On Pace +0% when exactly on pace with showPercent', () => {
+        mockResolveWeeklyUsageWindow.mockReturnValue(makeWindow(50));
+        expect(render({ usageData: { weeklyUsage: 50 } }, SHOW_PERCENT_ITEM)).toBe('D4/7: On Pace +0%');
+    });
+
+    it('does not affect non-On Pace labels when showPercent is true', () => {
+        // 30% elapsed, 40% usage → delta = +10% → Warm
+        mockResolveWeeklyUsageWindow.mockReturnValue(makeWindow(30));
+        expect(render({ usageData: { weeklyUsage: 40 } }, SHOW_PERCENT_ITEM)).toBe('D3/7: Warm +10%');
+    });
+
+    // --- Decimal precision ---
+
+    it('shows 1 decimal place when decimals is 1', () => {
+        mockResolveWeeklyUsageWindow.mockReturnValue(makeWindow(30));
+        const item: WidgetItem = { ...BASE_ITEM, metadata: { decimals: '1' } };
+        expect(render({ usageData: { weeklyUsage: 40 } }, item)).toBe('D3/7: Warm +10.0%');
+    });
+
+    it('shows 2 decimal places when decimals is 2', () => {
+        mockResolveWeeklyUsageWindow.mockReturnValue(makeWindow(30));
+        const item: WidgetItem = { ...BASE_ITEM, metadata: { decimals: '2' } };
+        expect(render({ usageData: { weeklyUsage: 40 } }, item)).toBe('D3/7: Warm +10.00%');
+    });
+
+    it('shows 3 decimal places when decimals is 3', () => {
+        mockResolveWeeklyUsageWindow.mockReturnValue(makeWindow(30));
+        const item: WidgetItem = { ...BASE_ITEM, metadata: { decimals: '3' } };
+        expect(render({ usageData: { weeklyUsage: 40 } }, item)).toBe('D3/7: Warm +10.000%');
+    });
+
+    it('applies decimal precision to Underusing band', () => {
+        // 85.71% elapsed (day 6/7), usage at 40% → delta ≈ -45.71%
+        mockResolveWeeklyUsageWindow.mockReturnValue(makeWindow(85.71));
+        const item: WidgetItem = { ...BASE_ITEM, metadata: { decimals: '1' } };
+        expect(render({ usageData: { weeklyUsage: 40 } }, item)).toBe('D6/7: Underusing -45.7%');
+    });
+
+    it('does not show delta on On Pace when decimals set but showPercent absent', () => {
+        // 57.14% elapsed, 60% usage → delta ≈ +2.86%
+        mockResolveWeeklyUsageWindow.mockReturnValue(makeWindow(57.14));
+        const item: WidgetItem = { ...BASE_ITEM, metadata: { decimals: '2' } };
+        expect(render({ usageData: { weeklyUsage: 60 } }, item)).toBe('D4/7: On Pace');
+    });
+
+    it('shows fractional delta with decimals and showPercent combined', () => {
+        // 57.14% elapsed, 60% usage → delta ≈ +2.86%
+        mockResolveWeeklyUsageWindow.mockReturnValue(makeWindow(57.14));
+        const item: WidgetItem = { ...BASE_ITEM, metadata: { showPercent: 'true', decimals: '2' } };
+        expect(render({ usageData: { weeklyUsage: 60 } }, item)).toBe('D4/7: On Pace +2.86%');
+    });
+
+    it('applies decimal precision to pendulum bar display', () => {
+        mockResolveWeeklyUsageWindow.mockReturnValue(makeWindow(30));
+        const item: WidgetItem = { ...BASE_ITEM, metadata: { display: 'pendulum', decimals: '1' } };
+        const result = render({ usageData: { weeklyUsage: 50 } }, item);
+        expect(result).toContain('+20.0%');
+    });
+
     // --- Clamping ---
 
     it('clamps weeklyUsage above 100 to 100', () => {
@@ -255,6 +329,45 @@ describe('WeeklyPaceWidget', () => {
         expect(result?.metadata?.display).toBe('text');
     });
 
+    it('toggles showPercent on', () => {
+        const widget = new WeeklyPaceWidget();
+        const result = widget.handleEditorAction('toggle-show-percent', BASE_ITEM);
+        expect(result?.metadata?.showPercent).toBe('true');
+    });
+
+    it('toggles showPercent off', () => {
+        const widget = new WeeklyPaceWidget();
+        const result = widget.handleEditorAction('toggle-show-percent', SHOW_PERCENT_ITEM);
+        expect(result?.metadata?.showPercent).toBe('false');
+    });
+
+    it('cycles decimals from 0 to 1', () => {
+        const widget = new WeeklyPaceWidget();
+        const result = widget.handleEditorAction('cycle-decimals', BASE_ITEM);
+        expect(result?.metadata?.decimals).toBe('1');
+    });
+
+    it('cycles decimals from 1 to 2', () => {
+        const widget = new WeeklyPaceWidget();
+        const item: WidgetItem = { ...BASE_ITEM, metadata: { decimals: '1' } };
+        const result = widget.handleEditorAction('cycle-decimals', item);
+        expect(result?.metadata?.decimals).toBe('2');
+    });
+
+    it('cycles decimals from 2 to 3', () => {
+        const widget = new WeeklyPaceWidget();
+        const item: WidgetItem = { ...BASE_ITEM, metadata: { decimals: '2' } };
+        const result = widget.handleEditorAction('cycle-decimals', item);
+        expect(result?.metadata?.decimals).toBe('3');
+    });
+
+    it('cycles decimals from 3 back to 0', () => {
+        const widget = new WeeklyPaceWidget();
+        const item: WidgetItem = { ...BASE_ITEM, metadata: { decimals: '3' } };
+        const result = widget.handleEditorAction('cycle-decimals', item);
+        expect(result?.metadata?.decimals).toBe('0');
+    });
+
     it('returns null for unknown editor action', () => {
         const widget = new WeeklyPaceWidget();
         expect(widget.handleEditorAction('unknown', BASE_ITEM)).toBeNull();
@@ -262,11 +375,13 @@ describe('WeeklyPaceWidget', () => {
 
     // --- Custom keybinds ---
 
-    it('exposes pendulum toggle keybind', () => {
+    it('exposes all custom keybinds', () => {
         const widget = new WeeklyPaceWidget();
         const keybinds = widget.getCustomKeybinds();
         expect(keybinds).toEqual([
-            { key: 'p', label: '(p)endulum toggle', action: 'toggle-pendulum' }
+            { key: 'p', label: '(p)endulum toggle', action: 'toggle-pendulum' },
+            { key: '%', label: '(%) always show percent', action: 'toggle-show-percent' },
+            { key: '.', label: '(.) decimal precision', action: 'cycle-decimals' }
         ]);
     });
 
@@ -284,5 +399,34 @@ describe('WeeklyPaceWidget', () => {
         const display = widget.getEditorDisplay(PENDULUM_ITEM);
         expect(display.displayText).toBe('Weekly Pace');
         expect(display.modifierText).toBe('(pendulum bar)');
+    });
+
+    it('shows (always %) modifier text when showPercent is true', () => {
+        const widget = new WeeklyPaceWidget();
+        const display = widget.getEditorDisplay(SHOW_PERCENT_ITEM);
+        expect(display.displayText).toBe('Weekly Pace');
+        expect(display.modifierText).toBe('(always %)');
+    });
+
+    it('shows both modifiers when pendulum and showPercent are active', () => {
+        const widget = new WeeklyPaceWidget();
+        const bothItem: WidgetItem = { ...BASE_ITEM, metadata: { display: 'pendulum', showPercent: 'true' } };
+        const display = widget.getEditorDisplay(bothItem);
+        expect(display.displayText).toBe('Weekly Pace');
+        expect(display.modifierText).toBe('(pendulum bar, always %)');
+    });
+
+    it('shows decimal modifier text when decimals is set', () => {
+        const widget = new WeeklyPaceWidget();
+        const item: WidgetItem = { ...BASE_ITEM, metadata: { decimals: '2' } };
+        const display = widget.getEditorDisplay(item);
+        expect(display.modifierText).toBe('(.00)');
+    });
+
+    it('shows all modifiers combined', () => {
+        const widget = new WeeklyPaceWidget();
+        const item: WidgetItem = { ...BASE_ITEM, metadata: { display: 'pendulum', showPercent: 'true', decimals: '1' } };
+        const display = widget.getEditorDisplay(item);
+        expect(display.modifierText).toBe('(pendulum bar, always %, .0)');
     });
 });
