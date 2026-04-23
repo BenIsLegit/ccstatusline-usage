@@ -131,6 +131,23 @@ Default to using Bun instead of Node.js:
 - Use `bun build` with appropriate options for building
 - Bun automatically loads .env, so don't use dotenv
 
+## Fork maintenance
+
+This repo is a fork of [pcvelz/ccstatusline-usage](https://github.com/pcvelz/ccstatusline-usage).
+
+**Invariants:**
+- `main` equals `upstream/main` plus cherry-picked feat-branch commits in logical order. No merge commits on main.
+- Each `feat/*` branch is based on `upstream/main` and holds only its own feature commits.
+- When upstream advances: reset main to upstream, rebase feat branches onto the new upstream, then rebuild main by cherry-picking from the feat branches.
+
+For the step-by-step procedure (fetch, reset, rebase, cherry-pick, force-push), use the `sync-upstream` skill at `.claude/skills/sync-upstream/SKILL.md`. The skill covers conflict handling, chained feat branches, and the Windows-specific test failures to ignore.
+
+**Remote setup:**
+```
+origin    → https://github.com/BenIsLegit/ccstatusline-usage
+upstream  → https://github.com/pcvelz/ccstatusline-usage
+```
+
 ## Important Notes
 
 - **ink@6.2.0 patch**: The project uses a patch for ink@6.2.0 to fix backspace key handling on macOS
