@@ -6,7 +6,10 @@ import { opencodeProvider } from './providers/opencode';
 import type { UsageProvider } from './types';
 
 const OPENCODE_PATTERN = /(?:^|[^a-z])(glm|kimi|minimax|mm-|qwen|owen|mimo)/i;
-const ANTHROPIC_KEYWORDS = ['opus', 'sonnet', 'haiku'];
+// 'claude' matches every first-party model id (all are `claude-*`, e.g.
+// claude-fable-5), so new model families work without a code change. The
+// family keywords remain as a fallback for bare display names ('Fable 5').
+const ANTHROPIC_KEYWORDS = ['claude', 'opus', 'sonnet', 'haiku', 'fable'];
 
 export function resolveProvider(modelId: string | undefined | null): UsageProvider {
     if (!modelId)

@@ -16,6 +16,15 @@ describe('resolveProvider', () => {
     it('routes haiku to anthropic', () => {
         expect(resolveProvider('claude-haiku-4-5-20251001').name).toBe('anthropic');
     });
+    it('routes fable to anthropic', () => {
+        expect(resolveProvider('claude-fable-5').name).toBe('anthropic');
+    });
+    it('routes any future claude-prefixed model to anthropic', () => {
+        expect(resolveProvider('claude-newfamily-9').name).toBe('anthropic');
+    });
+    it('routes a bare Fable display name to anthropic', () => {
+        expect(resolveProvider('Fable 5').name).toBe('anthropic');
+    });
     it('routes glm-5.1 to opencode', () => {
         expect(resolveProvider('glm-5.1').name).toBe('opencode');
     });
